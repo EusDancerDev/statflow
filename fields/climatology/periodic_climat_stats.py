@@ -5,7 +5,7 @@
 periodic_climat_stats.py
 ------------------------
 
-This module provides functionality to compute periodic climatology statkit 
+This module provides functionality to compute periodic climatology statistics
 over specified time frequencies. These methods are particularly useful for 
 climatological and atmospheric sciences, where it's common to analyze data 
 on seasonal, monthly, daily, or even hourly time scales.
