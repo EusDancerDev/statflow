@@ -29,12 +29,12 @@ import xarray as xr
 # Import custom modules #
 #-----------------------#
 
-from pyutils.pandas_data_frames.data_frame_handler import find_date_key
-from pyutils.parameters_and_constants import global_parameters
-from pyutils.strings.information_output_formatters import format_string, print_format_string
-from pyutils.statkit.fields.climatology.periodic_climatology_stats import climat_periodic_statkit
-from pyutils.filewise.general.introspection_utils import get_type_str
-from pyutils.filewise.xarray_utils.patterns import find_time_dimension
+from filewise.general.introspection_utils import get_type_str
+from filewise.pandas_utils.pandas_obj_handler import find_time_key
+from filewise.xarray_utils.patterns import find_time_dimension
+from paramlib.parameters_and_constants import global_parameters
+from pygenutils.strings.information_output_formatters import format_string, print_format_string
+from statkit.fields.climatology.periodic_climatology_stats import climat_periodic_statkit
 
 # Create aliases #
 #----------------#
@@ -155,8 +155,8 @@ def calculate_and_apply_deltas(observed_series,
     #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
     
     if (obj_type_observed, obj_type_reanalysis ) == ("dataframe", "dataframe"):      
-        date_key = find_date_key(observed_series)
-        date_key_rean = find_date_key(observed_series)
+        date_key = find_time_key(observed_series)
+        date_key_rean = find_time_key(observed_series)
 
         if date_key != date_key_rean:
             reanalysis_series.columns = [date_key] + reanalysis_series.columns[1:]
