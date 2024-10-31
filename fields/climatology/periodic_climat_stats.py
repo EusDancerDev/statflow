@@ -40,14 +40,14 @@ import pandas as pd
 # Import custom modules #
 #-----------------------#
 
-from pyutils.pandas_data_frames.data_frame_handler import find_date_key
-from pyutils.parameters_and_constants import global_parameters
-from pyutils.strings.information_output_formatters import format_string
-from pyutils.strings.string_handler import find_substring_index
-from pyutils.filewise.introspection_utils import get_caller_args, get_type_str
-from pyutils.statkit.core.time_series import periodic_statkit
-from pyutils.time_handling.time_formatters import datetime_obj_converter
-from pyutils.filewise.xarray_utils.patterns import find_time_dimension
+from filewise.general.introspection_utils import get_caller_args, get_type_str
+from filewise.xarray_utils.patterns import find_time_dimension
+from pygenutils.parameters_and_constants import global_parameters
+from pygenutils.strings.information_output_formatters import format_string
+from pygenutils.strings.string_handler import find_substring_index
+from pygenutils.time_handling.date_and_time_utils import find_time_key
+from pygenutils.time_handling.time_formatters import datetime_obj_converter
+from statkit.core.time_series import periodic_statkit
 
 # Create aliases #
 #----------------#
@@ -134,7 +134,7 @@ def climat_periodic_statkit(obj,
     #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
     
     if obj_type == "dataframe":
-        date_key = find_date_key(obj)
+        date_key = find_time_key(obj)
         
     elif obj_type in ["dataset", "dataarray"]:
         date_key = find_time_dimension(obj)               
