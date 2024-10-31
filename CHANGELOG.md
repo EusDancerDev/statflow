@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ---
 
 ## [0.1.0] - Initial Release - 2024-10-28
+
 ### Added
 - **core**: 
   - `regressions.py`: methods for performing various regression analyses
