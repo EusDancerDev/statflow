@@ -7,7 +7,6 @@ All notable changes to this project will be documented in this file.
 ## [v3.0.0] - 2024-11-01
 
 ### Changed
-
 - For all files contained in this package, relocate package names in the absolute imports
 
 ---
