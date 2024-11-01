@@ -12,7 +12,7 @@ import scipy.stats as ss
 # Import custom modules #
 #-----------------------#
 
-from pyutils.arrays_and_lists.maths import window_sum
+from pygenutils.arrays_and_lists.maths import window_sum
 
 # Create aliases #
 #----------------#
