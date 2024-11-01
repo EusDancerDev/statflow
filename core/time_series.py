@@ -22,7 +22,7 @@ from pygenutils.arrays_and_lists import patterns, data_manipulation
 # Import custom modules #
 #-----------------------#
 
-from filewise.introspection_utils import get_caller_args, get_type_str
+from filewise.general.introspection_utils import get_caller_args, get_type_str
 from filewise.pandas_utils.pandas_obj_handler import find_time_key
 from filewise.xarray_utils.patterns import find_time_dimension
 from pygenutils.strings.information_output_formatters import format_string
