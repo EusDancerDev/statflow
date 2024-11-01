@@ -11,8 +11,8 @@ import numpy as np
 # Import custom modules #
 #-----------------------#
 
-from pyutils.arrays_and_lists.patterns import count_consecutive
-from pyutils.statkit.core.time_series import consec_occurrences_mindata, consec_occurrences_maxdata
+from pygenutils.arrays_and_lists.patterns import count_consecutive
+from statkit.core.time_series import consec_occurrences_mindata, consec_occurrences_maxdata
 
 #------------------#
 # Define functions #
