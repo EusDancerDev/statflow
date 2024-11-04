@@ -12,7 +12,7 @@ import pandas as pd
 # Import custom modules #
 #-----------------------#
 
-from paramlib.parameters_and_constants.global_parameters import common_delim_list
+from paramlib.global_parameters import common_delim_list
 from climalab.meteorological_variables import meteorological_wind_direction
 from statkit.core import interpolation_methods, time_series
 
