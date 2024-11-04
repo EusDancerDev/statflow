@@ -3,4 +3,5 @@
 
 # statkit/fields/__init__.py
 
+from . import __init__
 from . import climatology

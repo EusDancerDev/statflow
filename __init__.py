@@ -3,6 +3,7 @@
 
 # statkit/__init__.py
 
+from . import __init__
 from . import core
 from . import distributions
 from . import fields

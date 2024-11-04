@@ -3,6 +3,7 @@
 
 # statkit/core/__init__.py
 
+from . import __init__
 from . import approximation_techniques
 from . import interpolation_methods
 from . import moving_operations

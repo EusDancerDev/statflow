@@ -3,6 +3,7 @@
 
 # statkit/fields/climatology/__init__.py
 
+from . import __init__
 from . import indicators
 from . import periodic_climat_stats
 from . import representative_series
