@@ -32,9 +32,9 @@ import xarray as xr
 from filewise.general.introspection_utils import get_type_str
 from filewise.pandas_utils.pandas_obj_handler import find_time_key
 from filewise.xarray_utils.patterns import find_time_dimension
-from paramlib.parameters_and_constants import global_parameters
+from paramlib import global_parameters
 from pygenutils.strings.information_output_formatters import format_string, print_format_string
-from statkit.fields.climatology.periodic_climatology_stats import climat_periodic_statkit
+from statkit.fields.climatology.periodic_climat_stats import climat_periodic_statistics
 
 # Create aliases #
 #----------------#
@@ -47,11 +47,6 @@ time_freqs2 = global_parameters.time_frequencies_short_1
 #------------------#
 # Define functions #
 #------------------#
-    
-# Climatologic statkit #
-#-------------------------#
-
-
 
 # Bias correction methods #
 #-------------------------#
@@ -74,7 +69,7 @@ def calculate_and_apply_deltas(observed_series,
     and then applies to any of them.
     
     For that, it firstly calculates the given time-frequency climatologies
-    for both objects using 'climat_periodic_statkit' function,
+    for both objects using 'climat_periodic_statistics' function,
     and then performs the delta calculation, 
     depending on the math operator chosen:
       1. Absolute delta: subtraction between both objects
@@ -203,7 +198,7 @@ def calculate_and_apply_deltas(observed_series,
             )
         print_format_string(delta_application_info_str, arg_tuple_delta3)
         
-        obs_climat = climat_periodic_statkit(observed_series, 
+        obs_climat = climat_periodic_statistics(observed_series, 
                                                 statistic, 
                                                 time_freq,
                                                 keep_std_dates,
@@ -218,7 +213,7 @@ def calculate_and_apply_deltas(observed_series,
             )
         print_format_string(delta_application_info_str, arg_tuple_delta4)
         
-        rean_climat = climat_periodic_statkit(reanalysis_series, 
+        rean_climat = climat_periodic_statistics(reanalysis_series, 
                                                  statistic, 
                                                  time_freq,
                                                  keep_std_dates,
@@ -458,7 +453,7 @@ delta_types = ["absolute", "relative"]
 supported_time_series = ["observed", "reanalysis"]
 
 # Statistics #
-statkit = ["max", "min", "sum", "mean", "std"]
+statistics = ["max", "min", "sum", "mean", "std"]
 
 # Preformatted strings #
 #----------------------#
