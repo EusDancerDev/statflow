@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+---
+
+## [v3.0.6] - 2025-02-03
+
+### Changed
+
+**General**
+
+- Peform several term replacements in many modules:
+	- `method` with `function`, if no object is instantiated throughout the module.
+	- `method` with `procedure` (or `algorithm`/`module`), to more accurately describe the approach or technique used in functions.
+	Additionally, this change effectively communicates that a function can employ different methods or techniques to achieve its goal.
+
+---
+
 ## [v3.0.0] - 2024-11-04
 
 ### Added
