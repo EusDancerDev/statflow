@@ -29,8 +29,8 @@ polynomial_fitting = interpolation_methods.polynomial_fitting
 # Hourly Design Year #
 #--------------------#
 
-# Main method #
-#-#-#-#-#-#-#-#
+# Main function #
+#-#-#-#-#-#-#-#-#
 
 def calculate_HDY(hourly_df: pd.DataFrame, 
                   varlist: list, 
