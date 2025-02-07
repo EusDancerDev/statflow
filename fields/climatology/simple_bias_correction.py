@@ -6,12 +6,12 @@ simple_bias_correction.py
 -------------------------
 
 This module provides a set of functions to perform simple bias correction techniques,
-particularly designed for climatology data. These methods focus on calculating and 
+particularly designed for climatology data. These functions focus on calculating and 
 applying deltas between observed data series and reanalysis or model output series, 
 which are useful for correcting systematic biases in climate simulations or historical 
 reanalysis datasets.
 
-The methods in this module support bias correction using both absolute and relative deltas,
+The functions in this module support bias correction using both absolute and relative deltas,
 across various time frequencies such as seasonal, monthly, daily, or hourly resolutions.
 They can handle common data structures used in climatology like Pandas DataFrames or 
 xarray Datasets.
@@ -33,7 +33,7 @@ from filewise.general.introspection_utils import get_type_str
 from filewise.pandas_utils.pandas_obj_handler import find_time_key
 from filewise.xarray_utils.patterns import find_time_dimension
 from paramlib import global_parameters
-from pygenutils.strings.information_output_formatters import format_string, print_format_string
+from pygenutils.strings.text_formatters import format_string, print_format_string
 from statkit.fields.climatology.periodic_climat_stats import climat_periodic_statistics
 
 # Create aliases #
@@ -48,8 +48,8 @@ time_freqs2 = global_parameters.time_frequencies_short_1
 # Define functions #
 #------------------#
 
-# Bias correction methods #
-#-------------------------#
+# Bias correction functions #
+#---------------------------#
 
 # Deltas #
 #-#-#-#-#-
