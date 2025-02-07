@@ -6,7 +6,7 @@ periodic_climat_stats.py
 ------------------------
 
 This module provides functionality to compute periodic climatology statistics
-over specified time frequencies. These methods are particularly useful for 
+over specified time frequencies. These functions are particularly useful for 
 climatological and atmospheric sciences, where it's common to analyze data 
 on seasonal, monthly, daily, or even hourly time scales.
 
@@ -43,8 +43,8 @@ import pandas as pd
 from filewise.general.introspection_utils import get_caller_args, get_type_str
 from filewise.xarray_utils.patterns import find_time_dimension
 from paramlib import global_parameters
-from pygenutils.strings.information_output_formatters import format_string
 from pygenutils.strings.string_handler import find_substring_index
+from pygenutils.strings.text_formatters import format_string
 from pygenutils.time_handling.date_and_time_utils import find_time_key
 from pygenutils.time_handling.time_formatters import datetime_obj_converter
 from statkit.core.time_series import periodic_statistics
@@ -56,7 +56,6 @@ basic_time_format_strs = global_parameters.basic_time_format_strs
 month_number_dict = global_parameters.month_number_dict
 time_freqs1 = global_parameters.time_frequencies_complete
 time_freqs2 = global_parameters.time_frequencies_short_1
-
 
 #------------------#
 # Define functions #
