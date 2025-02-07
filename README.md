@@ -7,7 +7,7 @@
 - **Core Statistical Methods**:
   - Modules for regression, moving averages, and statistical testing.
 - **Time Series Analysis**:
-  - Specialized methods for analyzing time-dependent data.
+  - Specialised methods for analyzing time-dependent data.
 - **Signal Processing**:
   - Functions for signal filtering, interpolation, and approximation.
 - **Climatology Tools**:
