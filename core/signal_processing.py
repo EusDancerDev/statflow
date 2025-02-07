@@ -11,7 +11,7 @@ import numpy as np
 # Import custom modules #
 #-----------------------#
 
-from pygenutils.strings.information_output_formatters import format_string
+from pygenutils.strings.text_formatters import format_string
 
 #------------------#
 # Define functions #
@@ -92,7 +92,7 @@ def low_pass_filter(data, window_size=3):
     """
     Applies a simple moving average (SMA) low-pass filter to the input data.
     
-    This method smooths the input signal by averaging over a sliding window,
+    This function smooths the input signal by averaging over a sliding window,
     effectively filtering out high-frequency noise.
     
     Parameters
@@ -127,7 +127,7 @@ def high_pass_filter(data):
     """
     Applies a simple high-pass filter by taking the difference between consecutive points in the time series.
     
-    This method is useful for extracting high-frequency components and removing slow trends from the data.
+    This function is useful for extracting high-frequency components and removing slow trends from the data.
     
     Parameters
     ----------
@@ -176,7 +176,7 @@ def band_pass1(original, timestep, low_freq, high_freq):
 
     Notes
     -----
-    This method processes the data entirely in the frequency domain. 
+    This function processes the data entirely in the frequency domain. 
     Do not work directly with the time-domain signal.
     """
 
@@ -223,7 +223,7 @@ def band_pass2(original, low_filtered_all_highfreq, low_filtered_all_lowfreq):
 
     Notes
     -----
-    This method requires pre-filtered signals using low-pass filters.
+    This function requires pre-filtered signals using low-pass filters.
     """
 
     # Convert time series and low-pass filtered signals to frequency domain
@@ -265,7 +265,7 @@ def band_pass3(original, low_filtered_all, high_filtered_all):
 
     Notes
     -----
-    The method works entirely in the frequency domain. Do not manipulate
+    This function works entirely in the frequency domain. Do not manipulate
     the time-domain signal directly.
     """
 
