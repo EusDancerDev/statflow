@@ -109,7 +109,7 @@ def interp_np(data, method='linear', order=None, kind="nearest", fill_value="ext
           points outside of the data range. If not provided, then the default is NaN.
         - If a two-element tuple, then the first element is used as a fill value 
         for x_new < x[0] and the second element is used for x_new > x[-1]. 
-        Anything that is not a 2-element tuple (e.g., list or ndarray, regardless of shape) 
+        Anything that is not a 2-element tuple (e.g., list or ndarray, regardless of the shape) 
         is taken to be a single array-like argument meant to be used for both bounds as
         `below`, `above` = `fill_value`, `fill_value`.
         
