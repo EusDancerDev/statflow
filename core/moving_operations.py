@@ -47,8 +47,7 @@ def window_sum(x, N):
     shape could be (time, lat, lon). Uses numpy for 1D arrays and switches to 
     scipy.convolve for n-dimensional arrays.
     """
-    shape = x.shape
-    dims = len(shape)
+    dims = x.ndim
     
     if dims == 1:
         try:
