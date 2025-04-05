@@ -99,19 +99,19 @@ def periodic_statistics(obj, statistic, freq,
     seas_mon_arg_type = get_type_str(season_months)
     
     if statistic not in statistics:
-        arg_tuple_stat = ("statistic", statistic, statistics)
-        raise ValueError(format_string(unsupported_option_error_template, arg_tuple_stat))
+        format_args_stat = ("statistic", statistic, statistics)
+        raise ValueError(format_string(unsupported_option_error_template, format_args_stat))
         
     
     if obj_type not in ["dataframe", "dataset", "dataarray"]:
-        arg_tuple_obj_type = ("data type",
-                              obj_type, 
-                              "{pandas.DataFrame, xarray.Dataset, xarray.DataArray}")
-        raise ValueError(format_string(unsupported_option_error_template, arg_tuple_obj_type))
+        format_args_obj_type = ("data type",
+                                obj_type, 
+                                "{pandas.DataFrame, xarray.Dataset, xarray.DataArray}")
+        raise ValueError(format_string(unsupported_option_error_template, format_args_obj_type))
 
     if freq not in freq_abbrs:
-        arg_tuple_freq = ("frequency", freq, freq_abbrs)
-        raise ValueError(format_string(unsupported_option_error_template, arg_tuple_freq))
+        format_args_freq = ("frequency", freq, freq_abbrs)
+        raise ValueError(format_string(unsupported_option_error_template, format_args_freq))
     
     if seas_mon_arg_type != "list":
         raise TypeError("Expected a list for parameter 'season_months' "
