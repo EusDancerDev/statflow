@@ -6,15 +6,15 @@ All notable changes to this project will be documented in this file.
 
 ## [v3.1.0] - 2025-04-05
 
-### Changed
+### Changed (v3.1.0)
 
-#### **General**
+#### **General** (v3.1.0)
 
 - Improved variable naming conventions across multiple modules:
   - Renamed `arg_tuple_*` variables to `format_args_*` in `core/time_series.py`, `core/signal_processing.py`, `fields/climatology/periodic_climat_stats.py`, and `fields/climatology/simple_bias_correction.py` to better reflect their purpose in error handling and information formatting.
   - This change enhances code readability and maintainability by using more descriptive variable names.
 
-#### **Fields/Climatology**
+#### **Fields/Climatology** (v3.1.0)
 
 - Module `simple_bias_correction.py`:
   - Enhanced `calculate_and_apply_deltas` function:
