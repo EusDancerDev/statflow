@@ -62,7 +62,8 @@ def calculate_and_apply_deltas(observed_series,
                                preference="observed",
                                keep_std_dates=True, 
                                drop_date_idx_col=False,
-                               season_months=None):
+                               season_months=None,
+                               delta_value=2):
 
     """
     Function that calculates simple deltas between two objects
@@ -114,6 +115,12 @@ def calculate_and_apply_deltas(observed_series,
         List containing the month numbers to later refer to the time array,
         whatever the object is among the mentioned three types.
         Defaults to None.
+    delta_value : int or "auto", optional
+        Controls the formatting of the delta value in output messages.
+        If an integer, it specifies the number of decimal places to display.
+        If "auto", it uses the best format with 2 significant digits, 
+        choosing between scientific notation and floating-point.
+        Defaults to 2.
     
     Returns
     -------
@@ -130,12 +137,22 @@ def calculate_and_apply_deltas(observed_series,
     #-------------------#
     
     if delta_type not in delta_types:
-        arg_tuple_delta1 = ("delta type", delta_type, delta_types)
-        raise ValueError(format_string(unsupported_option_error_str, arg_tuple_delta1))
+        format_args_delta_type = ("delta type", delta_type, delta_types)
+        raise ValueError(format_string(unsupported_option_error_template, format_args_delta_type))
     
     if preference not in supported_time_series:
-        arg_tuple_delta2 = ("preferent time series name", preference, supported_time_series)
-        raise ValueError(format_string(unsupported_option_error_str, arg_tuple_delta2))
+        format_args_preference = ("preferent time series name", preference, supported_time_series)
+        raise ValueError(format_string(unsupported_option_error_template, format_args_preference))
+    
+    # Validate delta_value
+    if delta_value != "auto" and (not isinstance(delta_value, int) or delta_value < 0):
+        raise ValueError("Argument 'delta_value' must be a positive integer or 'auto'")
+    
+    # Define the format string based on delta_value type
+    if delta_value == "auto":
+        delta_format = "{:.2g}"
+    else:
+        delta_format = "{:." + str(delta_value) + "f}"
     
     # Operations #
     #------------#
@@ -298,11 +315,18 @@ def calculate_and_apply_deltas(observed_series,
             obj2correct = obj_aux[obj_aux[date_key].dt.month.isin(season_months)]
             
             # Delta application #
-            arg_tuple_delta5 = (
-                f"Applying deltas over the {preference} series...",
-                freq_abbr,season_months,"all","all"
-                )
-            print_format_string(delta_application_info_template, arg_tuple_delta5)
+            # Get the actual delta value for display
+            if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")):
+                actual_delta = delta_obj.iloc[0, 1]  # First row, second column (after date)
+            else:
+                actual_delta = float(delta_obj.values[0])
+                
+            format_args_delta_seasonal = (
+                "delta",
+                delta_type,
+                f"{delta_type} ({delta_format.format(actual_delta)})"
+            )
+            print_format_string(delta_application_info_template, format_args_delta_seasonal)
             
             if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")):    
                 if delta_type == "absolute":    
@@ -330,11 +354,18 @@ def calculate_and_apply_deltas(observed_series,
                 obj_delta = delta_obj[delta_obj[date_key].dt.month==m]
                 
                 # Delta application #
-                arg_tuple_delta6 = (
-                    f"Applying deltas over the {preference} series...",
-                    freq_abbr,m,"all","all"
-                    )
-                print_format_string(delta_application_info_template, arg_tuple_delta6)
+                # Get the actual delta value for display
+                if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")):
+                    actual_delta = obj_delta.iloc[0, 1]  # First row, second column (after date)
+                else:
+                    actual_delta = float(obj_delta.values[0])
+                    
+                format_args_delta_monthly = (
+                    "delta",
+                    delta_type,
+                    f"{delta_type} ({delta_format.format(actual_delta)})"
+                )
+                print_format_string(delta_application_info_template, format_args_delta_monthly)
                 
                 if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")):
                     if delta_type == "absolute":
@@ -369,11 +400,18 @@ def calculate_and_apply_deltas(observed_series,
                     
                     # Delta application #
                     if len(obj2correct) > 0 and len(obj_delta) > 0:
-                        arg_tuple_delta7 = (
-                            f"Applying deltas over the {preference} series...",
-                            freq_abbr,m,d,"all"
-                            )
-                        print_format_string(delta_application_info_template, arg_tuple_delta7)
+                        # Get the actual delta value for display
+                        if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")):
+                            actual_delta = obj_delta.iloc[0, 1]  # First row, second column (after date)
+                        else:
+                            actual_delta = float(obj_delta.values[0])
+                            
+                        format_args_delta_daily = (
+                            "delta",
+                            delta_type,
+                            f"{delta_type} ({delta_format.format(actual_delta)})"
+                        )
+                        print_format_string(delta_application_info_template, format_args_delta_daily)
                         
                         if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")):
                             if delta_type == "absolute":
@@ -414,11 +452,18 @@ def calculate_and_apply_deltas(observed_series,
                        
                         # Delta application #
                         if len(obj2correct) > 0 and len(obj_delta) > 0:
-                            arg_tuple_delta8 = (
-                                f"Applying deltas over the {preference} series...",
-                                freq_abbr,m,d,h
-                                )
-                            print_format_string(delta_application_info_template, arg_tuple_delta8)
+                            # Get the actual delta value for display
+                            if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")):
+                                actual_delta = obj_delta.iloc[0, 1]  # First row, second column (after date)
+                            else:
+                                actual_delta = float(obj_delta.values[0])
+                                
+                            format_args_delta_hourly = (
+                                "delta",
+                                delta_type,
+                                f"{delta_type} ({delta_format.format(actual_delta)})"
+                            )
+                            print_format_string(delta_application_info_template, format_args_delta_hourly)
                             
                             if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")):
                                 if delta_type == "absolute":
@@ -446,8 +491,6 @@ def calculate_and_apply_deltas(observed_series,
 # Parameters and constants #
 #--------------------------#
 
-unsupported_option_error_str = "Unsupported {} '{}'. Options are {}."
-
 # Delta application function #
 delta_types = ["absolute", "relative"]
 supported_time_series = ["observed", "reanalysis"]
@@ -457,6 +500,9 @@ statistics = ["max", "min", "sum", "mean", "std"]
 
 # Template strings #
 #------------------#
+
+# Error strings #
+unsupported_option_error_template = "Unsupported {} '{}'. Options are {}."
 
 # Delta application options #
 delta_application_info_template = """{}
