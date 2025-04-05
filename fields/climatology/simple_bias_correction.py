@@ -206,14 +206,14 @@ def calculate_and_apply_deltas(observed_series,
         # Calculate statistical climatologies #
         #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
         
-        arg_tuple_delta3 = (
+        format_args_delta3 = (
             "Calculating observed climatologies...",
             time_freq,
             "N/P",
             "N/P",
             "N/P"
             )
-        print_format_string(delta_application_info_template, arg_tuple_delta3)
+        print_format_string(delta_application_info_template, format_args_delta3)
         
         obs_climat = climat_periodic_statistics(observed_series, 
                                                 statistic, 
@@ -221,14 +221,14 @@ def calculate_and_apply_deltas(observed_series,
                                                 keep_std_dates,
                                                 drop_date_idx_col,
                                                 season_months)
-        arg_tuple_delta4 = (
+        format_args_delta4 = (
             "Calculating reanalysis climatologies...",
             time_freq,
             "N/P",
             "N/P",
             "N/P"
             )
-        print_format_string(delta_application_info_template, arg_tuple_delta4)
+        print_format_string(delta_application_info_template, format_args_delta4)
         
         rean_climat = climat_periodic_statistics(reanalysis_series, 
                                                  statistic, 
