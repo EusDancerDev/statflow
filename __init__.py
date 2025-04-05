@@ -3,6 +3,8 @@
 
 # statkit/__init__.py
 
+__version__ = "3.1.0"
+
 from . import __init__
 from . import core
 from . import distributions
