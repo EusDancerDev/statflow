@@ -82,8 +82,8 @@ def signal_whitening(data, method="classic"):
         return whitened_data
     
     else:
-        arg_tuple_white_noise = ("whitening method", method, signal_forcing_methods)
-        raise ValueError(format_string(unsupported_option_error_template, arg_tuple_white_noise))
+        format_args_whitening = ("whitening method", method, signal_forcing_methods)
+        raise ValueError(format_string(unsupported_option_error_template, format_args_whitening))
         
 # Filtering #
 #~~~~~~~~~~~#
