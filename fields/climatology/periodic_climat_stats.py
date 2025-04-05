@@ -113,12 +113,11 @@ def climat_periodic_statistics(obj,
     
     seas_mon_arg_type = get_type_str(season_months)
     
-    tf_idx = time_freqs2.index(time_freq)
-    if tf_idx == -1:
-        arg_tuple_climat_stats = ("time-frequency", time_freq, time_freqs2)
-        raise ValueError(format_string(unsupported_option_error_str, arg_tuple_climat_stats))
+    if time_freq not in time_freqs2:
+        format_args_climat_stats = ("time-frequency", time_freq, time_freqs2)
+        raise ValueError(format_string(unsupported_option_error_template, format_args_climat_stats))
     else:
-        freq_abbr = freq_abbrs[tf_idx]
+        freq_abbr = freq_abbrs[time_freqs2.index(time_freq)]
       
         
     # Operations #
@@ -232,7 +231,7 @@ def climat_periodic_statistics(obj,
                                 f"got '{seas_mon_arg_type}'.")
             
             if (season_months and len(season_months) != 3):
-                raise ValueError(season_month_fmt_error_str)
+                raise ValueError(season_month_fmt_error_template)
 
             climat_vals = [obj[obj[date_key].dt.month.isin(season_months)].iloc[:, 1:][statistic]()]
         
@@ -284,7 +283,7 @@ def climat_periodic_statistics(obj,
                                 f"got '{seas_mon_arg_type}'.")
                 
             if (season_months and len(season_months) != 3):
-                raise ValueError(season_month_fmt_error_str)
+                raise ValueError(season_month_fmt_error_template)
             else:
                 obj_seas_sel = obj.sel({date_key: obj[date_key].dt.month.isin(season_months)})
                 obj_climat = obj_seas_sel[statistic](dim=date_key)
@@ -358,8 +357,9 @@ def climat_periodic_statistics(obj,
 # Parameters and constants #
 #--------------------------#
 
-unsupported_option_error_str = "Unsupported {} '{}'. Options are {}."
-season_month_fmt_error_str = """Parameter 'season_months' must contain exactly \
+# Error template strings #
+unsupported_option_error_template = "Unsupported {} '{}'. Options are {}."
+season_month_fmt_error_template = """Parameter 'season_months' must contain exactly \
 3 integers representing months. For example: [12, 1, 2]."""
 
 # Date and time format strings #
