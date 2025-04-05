@@ -16,17 +16,12 @@ from pandas import Grouper
 # Import custom modules #
 #-----------------------#
 
-from pygenutils.arrays_and_lists import patterns, data_manipulation
-
-#-----------------------#
-# Import custom modules #
-#-----------------------#
-
 from filewise.general.introspection_utils import get_caller_args, get_type_str
 from filewise.pandas_utils.pandas_obj_handler import find_time_key
 from filewise.xarray_utils.patterns import find_time_dimension
-from pygenutils.strings.text_formatters import format_string
+from pygenutils.arrays_and_lists import patterns, data_manipulation
 from pygenutils.strings.string_handler import find_substring_index
+from pygenutils.strings.text_formatters import format_string
 
 # Create aliases #
 #----------------#
@@ -105,18 +100,18 @@ def periodic_statistics(obj, statistic, freq,
     
     if statistic not in statistics:
         arg_tuple_stat = ("statistic", statistic, statistics)
-        raise ValueError(format_string(unsupported_option_error_str, arg_tuple_stat))
+        raise ValueError(format_string(unsupported_option_error_template, arg_tuple_stat))
         
     
     if obj_type not in ["dataframe", "dataset", "dataarray"]:
         arg_tuple_obj_type = ("data type",
                               obj_type, 
                               "{pandas.DataFrame, xarray.Dataset, xarray.DataArray}")
-        raise ValueError(format_string(unsupported_option_error_str, arg_tuple_obj_type))
+        raise ValueError(format_string(unsupported_option_error_template, arg_tuple_obj_type))
 
     if freq not in freq_abbrs:
         arg_tuple_freq = ("frequency", freq, freq_abbrs)
-        raise ValueError(format_string(unsupported_option_error_str, arg_tuple_freq))
+        raise ValueError(format_string(unsupported_option_error_template, arg_tuple_freq))
     
     if seas_mon_arg_type != "list":
         raise TypeError("Expected a list for parameter 'season_months' "
@@ -126,7 +121,7 @@ def periodic_statistics(obj, statistic, freq,
         raise ValueError("Seasonal frequency requires parameter 'season_months'.")
     
     if season_months and len(season_months) != 3:
-        raise ValueError(season_month_fmt_error_str)
+        raise ValueError(season_month_fmt_error_template)
 
     # Operations #
     #-#-#-#-#-#-#-
@@ -339,9 +334,9 @@ statistics = ["max", "min", "sum", "mean", "std"]
 # Time frequency abbreviations #
 freq_abbrs = ["Y", "SEAS", "M", "D", "H", "min", "S"]
 
-# Preformatted strings #
-#----------------------#
+# Template strings #
+#------------------#
 
-unsupported_option_error_str = "Unsupported {} '{}'. Options are {}."
-season_month_fmt_error_str = """Parameter 'season_months' must contain exactly \
+unsupported_option_error_template = "Unsupported {} '{}'. Options are {}."
+season_month_fmt_error_template = """Parameter 'season_months' must contain exactly \
 3 integers representing months. For example: [12, 1, 2]."""

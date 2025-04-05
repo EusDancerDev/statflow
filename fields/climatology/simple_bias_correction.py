@@ -196,7 +196,7 @@ def calculate_and_apply_deltas(observed_series,
             "N/P",
             "N/P"
             )
-        print_format_string(delta_application_info_str, arg_tuple_delta3)
+        print_format_string(delta_application_info_template, arg_tuple_delta3)
         
         obs_climat = climat_periodic_statistics(observed_series, 
                                                 statistic, 
@@ -211,7 +211,7 @@ def calculate_and_apply_deltas(observed_series,
             "N/P",
             "N/P"
             )
-        print_format_string(delta_application_info_str, arg_tuple_delta4)
+        print_format_string(delta_application_info_template, arg_tuple_delta4)
         
         rean_climat = climat_periodic_statistics(reanalysis_series, 
                                                  statistic, 
@@ -302,7 +302,7 @@ def calculate_and_apply_deltas(observed_series,
                 f"Applying deltas over the {preference} series...",
                 freq_abbr,season_months,"all","all"
                 )
-            print_format_string(delta_application_info_str, arg_tuple_delta5)
+            print_format_string(delta_application_info_template, arg_tuple_delta5)
             
             if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")):    
                 if delta_type == "absolute":    
@@ -334,7 +334,7 @@ def calculate_and_apply_deltas(observed_series,
                     f"Applying deltas over the {preference} series...",
                     freq_abbr,m,"all","all"
                     )
-                print_format_string(delta_application_info_str, arg_tuple_delta6)
+                print_format_string(delta_application_info_template, arg_tuple_delta6)
                 
                 if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")):
                     if delta_type == "absolute":
@@ -373,7 +373,7 @@ def calculate_and_apply_deltas(observed_series,
                             f"Applying deltas over the {preference} series...",
                             freq_abbr,m,d,"all"
                             )
-                        print_format_string(delta_application_info_str, arg_tuple_delta7)
+                        print_format_string(delta_application_info_template, arg_tuple_delta7)
                         
                         if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")):
                             if delta_type == "absolute":
@@ -418,7 +418,7 @@ def calculate_and_apply_deltas(observed_series,
                                 f"Applying deltas over the {preference} series...",
                                 freq_abbr,m,d,h
                                 )
-                            print_format_string(delta_application_info_str, arg_tuple_delta8)
+                            print_format_string(delta_application_info_template, arg_tuple_delta8)
                             
                             if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")):
                                 if delta_type == "absolute":
@@ -455,11 +455,11 @@ supported_time_series = ["observed", "reanalysis"]
 # Statistics #
 statistics = ["max", "min", "sum", "mean", "std"]
 
-# Preformatted strings #
-#----------------------#
+# Template strings #
+#------------------#
 
 # Delta application options #
-delta_application_info_str = """{}
+delta_application_info_template = """{}
 Time frequency : {}
 Month = {}
 Day = {}

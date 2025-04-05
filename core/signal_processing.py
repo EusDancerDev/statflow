@@ -83,7 +83,7 @@ def signal_whitening(data, method="classic"):
     
     else:
         arg_tuple_white_noise = ("whitening method", method, signal_forcing_methods)
-        raise ValueError(format_string(unsupported_option_error_str, arg_tuple_white_noise))
+        raise ValueError(format_string(unsupported_option_error_template, arg_tuple_white_noise))
         
 # Filtering #
 #~~~~~~~~~~~#
@@ -291,7 +291,7 @@ def band_pass3(original, low_filtered_all, high_filtered_all):
 # Signal forcing #
 signal_forcing_methods = ["classic", "sklearn", "zca"]
 
-# Preformatted strings #
-#----------------------#
+# Template strings #
+#------------------#
 
-unsupported_option_error_str = "Unsupported {} '{}'. Options are {}."
+unsupported_option_error_template = "Unsupported {} '{}'. Options are {}."
