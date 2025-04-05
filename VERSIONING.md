@@ -6,7 +6,7 @@ This document outlines the versioning schema used for the statkit package.
 
 The version format follows Semantic Versioning (SemVer) principles with a three-part version number:
 
-```
+```text
 MAJOR.MINOR.PATCH
 ```
 
@@ -55,4 +55,4 @@ The version of the package is defined in the `__init__.py` file and can be acces
 ```python
 import statkit
 print(statkit.__version__)
-``` 
+```
