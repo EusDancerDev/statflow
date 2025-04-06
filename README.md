@@ -15,7 +15,7 @@
 
 ## Version Information
 
-The current version of statkit is **3.1.0** (released on 2025-04-05).
+The current version of statkit is **3.2.0** (released on 2025-05-15).
 
 For detailed information about the versioning schema and release history, please refer to the [VERSIONING.md](VERSIONING.md) file.
 
@@ -78,7 +78,7 @@ Until this package is available on PyPI or Anaconda, please follow these steps:
    - Run the following command to install the package:
 
      ```bash
-     pip3 install statkit-3.1.0.tar.gz
+     pip3 install statkit-3.2.0.tar.gz
      ```
 
 **Note**: Once available on PyPI and Anaconda, installation will be simpler and more conventional.
@@ -100,3 +100,16 @@ To stay up-to-date with the latest version of this package, follow these steps:
      ```
 
 This will download the latest changes from the main branch of the repository. After updating, you may need to rebuild and reinstall the package as described in the [Installation Guide](#installation-guide) above.
+
+---
+
+## Recent Improvements
+
+The latest version (3.2.0) includes significant improvements to the climatology modules:
+
+- **Enhanced Code Structure**: The climatology modules have been refactored for improved maintainability and readability.
+- **Better Function Organization**: Large functions have been split into smaller, focused components with clear responsibilities.
+- **Improved Encapsulation**: Helper functions are now properly marked as internal, providing a cleaner public API.
+- **Enhanced Documentation**: All functions now include comprehensive docstrings for better understanding.
+
+These improvements maintain all existing functionality while making the code more maintainable and easier to understand.
