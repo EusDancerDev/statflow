@@ -133,9 +133,39 @@ def calculate_and_apply_deltas(observed_series,
     it is interpreted that data holds for a specific geographical point.
     """
     
-    # Input validations #
-    #-------------------#
+    # Input validations
+    _validate_inputs(delta_type, preference, delta_value)
     
+    # Define the format string based on delta_value type
+    delta_format = _get_delta_format(delta_value)
+    
+    # Determine object type
+    obj_type_observed = get_type_str(observed_series, lowercase=True)
+    obj_type_reanalysis = get_type_str(reanalysis_series, lowercase=True)
+    
+    # Identify the time dimension and align if needed
+    date_key = _align_time_dimensions(observed_series, reanalysis_series, 
+                                     obj_type_observed, obj_type_reanalysis)
+    
+    # Calculate climatologies and deltas
+    delta_obj, delta_cols = _calculate_deltas(observed_series, reanalysis_series, 
+                                             time_freq, statistic, keep_std_dates, 
+                                             drop_date_idx_col, season_months, 
+                                             delta_type, preference, obj_type_observed, 
+                                             obj_type_reanalysis, date_key)
+    
+    # Apply deltas to the chosen series
+    delta_corrected_obj = _apply_deltas(delta_obj, delta_cols, time_freq, 
+                                       delta_type, preference, obj_type_observed, 
+                                       obj_type_reanalysis, date_key, 
+                                       delta_format, season_months, 
+                                       observed_series, reanalysis_series)
+    
+    return delta_corrected_obj
+
+
+def _validate_inputs(delta_type, preference, delta_value):
+    """Validate input parameters."""
     if delta_type not in delta_types:
         format_args_delta_type = ("delta type", delta_type, delta_types)
         raise ValueError(format_string(unsupported_option_error_template, format_args_delta_type))
@@ -147,346 +177,371 @@ def calculate_and_apply_deltas(observed_series,
     # Validate delta_value
     if delta_value != "auto" and (not isinstance(delta_value, int) or delta_value < 0):
         raise ValueError("Argument 'delta_value' must be a positive integer or 'auto'")
-    
-    # Define the format string based on delta_value type
+
+
+def _get_delta_format(delta_value):
+    """Get the format string for delta values."""
     if delta_value == "auto":
-        delta_format = "{:.2g}"
+        return "{:.2g}"
     else:
-        delta_format = "{:." + str(delta_value) + "f}"
-    
-    # Operations #
-    #------------#
-    
-    # Determine object type #
-    #-#-#-#-#-#-#-#-#-#-#-#-#
-    
-    obj_type_observed = get_type_str(observed_series, lowercase=True)
-    obj_type_reanalysis = get_type_str(reanalysis_series, lowercase=True)
-    
-    # Identify the time dimension #
-    #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-    
-    if (obj_type_observed, obj_type_reanalysis ) == ("dataframe", "dataframe"):      
+        return "{:." + str(delta_value) + "f}"
+
+
+def _align_time_dimensions(observed_series, reanalysis_series, obj_type_observed, obj_type_reanalysis):
+    """Align time dimensions between observed and reanalysis series."""
+    if (obj_type_observed, obj_type_reanalysis) == ("dataframe", "dataframe"):      
         date_key = find_time_key(observed_series)
-        date_key_rean = find_time_key(observed_series)
+        date_key_rean = find_time_key(reanalysis_series)
 
         if date_key != date_key_rean:
             reanalysis_series.columns = [date_key] + reanalysis_series.columns[1:]
+        return date_key
 
     elif ((obj_type_observed, obj_type_reanalysis) == ("dataset", "dataset"))\
         or ((obj_type_observed, obj_type_reanalysis) == ("dataarray", "dataarray")):
         
         date_key = find_time_dimension(observed_series)
-        date_key_rean = find_time_dimension(observed_series)
+        date_key_rean = find_time_dimension(reanalysis_series)
         
         if date_key != date_key_rean:
-            
-            try:
-                
-                # Rename the analogous dimension of 'time' on dimension list #
-                reanalysis_series\
-                = reanalysis_series.rename_dims({date_key_rean : date_key})
-                   
-                # Rename the analogous dimension name of 'time' to standard #
-                reanalysis_series\
-                = reanalysis_series.rename({date_key_rean : date_key})
-                
-            except:
-                
-                # Rename the analogous dimension of 'time' on dimension list #
-                reanalysis_series\
-                = reanalysis_series.swap_dims({date_key_rean : date_key})
-                   
-                # Rename the analogous dimension name of 'time' to standard #
-                reanalysis_series\
-                = reanalysis_series.swap_dims({date_key_rean : date_key})
-                
+            _rename_xarray_dimension(reanalysis_series, date_key_rean, date_key)
+        
+        return date_key
     else:
-        
-        # Calculate statistical climatologies #
-        #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-        
-        format_args_delta3 = (
-            "Calculating observed climatologies...",
-            time_freq,
-            "N/P",
-            "N/P",
-            "N/P"
-            )
-        print_format_string(delta_application_info_template, format_args_delta3)
-        
-        obs_climat = climat_periodic_statistics(observed_series, 
-                                                statistic, 
-                                                time_freq,
-                                                keep_std_dates,
-                                                drop_date_idx_col,
-                                                season_months)
-        format_args_delta4 = (
-            "Calculating reanalysis climatologies...",
-            time_freq,
-            "N/P",
-            "N/P",
-            "N/P"
-            )
-        print_format_string(delta_application_info_template, format_args_delta4)
-        
-        rean_climat = climat_periodic_statistics(reanalysis_series, 
-                                                 statistic, 
-                                                 time_freq,
-                                                 keep_std_dates,
-                                                 drop_date_idx_col,
-                                                 season_months)
-        
-        # Calculate deltas #
-        #-#-#-#-#-#-#-#-#-#-
+        return None
+
+
+def _rename_xarray_dimension(obj, old_dim, new_dim):
+    """Rename a dimension in an xarray object."""
+    try:
+        # Rename the analogous dimension of 'time' on dimension list
+        obj = obj.rename_dims({old_dim: new_dim})
+        # Rename the analogous dimension name of 'time' to standard
+        obj = obj.rename({old_dim: new_dim})
+    except:
+        try:
+            # Rename the analogous dimension of 'time' on dimension list
+            obj = obj.swap_dims({old_dim: new_dim})
+            # Rename the analogous dimension name of 'time' to standard
+            obj = obj.swap_dims({old_dim: new_dim})
+        except:
+            pass
+
+
+def _calculate_deltas(observed_series, reanalysis_series, time_freq, statistic, 
+                     keep_std_dates, drop_date_idx_col, season_months, delta_type, 
+                     preference, obj_type_observed, obj_type_reanalysis, date_key):
+    """Calculate deltas between observed and reanalysis series."""
+    # Calculate statistical climatologies
+    format_args_delta3 = (
+        "Calculating observed climatologies...",
+        time_freq,
+        "N/P",
+        "N/P",
+        "N/P"
+    )
+    print_format_string(delta_application_info_template, format_args_delta3)
     
-        if ((obj_type_observed, obj_type_reanalysis) == ("dataframe", "dataframe")):
-            
-            if preference == "observed":
-                delta_cols = observed_series.columns[1:]
-                
-                if delta_type == "absolute":
-                    delta_arr = rean_climat.iloc[:, 1:].values - obs_climat.iloc[:, 1:].values
-                else:
-                    delta_arr = rean_climat.iloc[:, 1:].values / obs_climat.iloc[:, 1:].values
-                
-            elif preference == "reanalysis":
-                delta_cols = reanalysis_series.columns[1:]
-                
-                if delta_type == "absolute":
-                    delta_arr = obs_climat.iloc[:, 1:].values - rean_climat.iloc[:, 1:].values
-                else:
-                    delta_arr = obs_climat.iloc[:, 1:].values / rean_climat.iloc[:, 1:].values
-                
-            delta_obj = pd.concat([obs_climat[date_key],
-                                   pd.DataFrame(delta_arr, columns=delta_cols)],
-                                  axis=1)
-            
+    obs_climat = climat_periodic_statistics(observed_series, 
+                                            statistic, 
+                                            time_freq,
+                                            keep_std_dates,
+                                            drop_date_idx_col,
+                                            season_months)
+    
+    format_args_delta4 = (
+        "Calculating reanalysis climatologies...",
+        time_freq,
+        "N/P",
+        "N/P",
+        "N/P"
+    )
+    print_format_string(delta_application_info_template, format_args_delta4)
+    
+    rean_climat = climat_periodic_statistics(reanalysis_series, 
+                                             statistic, 
+                                             time_freq,
+                                             keep_std_dates,
+                                             drop_date_idx_col,
+                                             season_months)
+    
+    # Calculate deltas
+    if ((obj_type_observed, obj_type_reanalysis) == ("dataframe", "dataframe")):
+        return _calculate_dataframe_deltas(obs_climat, rean_climat, preference, 
+                                          delta_type, date_key, observed_series, 
+                                          reanalysis_series)
+    
+    elif ((obj_type_observed, obj_type_reanalysis) == ("dataset", "dataset"))\
+        or ((obj_type_observed, obj_type_reanalysis) == ("dataarray", "dataarray")):
+        return _calculate_xarray_deltas(obs_climat, rean_climat, preference, 
+                                       delta_type), None
+
+
+def _calculate_dataframe_deltas(obs_climat, rean_climat, preference, delta_type, 
+                               date_key, observed_series, reanalysis_series):
+    """Calculate deltas for DataFrame objects."""
+    if preference == "observed":
+        delta_cols = observed_series.columns[1:]
         
+        if delta_type == "absolute":
+            delta_arr = rean_climat.iloc[:, 1:].values - obs_climat.iloc[:, 1:].values
+        else:
+            delta_arr = rean_climat.iloc[:, 1:].values / obs_climat.iloc[:, 1:].values
+        
+    elif preference == "reanalysis":
+        delta_cols = reanalysis_series.columns[1:]
+        
+        if delta_type == "absolute":
+            delta_arr = obs_climat.iloc[:, 1:].values - rean_climat.iloc[:, 1:].values
+        else:
+            delta_arr = obs_climat.iloc[:, 1:].values / rean_climat.iloc[:, 1:].values
+        
+    delta_obj = pd.concat([obs_climat[date_key],
+                           pd.DataFrame(delta_arr, columns=delta_cols)],
+                          axis=1)
+    
+    return delta_obj, delta_cols
+
+
+def _calculate_xarray_deltas(obs_climat, rean_climat, preference, delta_type):
+    """Calculate deltas for xarray objects."""
+    if preference == "observed":
+        if delta_type == "absolute":
+            delta_obj = rean_climat - obs_climat
+        else:
+            delta_obj = rean_climat / obs_climat
+        
+    elif preference == "reanalysis":            
+        if delta_type == "absolute":
+            delta_obj = obs_climat - rean_climat
+        else:
+            delta_obj = obs_climat / rean_climat
+    
+    return delta_obj
+
+
+def _apply_deltas(delta_obj, delta_cols, time_freq, delta_type, preference, 
+                 obj_type_observed, obj_type_reanalysis, date_key, delta_format, 
+                 season_months, observed_series, reanalysis_series):
+    """Apply deltas to the chosen series."""
+    # Extract time components
+    months_delta = np.unique(delta_obj[date_key].dt.month)
+    days_delta = np.unique(delta_obj[date_key].dt.day)
+    hours_delta = np.unique(delta_obj[date_key].dt.hour)
+    
+    # Determine frequency abbreviation
+    freq_abbr = _get_frequency_abbreviation(time_freq, delta_obj, date_key, 
+                                           obj_type_observed, obj_type_reanalysis)
+    
+    # Create a copy of the object to be corrected
+    obj_aux = reanalysis_series.copy() if preference == "observed" else observed_series.copy()
+    
+    # Apply deltas based on time frequency
+    if time_freq == "seasonal":
+        obj_aux = _apply_seasonal_deltas(obj_aux, delta_obj, delta_cols, delta_type, 
+                                        obj_type_observed, obj_type_reanalysis, 
+                                        date_key, delta_format, season_months)
+    
+    elif time_freq == "monthly":
+        obj_aux = _apply_monthly_deltas(obj_aux, delta_obj, delta_cols, delta_type, 
+                                       obj_type_observed, obj_type_reanalysis, 
+                                       date_key, delta_format, months_delta)
+    
+    elif time_freq == "daily":
+        obj_aux = _apply_daily_deltas(obj_aux, delta_obj, delta_cols, delta_type, 
+                                     obj_type_observed, obj_type_reanalysis, 
+                                     date_key, delta_format, months_delta, days_delta)
+    
+    elif time_freq == "hourly":
+        obj_aux = _apply_hourly_deltas(obj_aux, delta_obj, delta_cols, delta_type, 
+                                      obj_type_observed, obj_type_reanalysis, 
+                                      date_key, delta_format, months_delta, days_delta, 
+                                      hours_delta)
+    
+    return obj_aux.copy()
+
+
+def _get_frequency_abbreviation(time_freq, delta_obj, date_key, obj_type_observed, obj_type_reanalysis):
+    """Get the frequency abbreviation for the time frequency."""
+    if time_freq == "seasonal":
+        return time_freq
+    else:
+        if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")): 
+            return pd.infer_freq(delta_obj[date_key])
         elif ((obj_type_observed, obj_type_reanalysis) == ("dataset", "dataset"))\
             or ((obj_type_observed, obj_type_reanalysis) == ("dataarray", "dataarray")):
-                
-            if preference == "observed":
-                
-                if delta_type == "absolute":
-                    delta_obj = rean_climat - obs_climat
-                else:
-                    delta_obj = rean_climat / obs_climat
-                
-            elif preference == "reanalysis":            
-                if delta_type == "absolute":
-                    delta_obj = obs_climat - rean_climat
-                else:
-                    delta_obj = obs_climat / rean_climat
-                
-        # Apply the deltas over the chosen series # 
-        #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-        
-        months_delta = np.unique(delta_obj[date_key].dt.month)
-        days_delta = np.unique(delta_obj[date_key].dt.day)
-        hours_delta = np.unique(delta_obj[date_key].dt.hour)
-        
-        if time_freq == "seasonal":
-            freq_abbr = time_freq
-            
-        else:
-            
-            if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")): 
-                freq_abbr = pd.infer_freq(obs_climat[date_key])
-                
-            elif ((obj_type_observed, obj_type_reanalysis) == ("dataset", "dataset"))\
-                or ((obj_type_observed, obj_type_reanalysis) == ("dataarray", "dataarray")):
-                freq_abbr = xr.infer_freq(obs_climat[date_key])
-        
-        obj_aux = reanalysis_series.copy() if preference == "observed" else observed_series.copy()
-        
-        """
-        Acronyms used in the following lines
-        ------------------------------------            
-        obj2correct : object 
-            Can either be a Pandas DataFrame or a xarray data set to be corrected.
-        obj_delta : delta object
-        """
+            return xr.infer_freq(delta_obj[date_key])
+
+
+def _apply_seasonal_deltas(obj_aux, delta_obj, delta_cols, delta_type, 
+                          obj_type_observed, obj_type_reanalysis, date_key, 
+                          delta_format, season_months):
+    """Apply deltas for seasonal time frequency."""
+    obj2correct = obj_aux[obj_aux[date_key].dt.month.isin(season_months)]
     
-        # Seasonal time-frequency #
-        ###########################
+    # Get the actual delta value for display
+    if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")):
+        actual_delta = delta_obj.iloc[0, 1]  # First row, second column (after date)
+    else:
+        actual_delta = float(delta_obj.values[0])
         
-        if time_freq == "seasonal":
-            obj2correct = obj_aux[obj_aux[date_key].dt.month.isin(season_months)]
+    format_args_delta_seasonal = (
+        "delta",
+        delta_type,
+        f"{delta_type} ({delta_format.format(actual_delta)})"
+    )
+    print_format_string(delta_application_info_template, format_args_delta_seasonal)
+    
+    if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")):    
+        if delta_type == "absolute":    
+            obj_aux.loc[obj2correct.index, delta_cols]\
+            += delta_obj.loc[:, delta_cols].values
+        else:
+            obj_aux.loc[obj2correct.index, delta_cols]\
+            *= delta_obj.loc[:, delta_cols].values
             
-            # Delta application #
-            # Get the actual delta value for display
-            if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")):
-                actual_delta = delta_obj.iloc[0, 1]  # First row, second column (after date)
+    elif ((obj_type_observed, obj_type_reanalysis) == ("dataset", "dataset"))\
+        or ((obj_type_observed, obj_type_reanalysis) == ("dataarray", "dataarray")):
+        if delta_type == "absolute":
+            obj_aux.loc[obj2correct.time] += delta_obj.values
+        else:
+            obj_aux.loc[obj2correct.time] *= delta_obj.values
+    
+    return obj_aux
+
+
+def _apply_monthly_deltas(obj_aux, delta_obj, delta_cols, delta_type, 
+                         obj_type_observed, obj_type_reanalysis, date_key, 
+                         delta_format, months_delta):
+    """Apply deltas for monthly time frequency."""
+    for m in months_delta:            
+        obj2correct = obj_aux[obj_aux[date_key].dt.month==m]
+        obj_delta = delta_obj[delta_obj[date_key].dt.month==m]
+        
+        # Get the actual delta value for display
+        if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")):
+            actual_delta = obj_delta.iloc[0, 1]  # First row, second column (after date)
+        else:
+            actual_delta = float(obj_delta.values[0])
+            
+        format_args_delta_monthly = (
+            "delta",
+            delta_type,
+            f"{delta_type} ({delta_format.format(actual_delta)})"
+        )
+        print_format_string(delta_application_info_template, format_args_delta_monthly)
+        
+        if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")):
+            if delta_type == "absolute":
+                obj_aux.loc[obj2correct.index, delta_cols]\
+                += obj_delta.loc[:, delta_cols].values
             else:
-                actual_delta = float(delta_obj.values[0])
+                obj_aux.loc[obj2correct.index, delta_cols]\
+                *= obj_delta.loc[:, delta_cols].values
                 
-            format_args_delta_seasonal = (
-                "delta",
-                delta_type,
-                f"{delta_type} ({delta_format.format(actual_delta)})"
-            )
-            print_format_string(delta_application_info_template, format_args_delta_seasonal)
+        elif ((obj_type_observed, obj_type_reanalysis) == ("dataset", "dataset"))\
+            or ((obj_type_observed, obj_type_reanalysis) == ("dataarray", "dataarray")):
+            if delta_type == "absolute":
+                obj_aux.loc[obj2correct.time] += obj_delta.values
+            else:
+                obj_aux.loc[obj2correct.time] *= obj_delta.values
+    
+    return obj_aux
+
+
+def _apply_daily_deltas(obj_aux, delta_obj, delta_cols, delta_type, 
+                       obj_type_observed, obj_type_reanalysis, date_key, 
+                       delta_format, months_delta, days_delta):
+    """Apply deltas for daily time frequency."""
+    for m in months_delta: 
+        for d in days_delta:
+            obj2correct = obj_aux[(obj_aux[date_key].dt.month==m)&
+                                  (obj_aux[date_key].dt.day==d)]
             
-            if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")):    
-                if delta_type == "absolute":    
-                    obj_aux.loc[obj2correct.index, delta_cols]\
-                    += delta_obj.loc[:, delta_cols].values
-                else:
-                    obj_aux.loc[obj2correct.index, delta_cols]\
-                    *= delta_obj.loc[:, delta_cols].values
-                    
-            elif ((obj_type_observed, obj_type_reanalysis) == ("dataset", "dataset"))\
-                or ((obj_type_observed, obj_type_reanalysis) == ("dataarray", "dataarray")):
-                if delta_type == "absolute":
-                    obj_aux.loc[obj2correct.time] += delta_obj.values
-                else:
-                    obj_aux.loc[obj2correct.time] *= delta_obj.values
-                 
-        
-        # Monthly time-frequency #
-        ##########################
-        
-        elif time_freq == "monthly":
+            obj_delta = delta_obj[(delta_obj[date_key].dt.month==m)&
+                                  (delta_obj[date_key].dt.day==d)]
             
-            for m in months_delta:            
-                obj2correct = obj_aux[obj_aux[date_key].dt.month==m]
-                obj_delta = delta_obj[delta_obj[date_key].dt.month==m]
-                
-                # Delta application #
+            # Delta application
+            if len(obj2correct) > 0 and len(obj_delta) > 0:
                 # Get the actual delta value for display
                 if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")):
                     actual_delta = obj_delta.iloc[0, 1]  # First row, second column (after date)
                 else:
                     actual_delta = float(obj_delta.values[0])
                     
-                format_args_delta_monthly = (
+                format_args_delta_daily = (
                     "delta",
                     delta_type,
                     f"{delta_type} ({delta_format.format(actual_delta)})"
                 )
-                print_format_string(delta_application_info_template, format_args_delta_monthly)
+                print_format_string(delta_application_info_template, format_args_delta_daily)
                 
                 if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")):
                     if delta_type == "absolute":
-                        obj_aux.loc[obj2correct.index, delta_cols]\
+                        obj_aux.loc[obj2correct.index, delta_cols] \
                         += obj_delta.loc[:, delta_cols].values
                     else:
-                        obj_aux.loc[obj2correct.index, delta_cols]\
+                        obj_aux.loc[obj2correct.index, delta_cols] \
                         *= obj_delta.loc[:, delta_cols].values
                         
                 elif ((obj_type_observed, obj_type_reanalysis) == ("dataset", "dataset"))\
                     or ((obj_type_observed, obj_type_reanalysis) == ("dataarray", "dataarray")):
-
                     if delta_type == "absolute":
                         obj_aux.loc[obj2correct.time] += obj_delta.values
                     else:
                         obj_aux.loc[obj2correct.time] *= obj_delta.values
-                    
-                
-        # Daily time-frequency #
-        ########################
-            
-        elif time_freq == "daily":
-            
-            for m in months_delta: 
-                for d in days_delta:
-                        
-                    obj2correct = obj_aux[(obj_aux[date_key].dt.month==m)&
-                                          (obj_aux[date_key].dt.day==d)]
-                    
-                    obj_delta = delta_obj[(delta_obj[date_key].dt.month==m)&
-                                          (delta_obj[date_key].dt.day==d)]
-                    
-                    # Delta application #
-                    if len(obj2correct) > 0 and len(obj_delta) > 0:
-                        # Get the actual delta value for display
-                        if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")):
-                            actual_delta = obj_delta.iloc[0, 1]  # First row, second column (after date)
-                        else:
-                            actual_delta = float(obj_delta.values[0])
-                            
-                        format_args_delta_daily = (
-                            "delta",
-                            delta_type,
-                            f"{delta_type} ({delta_format.format(actual_delta)})"
-                        )
-                        print_format_string(delta_application_info_template, format_args_delta_daily)
-                        
-                        if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")):
-                            if delta_type == "absolute":
-                                obj_aux.loc[obj2correct.index, delta_cols] \
-                                += obj_delta.loc[:, delta_cols].values
-                            
-                            else:
-                                obj_aux.loc[obj2correct.index, delta_cols] \
-                                *= obj_delta.loc[:, delta_cols].values
-                                
-                        elif ((obj_type_observed, obj_type_reanalysis) == ("dataset", "dataset"))\
-                            or ((obj_type_observed, obj_type_reanalysis) == ("dataarray", "dataarray")):
-                                
-                            if delta_type == "absolute":
-                                obj_aux.loc[obj2correct.time] += obj_delta.values
-                            else:
-                                obj_aux.loc[obj2correct.time] *= obj_delta.values
-                        
-                    else:
-                        pass
-                           
-        # Hourly time-frequency #
-        #########################
-        
-        elif time_freq == "hourly":
-                
-            for m in months_delta:
-                for d in days_delta:
-                    for h in hours_delta:
-                        
-                        obj2correct = obj_aux[(obj_aux[date_key].dt.month==m)&
-                                              (obj_aux[date_key].dt.day==d)&
-                                              (obj_aux[date_key].dt.hour==h)]
-                               
-                        obj_delta = delta_obj[(delta_obj[date_key].dt.month==m)&
-                                              (delta_obj[date_key].dt.day==d)&
-                                              (delta_obj[date_key].dt.hour==h)]
-                       
-                        # Delta application #
-                        if len(obj2correct) > 0 and len(obj_delta) > 0:
-                            # Get the actual delta value for display
-                            if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")):
-                                actual_delta = obj_delta.iloc[0, 1]  # First row, second column (after date)
-                            else:
-                                actual_delta = float(obj_delta.values[0])
-                                
-                            format_args_delta_hourly = (
-                                "delta",
-                                delta_type,
-                                f"{delta_type} ({delta_format.format(actual_delta)})"
-                            )
-                            print_format_string(delta_application_info_template, format_args_delta_hourly)
-                            
-                            if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")):
-                                if delta_type == "absolute":
-                                    obj_aux.loc[obj2correct.index, delta_cols] \
-                                    += obj_delta.loc[:, delta_cols].values
-                                else:
-                                    obj_aux.loc[obj2correct.index, delta_cols] \
-                                    *= obj_delta.loc[:, delta_cols].values
-                                    
-                            elif ((obj_type_observed, obj_type_reanalysis) == ("dataset", "dataset"))\
-                                or ((obj_type_observed, obj_type_reanalysis) == ("dataarray", "dataarray")):
-                                if delta_type == "absolute":
-                                    obj_aux.loc[obj2correct.time] += obj_delta.values
-                                else:
-                                    obj_aux.loc[obj2correct.time] *= obj_delta.values
-                       
-                        else:
-                            pass
-                       
-        delta_corrected_obj = obj_aux.copy()    
-        return delta_corrected_obj
-
     
+    return obj_aux
+
+
+def _apply_hourly_deltas(obj_aux, delta_obj, delta_cols, delta_type, 
+                        obj_type_observed, obj_type_reanalysis, date_key, 
+                        delta_format, months_delta, days_delta, hours_delta):
+    """Apply deltas for hourly time frequency."""
+    for m in months_delta:
+        for d in days_delta:
+            for h in hours_delta:
+                obj2correct = obj_aux[(obj_aux[date_key].dt.month==m)&
+                                      (obj_aux[date_key].dt.day==d)&
+                                      (obj_aux[date_key].dt.hour==h)]
+                                   
+                obj_delta = delta_obj[(delta_obj[date_key].dt.month==m)&
+                                      (delta_obj[date_key].dt.day==d)&
+                                      (delta_obj[date_key].dt.hour==h)]
+               
+                # Delta application
+                if len(obj2correct) > 0 and len(obj_delta) > 0:
+                    # Get the actual delta value for display
+                    if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")):
+                        actual_delta = obj_delta.iloc[0, 1]  # First row, second column (after date)
+                    else:
+                        actual_delta = float(obj_delta.values[0])
+                        
+                    format_args_delta_hourly = (
+                        "delta",
+                        delta_type,
+                        f"{delta_type} ({delta_format.format(actual_delta)})"
+                    )
+                    print_format_string(delta_application_info_template, format_args_delta_hourly)
+                    
+                    if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")):
+                        if delta_type == "absolute":
+                            obj_aux.loc[obj2correct.index, delta_cols] \
+                            += obj_delta.loc[:, delta_cols].values
+                        else:
+                            obj_aux.loc[obj2correct.index, delta_cols] \
+                            *= obj_delta.loc[:, delta_cols].values
+                            
+                    elif ((obj_type_observed, obj_type_reanalysis) == ("dataset", "dataset"))\
+                        or ((obj_type_observed, obj_type_reanalysis) == ("dataarray", "dataarray")):
+                        if delta_type == "absolute":
+                            obj_aux.loc[obj2correct.time] += obj_delta.values
+                        else:
+                            obj_aux.loc[obj2correct.time] *= obj_delta.values
+    
+    return obj_aux
+
+
 #--------------------------#
 # Parameters and constants #
 #--------------------------#
