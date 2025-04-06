@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v3.2.0] - 2025-05-15
+
+### Changed (v3.2.0)
+
+#### **Fields/Climatology** (v3.2.0)
+
+- Refactored the climatology modules for improved structure and maintainability:
+  - Module `periodic_climat_stats.py`:
+    - Split the monolithic `climat_periodic_statistics` function into smaller, focused functions
+    - Made helper functions internal by prefixing them with underscore
+    - Extracted common operations into utility functions
+    - Created specialized functions for different data types and time frequencies
+    - Added docstrings to all functions for better documentation
+  
+  - Module `simple_bias_correction.py`:
+    - Refactored the `calculate_and_apply_deltas` function into logical components
+    - Made helper functions internal by prefixing them with underscore
+    - Improved code organization with specialized functions for different operations
+    - Enhanced error handling and validation
+
+---
+
 ## [v3.1.0] - 2025-04-05
 
 ### Changed (v3.1.0)
