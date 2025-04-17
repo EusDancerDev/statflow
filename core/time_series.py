@@ -17,11 +17,10 @@ from pandas import Grouper
 #-----------------------#
 
 from filewise.general.introspection_utils import get_caller_args, get_type_str
-from filewise.pandas_utils.pandas_obj_handler import find_time_key
-from filewise.xarray_utils.patterns import find_time_dimension
 from pygenutils.arrays_and_lists import patterns, data_manipulation
 from pygenutils.strings.string_handler import find_substring_index
 from pygenutils.strings.text_formatters import format_string
+from pygenutils.time_handling.date_and_time_utils import find_time_key
 
 # Create aliases #
 #----------------#
@@ -127,7 +126,7 @@ def periodic_statistics(obj, statistic, freq,
     #-#-#-#-#-#-#-
 
     # GroupBy Logic
-    date_key = find_time_key(obj) if obj_type == "dataframe" else find_time_dimension(obj)
+    date_key = find_time_key(obj)
 
     if obj_type in ["dataset", "dataarray"]:
         groupby_key = f"{date_key}.dt.{freq}"
