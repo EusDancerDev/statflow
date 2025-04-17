@@ -30,19 +30,11 @@ import xarray as xr
 #-----------------------#
 
 from filewise.general.introspection_utils import get_type_str
-from filewise.pandas_utils.pandas_obj_handler import find_time_key
-from filewise.xarray_utils.patterns import find_time_dimension
-from paramlib import global_parameters
 from pygenutils.strings.text_formatters import format_string, print_format_string
+from pygenutils.time_handling.date_and_time_utils import find_time_key
 from statkit.fields.climatology.periodic_climat_stats import climat_periodic_statistics
 
-# Create aliases #
-#----------------#
-
-basic_time_format_strs = global_parameters.basic_time_format_strs
-month_number_dict = global_parameters.month_number_dict
-time_freqs1 = global_parameters.time_frequencies_complete
-time_freqs2 = global_parameters.time_frequencies_short_1
+#------------------#
 
 #------------------#
 # Define functions #
@@ -200,8 +192,8 @@ def _align_time_dimensions(observed_series, reanalysis_series, obj_type_observed
     elif ((obj_type_observed, obj_type_reanalysis) == ("dataset", "dataset"))\
         or ((obj_type_observed, obj_type_reanalysis) == ("dataarray", "dataarray")):
         
-        date_key = find_time_dimension(observed_series)
-        date_key_rean = find_time_dimension(reanalysis_series)
+        date_key = find_time_key(observed_series)
+        date_key_rean = find_time_key(reanalysis_series)
         
         if date_key != date_key_rean:
             _rename_xarray_dimension(reanalysis_series, date_key_rean, date_key)
