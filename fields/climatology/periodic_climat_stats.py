@@ -41,21 +41,17 @@ import pandas as pd
 #-----------------------#
 
 from filewise.general.introspection_utils import get_caller_args, get_type_str
-from filewise.xarray_utils.patterns import find_time_dimension
-from paramlib import global_parameters
+from paramlib.global_parameters import (
+    basic_time_format_strs,
+    month_number_dict,
+    time_frequencies_complete,
+    time_frequencies_short_1
+)
 from pygenutils.strings.string_handler import find_substring_index
 from pygenutils.strings.text_formatters import format_string
 from pygenutils.time_handling.date_and_time_utils import find_time_key
 from pygenutils.time_handling.time_formatters import datetime_obj_converter
 from statkit.core.time_series import periodic_statistics
-
-# Create aliases #
-#----------------#
-
-basic_time_format_strs = global_parameters.basic_time_format_strs
-month_number_dict = global_parameters.month_number_dict
-time_freqs1 = global_parameters.time_frequencies_complete
-time_freqs2 = global_parameters.time_frequencies_short_1
 
 #------------------#
 # Define functions #
@@ -109,7 +105,7 @@ def climat_periodic_statistics(obj,
     
     # Determine object type and get time frequency abbreviation
     obj_type = get_type_str(obj, lowercase=True)
-    freq_abbr = freq_abbrs[time_freqs2.index(time_freq)]
+    freq_abbr = freq_abbrs[time_frequencies_short_1.index(time_freq)]
     
     # Identify the time dimension
     date_key = _get_time_dimension(obj, obj_type)
@@ -138,8 +134,8 @@ def climat_periodic_statistics(obj,
 
 def _validate_inputs(time_freq, season_months):
     """Validate input parameters."""
-    if time_freq not in time_freqs2:
-        format_args_climat_stats = ("time-frequency", time_freq, time_freqs2)
+    if time_freq not in time_frequencies_short_1:
+        format_args_climat_stats = ("time-frequency", time_freq, time_frequencies_short_1)
         raise ValueError(format_string(unsupported_option_error_template, format_args_climat_stats))
     
     if time_freq == "seasonal":
@@ -158,10 +154,8 @@ def _validate_inputs(time_freq, season_months):
 
 def _get_time_dimension(obj, obj_type):
     """Get the time dimension key from the object."""
-    if obj_type == "dataframe":
+    if obj_type in ["dataframe", "dataset", "dataarray"]:
         return find_time_key(obj)
-    elif obj_type in ["dataset", "dataarray"]:
-        return find_time_dimension(obj)
     else:
         raise TypeError(f"Unsupported object type: {obj_type}")
 
@@ -362,9 +356,9 @@ def _process_other_xarray(obj, date_key, statistic, time_freq):
 def _format_xarray_time_dimension(obj_climat, time_freq, keep_std_dates, 
                                 season_months, freq_abbr, latest_year, date_key):
     """Format the time dimension for xarray objects."""
-    if time_freq in time_freqs1[2:]:
+    if time_freq in time_frequencies_complete[2:]:
         # Get the analogous dimension of 'time', usually label 'group'
-        occ_time_name_temp = find_time_dimension(obj_climat)
+        occ_time_name_temp = find_date_key(obj_climat)
         
         if keep_std_dates:                          
             climat_dates = pd.date_range(f"{latest_year}-1-1 0:00",
@@ -378,14 +372,14 @@ def _format_xarray_time_dimension(obj_climat, time_freq, keep_std_dates,
             
             occ_time_name = occ_time_name_temp
             
-            if time_freq in time_freqs1[-2:]:
+            if time_freq in time_frequencies_complete[-2:]:
                 occ_time_name = time_freq[:-2] + "ofyear"    
                 climat_dates = np.arange(lcd) 
             
         # 'time' dimension renaming and its assignment
         obj_climat = _rename_xarray_dimension(obj_climat, occ_time_name_temp, occ_time_name)
                 
-    elif time_freq == time_freqs1[1]:  # seasonal
+    elif time_freq == time_frequencies_complete[1]:  # seasonal
         if keep_std_dates:
             seas_end_dayofmonth = calendar.monthcalendar(latest_year, season_months[-1])[-1][-1]
             climat_dates = pd.Timestamp(latest_year, season_months[-1], seas_end_dayofmonth)
