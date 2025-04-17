@@ -4,7 +4,30 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [v3.2.0] - 2025-05-15
+## [v3.3.0] - 2025-04-17
+
+### Changed
+
+#### **Fields/Core**
+
+- Module `time_series.py`:
+  - Correct the path for the function `find_time_key`.
+  - Adapt the module to use only the `find_time_key` function instead of the removed and non-existing `find_time_dimension` function, as the former `find_time_key` and already supports the following top-level objects:
+  - pandas.DataFrame
+  - xarray.Dataset
+  - xarray.DataArray
+
+#### **Fields/Climatology**
+
+- Modules `periodic_climat_stats.py` and `simple_bias_correction.py`:
+  - Adapt the modules to use only the `find_time_key` function instead of the removed and non-existing `find_time_dimension` function, as the former `find_time_key` and already supports the following top-level objects:
+    - pandas.DataFrame
+    - xarray.Dataset
+    - xarray.DataArray
+  
+---
+
+## [v3.2.0] - 2025-04-15
 
 ### Changed (v3.2.0)
 
