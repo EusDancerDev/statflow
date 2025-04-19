@@ -17,7 +17,7 @@ from pandas import Grouper
 #-----------------------#
 
 from filewise.general.introspection_utils import get_caller_args, get_type_str
-from pygenutils.arrays_and_lists.data_manipulation import decompose_24h_cumulative_data
+from pygenutils.arrays_and_lists.data_manipulation import decompose_cumulative_data
 from pygenutils.arrays_and_lists.patterns import count_consecutive
 from pygenutils.strings.string_handler import find_substring_index
 from pygenutils.strings.text_formatters import format_string
@@ -163,7 +163,7 @@ def hourly_ts_cumul(array, zero_threshold, zeros_dtype='d'):
     """
     
     
-    hour_ts_data = decompose_24h_cumulative_data(array)  # Apply your decomposition logic
+    hour_ts_data = decompose_cumulative_data(array)  # Apply your decomposition logic
     unmet_case_values = np.zeros_like(array, dtype=zeros_dtype)
 
     hour_ts_cumul = np.where(np.all(hour_ts_data >= zero_threshold, axis=1),
