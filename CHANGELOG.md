@@ -6,14 +6,17 @@ All notable changes to this project will be documented in this file.
 
 ## [v3.4.0] - 2025-04-23
 
-### Changed (v3.4.0)
+### Changed
 
 #### **General**
 
 - Refactored package import structure:
-  - Replace direct imports with `__all__` definitions in package initiator files
-  - Improved control over exported symbols in `statkit/__init__.py`, `statkit/core/__init__.py` and `statkit/utils/__init__.py`
-  - Maintain consistent public API while following Python best practices
+  - Replace direct imports with `__all__` definitions in package initiator files:
+    - `statkit/__init__.py`
+    - `statkit/core/__init__.py`
+    - `statkit/utils/__init__.py`
+  - Improved control over exported symbols when using 'from package import *'
+  - Maintained consistent public API while following Python best practices
 
 #### **Core**
 
