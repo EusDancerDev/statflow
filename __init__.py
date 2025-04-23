@@ -3,10 +3,12 @@
 
 # statkit/__init__.py
 
-__version__ = "3.1.0"
+__version__ = "3.4.0"
 
-from . import __init__
-from . import core
-from . import distributions
-from . import fields
-from . import utils
+# Define what should be available when using 'from statkit import *'
+__all__ = [
+    'core',
+    'distributions',
+    'fields',
+    'utils'
+]
