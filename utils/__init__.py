@@ -3,7 +3,5 @@
 
 # statkit/utils/__init__.py
 
-# Define what should be available when using 'from statkit.utils import *'
-__all__ = [
-    'helpers'
-]
+from . import __init__
+from . import helpers
