@@ -3,5 +3,7 @@
 
 # statkit/fields/__init__.py
 
-from . import __init__
-from . import climatology
+# Define what should be available when using 'from statkit.fields import *'
+__all__ = [
+    'climatology'
+]
