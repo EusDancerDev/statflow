@@ -4,11 +4,30 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v3.4.0] - 2025-04-19
+
+### Changed (v3.4.0)
+
+#### **Core**
+
+- Module `time_series.py`:
+  - Correct non-existent module `decompose_24h_cumulative_data` to the actual `decompose_cumulative_data`
+
+#### **Fields/Climatology**
+
+- Module `representative_series.py`:
+  - Correct non-existent module `periodic_statkit` to the actual `periodic_statistics`
+  - Refactor import aliasing:
+    - Move import aliases to separate imports
+    - Remove the aliases themselves
+
+---
+
 ## [v3.3.0] - 2025-04-17
 
-### Changed
+### Changed (v3.3.0)
 
-#### **Fields/Core**
+#### **Core** (v3.3.0)
 
 - Module `time_series.py`:
   - Correct the path for the function `find_time_key`.
@@ -17,7 +36,7 @@ All notable changes to this project will be documented in this file.
   - xarray.Dataset
   - xarray.DataArray
 
-#### **Fields/Climatology**
+#### **Fields/Climatology** (v3.3.0)
 
 - Modules `periodic_climat_stats.py` and `simple_bias_correction.py`:
   - Adapt the modules to use only the `find_time_key` function instead of the removed and non-existing `find_time_dimension` function, as the former `find_time_key` and already supports the following top-level objects:
