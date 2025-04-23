@@ -3,9 +3,11 @@
 
 # statkit/fields/climatology/__init__.py
 
-from . import __init__
-from . import indicators
-from . import periodic_climat_stats
-from . import representative_series
-from . import simple_bias_correction
-from . import variables
+# Define what should be available when using 'from statkit.fields.climatology import *'
+__all__ = [
+    'indicators',
+    'periodic_climat_stats',
+    'representative_series',
+    'simple_bias_correction',
+    'variables'
+]
