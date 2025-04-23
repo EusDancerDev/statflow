@@ -8,6 +8,13 @@ All notable changes to this project will be documented in this file.
 
 ### Changed (v3.4.0)
 
+#### **General**
+
+- Refactored package import structure:
+  - Replace direct imports with `__all__` definitions in package initiator files
+  - Improved control over exported symbols in `statkit/__init__.py`, `statkit/core/__init__.py` and `statkit/utils/__init__.py`
+  - Maintain consistent public API while following Python best practices
+
 #### **Core**
 
 - Module `time_series.py`:
