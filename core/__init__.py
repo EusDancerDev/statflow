@@ -3,11 +3,13 @@
 
 # statkit/core/__init__.py
 
-from . import __init__
-from . import approximation_techniques
-from . import interpolation_methods
-from . import moving_operations
-from . import regressions
-from . import signal_processing
-from . import statistical_tests
-from . import time_series
+# Define what should be available when using 'from statkit.core import *'
+__all__ = [
+    'approximation_techniques',
+    'interpolation_methods',
+    'moving_operations',
+    'regressions',
+    'signal_processing',
+    'statistical_tests',
+    'time_series'
+]
