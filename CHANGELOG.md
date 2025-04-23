@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [v3.4.0] - 2025-04-19
+## [v3.4.0] - 2025-04-23
 
 ### Changed (v3.4.0)
 
