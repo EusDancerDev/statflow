@@ -25,9 +25,9 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
-#-----------------------#
-# Import custom modules #
-#-----------------------#
+#------------------------#
+# Import project modules #
+#------------------------#
 
 from filewise.general.introspection_utils import get_type_str
 from pygenutils.strings.text_formatters import format_string, print_format_string
@@ -126,7 +126,7 @@ def calculate_and_apply_deltas(observed_series,
     """
     
     # Input validations
-    _validate_inputs(delta_type, preference, delta_value)
+    _validate_inputs(delta_type, preference, delta_value, statistic)
     
     # Define the format string based on delta_value type
     delta_format = _get_delta_format(delta_value)
@@ -156,15 +156,19 @@ def calculate_and_apply_deltas(observed_series,
     return delta_corrected_obj
 
 
-def _validate_inputs(delta_type, preference, delta_value):
+def _validate_inputs(delta_type, preference, delta_value, statistic=None):
     """Validate input parameters."""
-    if delta_type not in delta_types:
-        format_args_delta_type = ("delta type", delta_type, delta_types)
-        raise ValueError(format_string(unsupported_option_error_template, format_args_delta_type))
+    if delta_type not in DELTA_TYPES:
+        format_args_delta_type = ("delta type", delta_type, DELTA_TYPES)
+        raise ValueError(format_string(UNSUPPORTED_OPTION_ERROR_TEMPLATE, format_args_delta_type))
     
-    if preference not in supported_time_series:
-        format_args_preference = ("preferent time series name", preference, supported_time_series)
-        raise ValueError(format_string(unsupported_option_error_template, format_args_preference))
+    if preference not in SUPPORTED_TIME_SERIES:
+        format_args_preference = ("preferent time series name", preference, SUPPORTED_TIME_SERIES)
+        raise ValueError(format_string(UNSUPPORTED_OPTION_ERROR_TEMPLATE, format_args_preference))
+    
+    if statistic is not None and statistic not in STATISTICS:
+        format_args_statistic = ("statistic", statistic, STATISTICS)
+        raise ValueError(format_string(UNSUPPORTED_OPTION_ERROR_TEMPLATE, format_args_statistic))
     
     # Validate delta_value
     if delta_value != "auto" and (not isinstance(delta_value, int) or delta_value < 0):
@@ -232,7 +236,7 @@ def _calculate_deltas(observed_series, reanalysis_series, time_freq, statistic,
         "N/P",
         "N/P"
     )
-    print_format_string(delta_application_info_template, format_args_delta3)
+    print_format_string(DELTA_APPLICATION_INFO_TEMPLATE, format_args_delta3)
     
     obs_climat = climat_periodic_statistics(observed_series, 
                                             statistic, 
@@ -248,7 +252,7 @@ def _calculate_deltas(observed_series, reanalysis_series, time_freq, statistic,
         "N/P",
         "N/P"
     )
-    print_format_string(delta_application_info_template, format_args_delta4)
+    print_format_string(DELTA_APPLICATION_INFO_TEMPLATE, format_args_delta4)
     
     rean_climat = climat_periodic_statistics(reanalysis_series, 
                                              statistic, 
@@ -382,7 +386,7 @@ def _apply_seasonal_deltas(obj_aux, delta_obj, delta_cols, delta_type,
         delta_type,
         f"{delta_type} ({delta_format.format(actual_delta)})"
     )
-    print_format_string(delta_application_info_template, format_args_delta_seasonal)
+    print_format_string(DELTA_APPLICATION_INFO_TEMPLATE, format_args_delta_seasonal)
     
     if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")):    
         if delta_type == "absolute":    
@@ -421,7 +425,7 @@ def _apply_monthly_deltas(obj_aux, delta_obj, delta_cols, delta_type,
             delta_type,
             f"{delta_type} ({delta_format.format(actual_delta)})"
         )
-        print_format_string(delta_application_info_template, format_args_delta_monthly)
+        print_format_string(DELTA_APPLICATION_INFO_TEMPLATE, format_args_delta_monthly)
         
         if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")):
             if delta_type == "absolute":
@@ -466,7 +470,7 @@ def _apply_daily_deltas(obj_aux, delta_obj, delta_cols, delta_type,
                     delta_type,
                     f"{delta_type} ({delta_format.format(actual_delta)})"
                 )
-                print_format_string(delta_application_info_template, format_args_delta_daily)
+                print_format_string(DELTA_APPLICATION_INFO_TEMPLATE, format_args_delta_daily)
                 
                 if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")):
                     if delta_type == "absolute":
@@ -514,7 +518,7 @@ def _apply_hourly_deltas(obj_aux, delta_obj, delta_cols, delta_type,
                         delta_type,
                         f"{delta_type} ({delta_format.format(actual_delta)})"
                     )
-                    print_format_string(delta_application_info_template, format_args_delta_hourly)
+                    print_format_string(DELTA_APPLICATION_INFO_TEMPLATE, format_args_delta_hourly)
                     
                     if ((obj_type_observed, obj_type_reanalysis) == ("DataFrame", "DataFrame")):
                         if delta_type == "absolute":
@@ -539,20 +543,21 @@ def _apply_hourly_deltas(obj_aux, delta_obj, delta_cols, delta_type,
 #--------------------------#
 
 # Delta application function #
-delta_types = ["absolute", "relative"]
-supported_time_series = ["observed", "reanalysis"]
+DELTA_TYPES = ["absolute", "relative"]
+SUPPORTED_TIME_SERIES = ["observed", "reanalysis"]
 
 # Statistics #
-statistics = ["max", "min", "sum", "mean", "std"]
+# FIXME: not used!
+STATISTICS = ["max", "min", "sum", "mean", "std"]
 
 # Template strings #
 #------------------#
 
 # Error strings #
-unsupported_option_error_template = "Unsupported {} '{}'. Options are {}."
+UNSUPPORTED_OPTION_ERROR_TEMPLATE = "Unsupported {} '{}'. Options are {}."
 
 # Delta application options #
-delta_application_info_template = """{}
+DELTA_APPLICATION_INFO_TEMPLATE = """{}
 Time frequency : {}
 Month = {}
 Day = {}
