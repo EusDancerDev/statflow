@@ -134,20 +134,19 @@ def interp_np(data, method='linear', order=None, kind="nearest", fill_value="ext
         raise TypeError("Unsupported data type. The date provided must be a NumPy array.")
     
     # Interpolation method #
-    if method not in np_xr_interp_methods:
-        raise ValueError(f"Unsupported interpolation method for NumPy arrays: '{method}'."
-                         f"\nOptions are {np_xr_interp_methods}.")
+    if method not in NP_XR_INTERP_METHODS:
+        raise ValueError(UNSUPPORTED_OPTION_ERROR_TEMPLATE.format("interpolation method for NumPy arrays", method, NP_XR_INTERP_METHODS))
         
     # Kind (scipy's interp1D class) #
-    if not isinstance(kind, int) or kind not in kind_options:
+    if not isinstance(kind, int) or kind not in KIND_OPTIONS:
         raise TypeError(f"Kind of interpolation (position {kind_arg_pos}) "
-                        f"must be an integer or one of {kind_options}.")
+                        f"must be an integer or one of {KIND_OPTIONS}.")
         
     # Fill value (scipy's interp1D class) #
     fillval_type = get_type_str(fill_value)
-    if fillval_type not in fillval_types or fill_value != "extrapolate":
+    if fillval_type not in FILLVAL_TYPES or fill_value != "extrapolate":
         raise TypeError(f"Fill value (position {fillval_arg_pos}) "
-                        f"must be one of {fillval_types} or 'extrapolate'.")
+                        f"must be one of {FILLVAL_TYPES} or 'extrapolate'.")
           
     # Operations #
     ##############
@@ -211,9 +210,9 @@ def interp_pd(data, method='linear', order=None, axis=0):
                         "pandas.DataFrame or pandas.Series object.")
     
     # Interpolation methods #
-    if method not in pd_interp_methods:
+    if method not in PD_INTERP_METHODS:
         raise ValueError("Unsupported interpolation method for pandas objects: '{method}'."
-                         "\nOptions are {pd_interp_methods}.")
+                         "\nOptions are {PD_INTERP_METHODS}.")
     
     # Order specification for particular methods
     if method in ["polynomial", "spline"]:
@@ -259,9 +258,8 @@ def interp_xr(data, method='linear', order=None, dim=None):
         
         
     # Interpolation method #
-    if method not in np_xr_interp_methods:
-        raise ValueError(f"Unsupported interpolation method for Xarray objects: '{method}'."
-                         f"\nOptions are {np_xr_interp_methods}.")
+    if method not in NP_XR_INTERP_METHODS:
+        raise ValueError(UNSUPPORTED_OPTION_ERROR_TEMPLATE.format("interpolation method for Xarray objects", method, NP_XR_INTERP_METHODS))
         
     # Dimension #
     if dim is None:
@@ -286,22 +284,23 @@ def interp_xr(data, method='linear', order=None, dim=None):
 # Supported interpolation methods #
 #---------------------------------#
 
-# NumPy objects #
-kind_options = [
-    'linear', 'nearest', 'nearest-up', 'zero', 'slinear', 
-    'quadratic', 'cubic', 'previous', 'next'
-    ] 
-
-fillval_types = ["float", "tuple", "list", "ndarray"]
-
 # NumPy and Xarray objects #
-np_xr_interp_methods = ["linear", "nearest", "polynomial", "spline"]
+NP_XR_INTERP_METHODS = ["linear", "nearest", "polynomial", "spline"]
+
+# NumPy objects #
+KIND_OPTIONS = ["linear", "nearest", "nearest-up", "zero", "slinear", "quadratic", "cubic", "previous", "next"]
+FILLVAL_TYPES = ["ndarray", "float", "tuple"]
 
 # Pandas objects #
-pd_interp_methods = [
+PD_INTERP_METHODS = [
     "linear", "time", "index", "pad", 
     "ffill", "bfill",
-    "nearest", "zero", "slinear", "quadratic", "cubic", "barycentric", "polynomial"
-    "krogh", "piecewise_polynomial", "spline", "pchip", "akima", "cubicspline"
+    "nearest", "zero", "slinear", "quadratic", "cubic", "barycentric", "polynomial",
+    "krogh", "piecewise_polynomial", "spline", "pchip", "akima", "cubicspline",
     "from_derivatives"
 ]
+
+# Template strings #
+#------------------#
+
+UNSUPPORTED_OPTION_ERROR_TEMPLATE = "Unsupported {} '{}'. Options are {}."

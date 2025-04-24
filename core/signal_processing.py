@@ -82,8 +82,8 @@ def signal_whitening(data, method="classic"):
         return whitened_data
     
     else:
-        format_args_whitening = ("whitening method", method, signal_forcing_methods)
-        raise ValueError(format_string(unsupported_option_error_template, format_args_whitening))
+        format_args_whitening = ("whitening method", method, SIGNAL_FORCING_METHODS)
+        raise ValueError(format_string(UNSUPPORTED_OPTION_ERROR_TEMPLATE, format_args_whitening))
         
 # Filtering #
 #~~~~~~~~~~~#
@@ -288,10 +288,5 @@ def band_pass3(original, low_filtered_all, high_filtered_all):
 # Parameters and constants #
 #--------------------------#
 
-# Signal forcing #
-signal_forcing_methods = ["classic", "sklearn", "zca"]
-
-# Template strings #
-#------------------#
-
-unsupported_option_error_template = "Unsupported {} '{}'. Options are {}."
+SIGNAL_FORCING_METHODS = ["classic", "sklearn", "zca"]
+UNSUPPORTED_OPTION_ERROR_TEMPLATE = "Unsupported {}. Choose one from {}."
