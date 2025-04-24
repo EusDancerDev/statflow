@@ -4,9 +4,39 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [v3.4.0] - 2025-04-23
+## [v3.4.1] - 2025-04-24
 
 ### Changed
+
+#### **General**
+
+- Modify the comment header `import custom modules` to `import project modules` in all modules having it.
+
+#### **Core**
+
+- Convert constant names to uppercase in the following modules:
+  - `interpolation_methods.py`
+  - `signal_processing.py`
+  - `time_series.py`
+
+#### **Fields/Climatology**
+
+- Convert constant names to uppercase and improve code consistency:
+  - Module `periodic_climat_stats.py`:
+    - Convert all constant names to uppercase
+    - Add validation for statistic parameter using `STATISTICS` constant
+  - Module `simple_bias_correction.py`:
+    - Add validation for statistic parameter using `STATISTICS` constant
+    - Convert all constant names to uppercase
+  - Module `representative_series.py`:
+    - Convert constant names to uppercase
+    - Use `SPLIT_DELIM` constant for time range parsing instead of hardcoded colon
+
+---
+
+## [v3.4.0] - 2025-04-23
+
+### Changed (v3.4.0)
 
 #### **General**
 
