@@ -72,7 +72,7 @@ def calculate_HDY(hourly_df: pd.DataFrame,
 
         except ValueError as e:
             print(f"Error in periodic_statistics for month {m}: {e}")
-            continue  # Skip the current month if there’s an error
+            continue  # Skip the current month if there's an error
 
         # Get unique days for the current month
         no_of_days = len(pd.unique(hdata_MONTH_rank_phi.date.dt.day))
@@ -179,8 +179,8 @@ def hdy_interpolation(hdy_df,
                                      (hdy_interp.date.dt.month == hdy_interp.date.dt.month[i + 1])]
 
         # Handle time ranges as integers (hours), split the input range strings
-        pml1, pml2 = map(int, previous_month_last_time_range.split(":"))
-        nmf1, nmf2 = map(int, next_month_first_time_range.split(":"))
+        pml1, pml2 = map(int, previous_month_last_time_range.split(SPLIT_DELIM))
+        nmf1, nmf2 = map(int, next_month_first_time_range.split(SPLIT_DELIM))
 
         # Extract the time slices based on the provided ranges
         df_slice1 = days_slice_prev[(days_slice_prev.date.dt.hour >= pml1) & (days_slice_prev.date.dt.hour <= pml2)]
@@ -230,4 +230,4 @@ def hdy_interpolation(hdy_df,
 # Parameters and constants #
 #--------------------------#
 
-splitdelim = common_delim_list[1]
+SPLIT_DELIM = common_delim_list[3]
