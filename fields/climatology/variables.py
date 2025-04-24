@@ -8,9 +8,9 @@
 import numpy as np
 import scipy.stats as ss
 
-#-----------------------#
-# Import custom modules #
-#-----------------------#
+#------------------------#
+# Import project modules #
+#------------------------#
 
 from pygenutils.arrays_and_lists.maths import window_sum
 
