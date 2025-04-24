@@ -547,7 +547,6 @@ DELTA_TYPES = ["absolute", "relative"]
 SUPPORTED_TIME_SERIES = ["observed", "reanalysis"]
 
 # Statistics #
-# FIXME: not used!
 STATISTICS = ["max", "min", "sum", "mean", "std"]
 
 # Template strings #
