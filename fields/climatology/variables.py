@@ -14,9 +14,6 @@ import scipy.stats as ss
 
 from pygenutils.arrays_and_lists.maths import window_sum
 
-# Create aliases #
-#----------------#
-
 #-------------------------#
 # Define custom functions #
 #-------------------------#
@@ -132,10 +129,3 @@ def biovars(tmax_monthly_climat, tmin_monthly_climat, prec_monthly_climat):
     
     print("Biovariables have been successfully computed.")
     return bioclim_var_array
-
-# %%
-
-#--------------------------#
-# Parameters and constants #
-#--------------------------#
-
