@@ -36,16 +36,16 @@ import calendar
 import numpy as np
 import pandas as pd
 
-#-----------------------#
-# Import custom modules #
-#-----------------------#
+#------------------------#
+# Import project modules #
+#------------------------#
 
 from filewise.general.introspection_utils import get_caller_args, get_type_str
 from paramlib.global_parameters import (
-    basic_time_format_strs,
-    month_number_dict,
-    time_frequencies_complete,
-    time_frequencies_short_1
+    BASIC_TIME_FORMAT_STRS,
+    MONTH_NUMBER_DICT,
+    TIME_FREQUENCIES_COMPLETE,
+    TIME_FREQUENCIES_SHORT_1
 )
 from pygenutils.strings.string_handler import find_substring_index
 from pygenutils.strings.text_formatters import format_string
@@ -105,7 +105,7 @@ def climat_periodic_statistics(obj,
     
     # Determine object type and get time frequency abbreviation
     obj_type = get_type_str(obj, lowercase=True)
-    freq_abbr = FREQ_ABBRS[time_frequencies_short_1.index(time_freq)]
+    freq_abbr = FREQ_ABBRS[TIME_FREQUENCIES_SHORT_1.index(time_freq)]
     
     # Identify the time dimension
     date_key = _get_time_dimension(obj, obj_type)
@@ -134,8 +134,8 @@ def climat_periodic_statistics(obj,
 
 def _validate_inputs(time_freq, season_months, statistic=None):
     """Validate input parameters."""
-    if time_freq not in time_frequencies_short_1:
-        format_args_climat_stats = ("time-frequency", time_freq, time_frequencies_short_1)
+    if time_freq not in TIME_FREQUENCIES_SHORT_1:
+        format_args_climat_stats = ("time-frequency", time_freq, TIME_FREQUENCIES_SHORT_1)
         raise ValueError(format_string(UNSUPPORTED_OPTION_ERROR_TEMPLATE, format_args_climat_stats))
     
     if statistic is not None and statistic not in STATISTICS:
@@ -286,7 +286,7 @@ def _process_seasonal_dataframe(obj, date_key, statistic, keep_std_dates,
         climat_dates = [obj[obj[date_key].dt.month==season_months[-1]].
                         iloc[-1][date_key].strftime(DAYTIME_FMT_STR)]
     else:
-        climat_dates = [month_number_dict[m] for m in season_months]
+        climat_dates = [MONTH_NUMBER_DICT[m] for m in season_months]
         climat_obj_cols[0] = "season"
     
     return climat_vals, climat_dates, climat_obj_cols
@@ -360,7 +360,7 @@ def _process_other_xarray(obj, date_key, statistic, time_freq):
 def _format_xarray_time_dimension(obj_climat, time_freq, keep_std_dates, 
                                 season_months, freq_abbr, latest_year, date_key):
     """Format the time dimension for xarray objects."""
-    if time_freq in time_frequencies_complete[2:]:
+    if time_freq in TIME_FREQUENCIES_COMPLETE[2:]:
         # Get the analogous dimension of 'time', usually label 'group'
         occ_time_name_temp = find_time_key(obj_climat)
         
@@ -376,21 +376,21 @@ def _format_xarray_time_dimension(obj_climat, time_freq, keep_std_dates,
             
             occ_time_name = occ_time_name_temp
             
-            if time_freq in time_frequencies_complete[-2:]:
+            if time_freq in TIME_FREQUENCIES_COMPLETE[-2:]:
                 occ_time_name = time_freq[:-2] + "ofyear"    
                 climat_dates = np.arange(lcd) 
             
         # 'time' dimension renaming and its assignment
         obj_climat = _rename_xarray_dimension(obj_climat, occ_time_name_temp, occ_time_name)
                 
-    elif time_freq == time_frequencies_complete[1]:  # seasonal
+    elif time_freq == TIME_FREQUENCIES_COMPLETE[1]:  # seasonal
         if keep_std_dates:
             seas_end_dayofmonth = calendar.monthcalendar(latest_year, season_months[-1])[-1][-1]
             climat_dates = pd.Timestamp(latest_year, season_months[-1], seas_end_dayofmonth)
             occ_time_name = date_key
         else:
             occ_time_name = time_freq[:-2]
-            climat_dates = "".join([month_number_dict[m] for m in season_months])
+            climat_dates = "".join([MONTH_NUMBER_DICT[m] for m in season_months])
     
     # Update the time array
     obj_climat = obj_climat.assign_coords({occ_time_name: climat_dates})
@@ -430,7 +430,7 @@ SEASON_MONTH_FMT_ERROR_TEMPLATE = """Parameter 'season_months' must contain exac
 3 integers representing months. For example: [12, 1, 2]."""
 
 # Date and time format strings #
-DAYTIME_FMT_STR = basic_time_format_strs["D"]
+DAYTIME_FMT_STR = BASIC_TIME_FORMAT_STRS["D"]
 
 # Statistics #
 STATISTICS = ["max", "min", "sum", "mean", "std"]
