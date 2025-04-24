@@ -91,20 +91,20 @@ def periodic_statistics(obj, statistic, freq,
     obj_type = get_type_str(obj, lowercase=True)
     seas_mon_arg_type = get_type_str(season_months)
     
-    if statistic not in statistics:
-        format_args_stat = ("statistic", statistic, statistics)
-        raise ValueError(format_string(unsupported_option_error_template, format_args_stat))
+    if statistic not in STATISTICS:
+        format_args_stat = ("statistic", statistic, STATISTICS)
+        raise ValueError(format_string(UNSUPPORTED_OPTION_ERROR_TEMPLATE, format_args_stat))
         
     
     if obj_type not in ["dataframe", "dataset", "dataarray"]:
         format_args_obj_type = ("data type",
                                 obj_type, 
                                 "{pandas.DataFrame, xarray.Dataset, xarray.DataArray}")
-        raise ValueError(format_string(unsupported_option_error_template, format_args_obj_type))
+        raise ValueError(format_string(UNSUPPORTED_OPTION_ERROR_TEMPLATE, format_args_obj_type))
 
-    if freq not in freq_abbrs:
-        format_args_freq = ("frequency", freq, freq_abbrs)
-        raise ValueError(format_string(unsupported_option_error_template, format_args_freq))
+    if freq not in FREQ_ABBREVIATIONS:
+        format_args_freq = ("frequency", freq, FREQ_ABBREVIATIONS)
+        raise ValueError(format_string(UNSUPPORTED_OPTION_ERROR_TEMPLATE, format_args_freq))
     
     if seas_mon_arg_type != "list":
         raise TypeError("Expected a list for parameter 'season_months' "
@@ -114,7 +114,7 @@ def periodic_statistics(obj, statistic, freq,
         raise ValueError("Seasonal frequency requires parameter 'season_months'.")
     
     if season_months and len(season_months) != 3:
-        raise ValueError(season_month_fmt_error_template)
+        raise ValueError(SEASON_MONTH_FMT_ERROR_TEMPLATE)
 
     # Operations #
     #-#-#-#-#-#-#-
@@ -382,14 +382,14 @@ def autocorrelate(x, twosided=False):
 #--------------------------#
 
 # Statistics #
-statistics = ["max", "min", "sum", "mean", "std"]
+STATISTICS = ["max", "min", "sum", "mean", "std"]
 
 # Time frequency abbreviations #
-freq_abbrs = ["Y", "SEAS", "M", "D", "H", "min", "S"]
+FREQ_ABBREVIATIONS = ["Y", "SEAS", "M", "D", "H", "min", "S"]
 
 # Template strings #
 #------------------#
 
-unsupported_option_error_template = "Unsupported {} '{}'. Options are {}."
-season_month_fmt_error_template = """Parameter 'season_months' must contain exactly \
+UNSUPPORTED_OPTION_ERROR_TEMPLATE = "Unsupported {} '{}'. Options are {}."
+SEASON_MONTH_FMT_ERROR_TEMPLATE = """Parameter 'season_months' must contain exactly \
 3 integers representing months. For example: [12, 1, 2]."""
