@@ -8,12 +8,12 @@
 import numpy as np
 import pandas as pd
 
-#-----------------------#
-# Import custom modules #
-#-----------------------#
+#------------------------#
+# Import project modules #
+#------------------------#
 
-from paramlib.global_parameters import common_delim_list
 from climalab.meteorological_variables import meteorological_wind_direction
+from paramlib.global_parameters import COMMON_DELIM_LIST
 from statkit.core.interpolation_methods import polynomial_fitting
 from statkit.core.time_series import periodic_statistics
 
@@ -230,4 +230,4 @@ def hdy_interpolation(hdy_df,
 # Parameters and constants #
 #--------------------------#
 
-SPLIT_DELIM = common_delim_list[3]
+SPLIT_DELIM = COMMON_DELIM_LIST[3]
