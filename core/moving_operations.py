@@ -16,10 +16,6 @@ domains, including finance, climate science, and more.
 import numpy as np
 from scipy.signal import convolve
 
-#-----------------------#
-# Import custom modules #
-#-----------------------#
-
 #------------------#
 # Define functions #
 #------------------#
