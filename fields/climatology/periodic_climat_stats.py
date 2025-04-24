@@ -101,11 +101,11 @@ def climat_periodic_statistics(obj,
     """
     
     # Input validation
-    _validate_inputs(time_freq, season_months)
+    _validate_inputs(time_freq, season_months, statistic)
     
     # Determine object type and get time frequency abbreviation
     obj_type = get_type_str(obj, lowercase=True)
-    freq_abbr = freq_abbrs[time_frequencies_short_1.index(time_freq)]
+    freq_abbr = FREQ_ABBRS[time_frequencies_short_1.index(time_freq)]
     
     # Identify the time dimension
     date_key = _get_time_dimension(obj, obj_type)
@@ -132,11 +132,15 @@ def climat_periodic_statistics(obj,
         raise TypeError(f"Unsupported object type: {obj_type}")
 
 
-def _validate_inputs(time_freq, season_months):
+def _validate_inputs(time_freq, season_months, statistic=None):
     """Validate input parameters."""
     if time_freq not in time_frequencies_short_1:
         format_args_climat_stats = ("time-frequency", time_freq, time_frequencies_short_1)
-        raise ValueError(format_string(unsupported_option_error_template, format_args_climat_stats))
+        raise ValueError(format_string(UNSUPPORTED_OPTION_ERROR_TEMPLATE, format_args_climat_stats))
+    
+    if statistic is not None and statistic not in STATISTICS:
+        format_args_stat = ("statistic", statistic, STATISTICS)
+        raise ValueError(format_string(UNSUPPORTED_OPTION_ERROR_TEMPLATE, format_args_stat))
     
     if time_freq == "seasonal":
         param_keys = get_caller_args()
@@ -149,7 +153,7 @@ def _validate_inputs(time_freq, season_months):
                             f"got '{seas_mon_arg_type}'.")
         
         if (season_months and len(season_months) != 3):
-            raise ValueError(season_month_fmt_error_template)
+            raise ValueError(SEASON_MONTH_FMT_ERROR_TEMPLATE)
 
 
 def _get_time_dimension(obj, obj_type):
@@ -280,7 +284,7 @@ def _process_seasonal_dataframe(obj, date_key, statistic, keep_std_dates,
     
     if keep_std_dates:                
         climat_dates = [obj[obj[date_key].dt.month==season_months[-1]].
-                        iloc[-1][date_key].strftime(daytime_fmt_str)]
+                        iloc[-1][date_key].strftime(DAYTIME_FMT_STR)]
     else:
         climat_dates = [month_number_dict[m] for m in season_months]
         climat_obj_cols[0] = "season"
@@ -358,7 +362,7 @@ def _format_xarray_time_dimension(obj_climat, time_freq, keep_std_dates,
     """Format the time dimension for xarray objects."""
     if time_freq in time_frequencies_complete[2:]:
         # Get the analogous dimension of 'time', usually label 'group'
-        occ_time_name_temp = find_date_key(obj_climat)
+        occ_time_name_temp = find_time_key(obj_climat)
         
         if keep_std_dates:                          
             climat_dates = pd.date_range(f"{latest_year}-1-1 0:00",
@@ -421,15 +425,15 @@ def _rename_xarray_dimension(obj_climat, occ_time_name_temp, occ_time_name):
 #--------------------------#
 
 # Error template strings #
-unsupported_option_error_template = "Unsupported {} '{}'. Options are {}."
-season_month_fmt_error_template = """Parameter 'season_months' must contain exactly \
+UNSUPPORTED_OPTION_ERROR_TEMPLATE = "Unsupported {} '{}'. Options are {}."
+SEASON_MONTH_FMT_ERROR_TEMPLATE = """Parameter 'season_months' must contain exactly \
 3 integers representing months. For example: [12, 1, 2]."""
 
 # Date and time format strings #
-daytime_fmt_str = basic_time_format_strs["D"]
+DAYTIME_FMT_STR = basic_time_format_strs["D"]
 
 # Statistics #
-statistics = ["max", "min", "sum", "mean", "std"]
+STATISTICS = ["max", "min", "sum", "mean", "std"]
 
 # Time frequency abbreviations #
-freq_abbrs = ["Y", "S", "M", "D", "H"]
+FREQ_ABBRS = ["Y", "S", "M", "D", "H"]
