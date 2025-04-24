@@ -12,9 +12,9 @@ Module for time series operations in statistical analysis.
 import numpy as np
 from pandas import Grouper
 
-#-----------------------#
-# Import custom modules #
-#-----------------------#
+#------------------------#
+# Import project modules #
+#------------------------#
 
 from filewise.general.introspection_utils import get_caller_args, get_type_str
 from pygenutils.arrays_and_lists.patterns import count_consecutive
