@@ -38,7 +38,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed (v3.4.0)
 
-#### **General**
+#### **General** (v3.4.0)
 
 - Refactored package import structure:
   - Replace direct imports with `__all__` definitions in package initiator files:
@@ -48,12 +48,12 @@ All notable changes to this project will be documented in this file.
   - Improved control over exported symbols when using 'from package import *'
   - Maintained consistent public API while following Python best practices
 
-#### **Core**
+#### **Core** (v3.4.0)
 
 - Module `time_series.py`:
   - Correct non-existent module `decompose_24h_cumulative_data` to the actual `decompose_cumulative_data`
 
-#### **Fields/Climatology**
+#### **Fields/Climatology** (v3.4.0)
 
 - Module `representative_series.py`:
   - Correct non-existent module `periodic_statkit` to the actual `periodic_statistics`
