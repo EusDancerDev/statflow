@@ -4,13 +4,24 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [v3.4.1] - 2025-04-24
+## [v3.4.2] - 2025-04-27
 
 ### Changed
 
 #### **General**
 
-- Modify the comment header `import custom modules` to `import project modules` in all modules having it.
+- Modify the comment header `Import custom modules` to `Import project modules` in the remaining modules having it.
+- Sort project modules alphabetically where necessary.
+
+---
+
+## [v3.4.1] - 2025-04-24
+
+### Changed (v3.4.1)
+
+#### **General** (v3.4.1)
+
+- Modify the comment header `Import custom modules` to `Import project modules` in all modules having it.
 
 #### **Core**
 
