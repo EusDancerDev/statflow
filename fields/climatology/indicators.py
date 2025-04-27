@@ -7,9 +7,9 @@
 
 import numpy as np
 
-#-----------------------#
-# Import custom modules #
-#-----------------------#
+#------------------------#
+# Import project modules #
+#------------------------#
 
 from pygenutils.arrays_and_lists.patterns import count_consecutive
 from statkit.core.time_series import consec_occurrences_mindata, consec_occurrences_maxdata
