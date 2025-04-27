@@ -6,12 +6,12 @@
 #----------------#
 
 import numpy as np
-import scipy.optimize as scopt
 import scipy.interpolate as scintp
+import scipy.optimize as scopt
 
-#-----------------------#
-# Import custom modules #
-#-----------------------#
+#------------------------#
+# Import project modules #
+#------------------------#
 
 from filewise.general.introspection_utils import get_caller_args, get_type_str
 
