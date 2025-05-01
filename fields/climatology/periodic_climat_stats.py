@@ -51,7 +51,7 @@ from pygenutils.strings.string_handler import find_substring_index
 from pygenutils.strings.text_formatters import format_string
 from pygenutils.time_handling.date_and_time_utils import find_time_key
 from pygenutils.time_handling.time_formatters import datetime_obj_converter
-from statkit.core.time_series import periodic_statistics
+from statflow.core.time_series import periodic_statistics
 
 #------------------#
 # Define functions #

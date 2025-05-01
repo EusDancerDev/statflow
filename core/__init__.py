@@ -3,7 +3,7 @@
 
 # statkit/core/__init__.py
 
-# Define what should be available when using 'from statkit.core import *'
+# Define what should be available when using 'from statflow.core import *'
 __all__ = [
     'approximation_techniques',
     'interpolation_methods',

@@ -12,7 +12,7 @@ import numpy as np
 #------------------------#
 
 from pygenutils.arrays_and_lists.patterns import count_consecutive
-from statkit.core.time_series import consec_occurrences_mindata, consec_occurrences_maxdata
+from statflow.core.time_series import consec_occurrences_mindata, consec_occurrences_maxdata
 
 #------------------#
 # Define functions #

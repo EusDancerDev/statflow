@@ -3,7 +3,7 @@
 
 # statkit/fields/climatology/__init__.py
 
-# Define what should be available when using 'from statkit.fields.climatology import *'
+# Define what should be available when using 'from statflow.fields.climatology import *'
 __all__ = [
     'indicators',
     'periodic_climat_stats',

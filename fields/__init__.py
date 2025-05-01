@@ -3,7 +3,7 @@
 
 # statkit/fields/__init__.py
 
-# Define what should be available when using 'from statkit.fields import *'
+# Define what should be available when using 'from statflow.fields import *'
 __all__ = [
     'climatology'
 ]

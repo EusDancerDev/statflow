@@ -1,6 +1,6 @@
 # Versioning Schema
 
-This document outlines the versioning schema used for the statkit package.
+This document outlines the versioning schema used for the statflow package.
 
 ## Version Format
 
@@ -16,7 +16,7 @@ MAJOR.MINOR.PATCH
 
 ## Current Versioning History
 
-The versioning history of statkit follows this pattern:
+The versioning history of statflow follows this pattern:
 
 - **v2.1.0**: Initial Release (2024-10-28)
   - First public release with core functionality
@@ -53,6 +53,6 @@ The versioning history of statkit follows this pattern:
 The version of the package is defined in the `__init__.py` file and can be accessed programmatically:
 
 ```python
-import statkit
-print(statkit.__version__)
+import statflow
+print(statflow.__version__)
 ```

@@ -5,7 +5,7 @@
 
 __version__ = "3.4.2"
 
-# Define what should be available when using 'from statkit import *'
+# Define what should be available when using 'from statflow import *'
 __all__ = [
     'core',
     'distributions',

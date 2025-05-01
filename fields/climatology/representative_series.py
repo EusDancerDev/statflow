@@ -14,8 +14,8 @@ import pandas as pd
 
 from climalab.meteorological_variables import meteorological_wind_direction
 from paramlib.global_parameters import COMMON_DELIM_LIST
-from statkit.core.interpolation_methods import polynomial_fitting
-from statkit.core.time_series import periodic_statistics
+from statflow.core.interpolation_methods import polynomial_fitting
+from statflow.core.time_series import periodic_statistics
 
 #-------------------------#
 # Define custom functions #

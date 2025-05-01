@@ -32,7 +32,7 @@ import xarray as xr
 from filewise.general.introspection_utils import get_type_str
 from pygenutils.strings.text_formatters import format_string, print_format_string
 from pygenutils.time_handling.date_and_time_utils import find_time_key
-from statkit.fields.climatology.periodic_climat_stats import climat_periodic_statistics
+from statflow.fields.climatology.periodic_climat_stats import climat_periodic_statistics
 
 #------------------#
 

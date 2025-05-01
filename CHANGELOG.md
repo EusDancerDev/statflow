@@ -1,4 +1,4 @@
-# statkit changelog
+# statflow changelog
 
 All notable changes to this project will be documented in this file.
 
@@ -53,9 +53,9 @@ All notable changes to this project will be documented in this file.
 
 - Refactored package import structure:
   - Replace direct imports with `__all__` definitions in package initiator files:
-    - `statkit/__init__.py`
-    - `statkit/core/__init__.py`
-    - `statkit/utils/__init__.py`
+    - `statflow/__init__.py`
+    - `statflow/core/__init__.py`
+    - `statflow/utils/__init__.py`
   - Improved control over exported symbols when using 'from package import *'
   - Maintained consistent public API while following Python best practices
 
@@ -67,7 +67,7 @@ All notable changes to this project will be documented in this file.
 #### **Fields/Climatology** (v3.4.0)
 
 - Module `representative_series.py`:
-  - Correct non-existent module `periodic_statkit` to the actual `periodic_statistics`
+  - Correct non-existent module `periodic_statkit` (old name of the project) to the actual `periodic_statistics`
   - Refactor import aliasing:
     - Move import aliases to separate imports
     - Remove the aliases themselves
