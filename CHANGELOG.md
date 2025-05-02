@@ -4,11 +4,24 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [v3.4.2] - 2025-04-27
+## [v3.4.3] - 2025-05-02
 
 ### Changed
 
 #### **General**
+
+- Replace the deprecated `find_time_key` function with the new `find_dt_key` function in the following modules:
+  - `core/time_series.py`
+  - `fields/climatology/periodic_climat_stats.py`
+  - `fields/climatology/simple_bias_correction.py`
+
+---
+
+## [v3.4.2] - 2025-04-27
+
+### Changed (v3.4.2)
+
+#### **General** (changing)
 
 - Modify the comment header `Import custom modules` to `Import project modules` in the remaining modules having it.
 - Sort project modules alphabetically where necessary.
