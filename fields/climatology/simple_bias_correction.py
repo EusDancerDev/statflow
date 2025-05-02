@@ -31,7 +31,7 @@ import xarray as xr
 
 from filewise.general.introspection_utils import get_type_str
 from pygenutils.strings.text_formatters import format_string, print_format_string
-from pygenutils.time_handling.date_and_time_utils import find_time_key
+from pygenutils.time_handling.date_and_time_utils import find_dt_key
 from statflow.fields.climatology.periodic_climat_stats import climat_periodic_statistics
 
 #------------------#
@@ -186,8 +186,8 @@ def _get_delta_format(delta_value):
 def _align_time_dimensions(observed_series, reanalysis_series, obj_type_observed, obj_type_reanalysis):
     """Align time dimensions between observed and reanalysis series."""
     if (obj_type_observed, obj_type_reanalysis) == ("dataframe", "dataframe"):      
-        date_key = find_time_key(observed_series)
-        date_key_rean = find_time_key(reanalysis_series)
+        date_key = find_dt_key(observed_series)
+        date_key_rean = find_dt_key(reanalysis_series)
 
         if date_key != date_key_rean:
             reanalysis_series.columns = [date_key] + reanalysis_series.columns[1:]
@@ -196,8 +196,8 @@ def _align_time_dimensions(observed_series, reanalysis_series, obj_type_observed
     elif ((obj_type_observed, obj_type_reanalysis) == ("dataset", "dataset"))\
         or ((obj_type_observed, obj_type_reanalysis) == ("dataarray", "dataarray")):
         
-        date_key = find_time_key(observed_series)
-        date_key_rean = find_time_key(reanalysis_series)
+        date_key = find_dt_key(observed_series)
+        date_key_rean = find_dt_key(reanalysis_series)
         
         if date_key != date_key_rean:
             _rename_xarray_dimension(reanalysis_series, date_key_rean, date_key)

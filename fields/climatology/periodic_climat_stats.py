@@ -49,7 +49,7 @@ from paramlib.global_parameters import (
 )
 from pygenutils.strings.string_handler import find_substring_index
 from pygenutils.strings.text_formatters import format_string
-from pygenutils.time_handling.date_and_time_utils import find_time_key
+from pygenutils.time_handling.date_and_time_utils import find_dt_key
 from pygenutils.time_handling.time_formatters import datetime_obj_converter
 from statflow.core.time_series import periodic_statistics
 
@@ -159,7 +159,7 @@ def _validate_inputs(time_freq, season_months, statistic=None):
 def _get_time_dimension(obj, obj_type):
     """Get the time dimension key from the object."""
     if obj_type in ["dataframe", "dataset", "dataarray"]:
-        return find_time_key(obj)
+        return find_dt_key(obj)
     else:
         raise TypeError(f"Unsupported object type: {obj_type}")
 
@@ -362,7 +362,7 @@ def _format_xarray_time_dimension(obj_climat, time_freq, keep_std_dates,
     """Format the time dimension for xarray objects."""
     if time_freq in TIME_FREQUENCIES_COMPLETE[2:]:
         # Get the analogous dimension of 'time', usually label 'group'
-        occ_time_name_temp = find_time_key(obj_climat)
+        occ_time_name_temp = find_dt_key(obj_climat)
         
         if keep_std_dates:                          
             climat_dates = pd.date_range(f"{latest_year}-1-1 0:00",
