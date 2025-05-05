@@ -3,7 +3,7 @@
 
 # statkit/__init__.py
 
-__version__ = "3.4.3"
+__version__ = "3.4.4"
 
 # Define what should be available when using 'from statflow import *'
 __all__ = [
