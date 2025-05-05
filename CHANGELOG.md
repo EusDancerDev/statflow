@@ -4,9 +4,20 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [v3.4.3] - 2025-05-02
+## [v3.4.4] - 2025-05-05
 
 ### Changed
+
+#### **Fields/Climatology**
+
+- Module `representative_series.py`:
+  - Resolved circular import issue by implementing lazy import of `meteorological_wind_direction` from `climalab.meteorological_variables`
+
+---
+
+## [v3.4.3] - 2025-05-02
+
+### Changed (v3.4.3)
 
 #### **General**
 
