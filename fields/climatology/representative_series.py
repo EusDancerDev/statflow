@@ -12,7 +12,6 @@ import pandas as pd
 # Import project modules #
 #------------------------#
 
-from climalab.meteorological_variables import meteorological_wind_direction
 from paramlib.global_parameters import COMMON_DELIM_LIST
 from statflow.core.interpolation_methods import polynomial_fitting
 from statflow.core.time_series import periodic_statistics
@@ -221,6 +220,8 @@ def hdy_interpolation(hdy_df,
 
     # Calculate wind direction using meteorological convention
     print("\nCalculating the wind direction from the meteorological point of view...")
+    # Import here to avoid circular imports
+    from climalab.meteorological_variables import meteorological_wind_direction
     wind_dir_meteo_interp = meteorological_wind_direction(hdy_interp.u10.values, hdy_interp.v10.values)
 
     return hdy_interp, wind_dir_meteo_interp
