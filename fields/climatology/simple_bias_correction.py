@@ -21,7 +21,6 @@ xarray Datasets.
 # Import modules #
 #----------------#
 
-import numpy as np
 import pandas as pd
 import xarray as xr
 
@@ -35,126 +34,27 @@ from pygenutils.time_handling.date_and_time_utils import find_dt_key
 from statflow.fields.climatology.periodic_climat_stats import climat_periodic_statistics
 
 #------------------#
-
-#------------------#
 # Define functions #
 #------------------#
 
-# Bias correction functions #
-#---------------------------#
+# Internal functions #
+#--------------------#
 
-# Deltas #
-#-#-#-#-#-
-
-def calculate_and_apply_deltas(observed_series,
-                               reanalysis_series,
-                               time_freq,
-                               delta_type="absolute",
-                               statistic="mean",
-                               preference="observed",
-                               keep_std_dates=True, 
-                               drop_date_idx_col=False,
-                               season_months=None,
-                               delta_value=2):
-
+def _unique_sorted(items):
     """
-    Function that calculates simple deltas between two objects
-    and then applies to any of them.
-    
-    For that, it firstly calculates the given time-frequency climatologies
-    for both objects using 'climat_periodic_statistics' function,
-    and then performs the delta calculation, 
-    depending on the math operator chosen:
-      1. Absolute delta: subtraction between both objects
-      2. Relative delta: division between both objects
-    
-    Once calculated, delta values are climatologically applied to the chosen
-    object, by addition if the deltas are absolute or multiplication if they
-    are relative.
+    Returns a sorted list of unique items.
     
     Parameters
     ----------
-    observed_series : pandas.DataFrame, xarray.Dataset or xarray.DataArray.
-    reanalysis_series : pandas.DataFrame, xarray.Dataset or xarray.DataArray.
-        This object can be that extracted from a reanalysis,
-        CORDEX projections or similar ones.
-    time_freq : str
-        Time frequency to which data will be filtered.
-    delta_type : {"absolute", "relative"}
-    statistic : {"max", "min", "mean", "std", "sum"}
-        The statistic to calculate.
-        Default is "mean" so that climatologic mean is calculated.
-    preference : {"observed", "reanalysis"}
-        If "observed", then the observed series will be treated as the 'truth'
-        and the reanalysis will be delta-corrected.
-        Otherwise, though it is not common, the reanalysis will be treated
-        as the truth and observations will be delta-corrected.
-        Defaults to give preference over the observed series.
-    keep_std_dates : bool
-        If True, standard YMD (HMS) date format is kept for all climatologics
-        except for yearly climatologics.
-        Otherwise dates are shown as hour, day, or month indices,
-        and season achronyms if "seasonal" is selected as the time frequency.
-        Default value is False.
-    drop_date_idx_col : bool
-        Affects only if the passed object is a Pandas DataFrame.
-        Boolean used to whether drop the date columns in the new data frame.
-        If it is False, then the columns of the dates will be kept.
-        Otherwise, the dates themselves will be kept, but they will be
-        treated as indexers, and not as a column.
-        Defaults to True in order to return date-time incorporated series.
-    season_months : list of integers
-        List containing the month numbers to later refer to the time array,
-        whatever the object is among the mentioned three types.
-        Defaults to None.
-    delta_value : int or "auto", optional
-        Controls the formatting of the delta value in output messages.
-        If an integer, it specifies the number of decimal places to display.
-        If "auto", it uses the best format with 2 significant digits, 
-        choosing between scientific notation and floating-point.
-        Defaults to 2.
-    
+    items : list
+        List of items to deduplicate and sort.
+        
     Returns
     -------
-    obj_climat : pandas.DataFrame, xarray.Dataset or xarray.DataArray.
-        Climatological average of the data.
-    
-    Notes
-    -----
-    For Pandas DataFrames, since it is an 2D object,
-    it is interpreted that data holds for a specific geographical point.
+    list
+        Sorted list of unique items.
     """
-    
-    # Input validations
-    _validate_inputs(delta_type, preference, delta_value, statistic)
-    
-    # Define the format string based on delta_value type
-    delta_format = _get_delta_format(delta_value)
-    
-    # Determine object type
-    obj_type_observed = get_type_str(observed_series, lowercase=True)
-    obj_type_reanalysis = get_type_str(reanalysis_series, lowercase=True)
-    
-    # Identify the time dimension and align if needed
-    date_key = _align_time_dimensions(observed_series, reanalysis_series, 
-                                     obj_type_observed, obj_type_reanalysis)
-    
-    # Calculate climatologies and deltas
-    delta_obj, delta_cols = _calculate_deltas(observed_series, reanalysis_series, 
-                                             time_freq, statistic, keep_std_dates, 
-                                             drop_date_idx_col, season_months, 
-                                             delta_type, preference, obj_type_observed, 
-                                             obj_type_reanalysis, date_key)
-    
-    # Apply deltas to the chosen series
-    delta_corrected_obj = _apply_deltas(delta_obj, delta_cols, time_freq, 
-                                       delta_type, preference, obj_type_observed, 
-                                       obj_type_reanalysis, date_key, 
-                                       delta_format, season_months, 
-                                       observed_series, reanalysis_series)
-    
-    return delta_corrected_obj
-
+    return sorted(set(items))
 
 def _validate_inputs(delta_type, preference, delta_value, statistic=None):
     """Validate input parameters."""
@@ -321,9 +221,9 @@ def _apply_deltas(delta_obj, delta_cols, time_freq, delta_type, preference,
                  season_months, observed_series, reanalysis_series):
     """Apply deltas to the chosen series."""
     # Extract time components
-    months_delta = np.unique(delta_obj[date_key].dt.month)
-    days_delta = np.unique(delta_obj[date_key].dt.day)
-    hours_delta = np.unique(delta_obj[date_key].dt.hour)
+    months_delta = _unique_sorted(delta_obj[date_key].dt.month)
+    days_delta = _unique_sorted(delta_obj[date_key].dt.day)
+    hours_delta = _unique_sorted(delta_obj[date_key].dt.hour)
     
     # Determine frequency abbreviation
     freq_abbr = _get_frequency_abbreviation(time_freq, delta_obj, date_key, 
@@ -536,6 +436,118 @@ def _apply_hourly_deltas(obj_aux, delta_obj, delta_cols, delta_type,
                             obj_aux.loc[obj2correct.time] *= obj_delta.values
     
     return obj_aux
+
+
+# Public functions #
+#------------------#
+
+def calculate_and_apply_deltas(observed_series,
+                               reanalysis_series,
+                               time_freq,
+                               delta_type="absolute",
+                               statistic="mean",
+                               preference="observed",
+                               keep_std_dates=True, 
+                               drop_date_idx_col=False,
+                               season_months=None,
+                               delta_value=2):
+    """
+    Function that calculates simple deltas between two objects
+    and then applies to any of them.
+    
+    For that, it firstly calculates the given time-frequency climatologies
+    for both objects using 'climat_periodic_statistics' function,
+    and then performs the delta calculation, 
+    depending on the math operator chosen:
+      1. Absolute delta: subtraction between both objects
+      2. Relative delta: division between both objects
+    
+    Once calculated, delta values are climatologically applied to the chosen
+    object, by addition if the deltas are absolute or multiplication if they
+    are relative.
+    
+    Parameters
+    ----------
+    observed_series : pandas.DataFrame, xarray.Dataset or xarray.DataArray.
+    reanalysis_series : pandas.DataFrame, xarray.Dataset or xarray.DataArray.
+        This object can be that extracted from a reanalysis,
+        CORDEX projections or similar ones.
+    time_freq : str
+        Time frequency to which data will be filtered.
+    delta_type : {"absolute", "relative"}
+    statistic : {"max", "min", "mean", "std", "sum"}
+        The statistic to calculate.
+        Default is "mean" so that climatologic mean is calculated.
+    preference : {"observed", "reanalysis"}
+        If "observed", then the observed series will be treated as the 'truth'
+        and the reanalysis will be delta-corrected.
+        Otherwise, though it is not common, the reanalysis will be treated
+        as the truth and observations will be delta-corrected.
+        Defaults to give preference over the observed series.
+    keep_std_dates : bool
+        If True, standard YMD (HMS) date format is kept for all climatologics
+        except for yearly climatologics.
+        Otherwise dates are shown as hour, day, or month indices,
+        and season achronyms if "seasonal" is selected as the time frequency.
+        Default value is False.
+    drop_date_idx_col : bool
+        Affects only if the passed object is a Pandas DataFrame.
+        Boolean used to whether drop the date columns in the new data frame.
+        If it is False, then the columns of the dates will be kept.
+        Otherwise, the dates themselves will be kept, but they will be
+        treated as indexers, and not as a column.
+        Defaults to True in order to return date-time incorporated series.
+    season_months : list of integers
+        List containing the month numbers to later refer to the time array,
+        whatever the object is among the mentioned three types.
+        Defaults to None.
+    delta_value : int or "auto", optional
+        Controls the formatting of the delta value in output messages.
+        If an integer, it specifies the number of decimal places to display.
+        If "auto", it uses the best format with 2 significant digits, 
+        choosing between scientific notation and floating-point.
+        Defaults to 2.
+    
+    Returns
+    -------
+    obj_climat : pandas.DataFrame, xarray.Dataset or xarray.DataArray.
+        Climatological average of the data.
+    
+    Notes
+    -----
+    For Pandas DataFrames, since it is an 2D object,
+    it is interpreted that data holds for a specific geographical point.
+    """
+    
+    # Input validations
+    _validate_inputs(delta_type, preference, delta_value, statistic)
+    
+    # Define the format string based on delta_value type
+    delta_format = _get_delta_format(delta_value)
+    
+    # Determine object type
+    obj_type_observed = get_type_str(observed_series, lowercase=True)
+    obj_type_reanalysis = get_type_str(reanalysis_series, lowercase=True)
+    
+    # Identify the time dimension and align if needed
+    date_key = _align_time_dimensions(observed_series, reanalysis_series, 
+                                     obj_type_observed, obj_type_reanalysis)
+    
+    # Calculate climatologies and deltas
+    delta_obj, delta_cols = _calculate_deltas(observed_series, reanalysis_series, 
+                                             time_freq, statistic, keep_std_dates, 
+                                             drop_date_idx_col, season_months, 
+                                             delta_type, preference, obj_type_observed, 
+                                             obj_type_reanalysis, date_key)
+    
+    # Apply deltas to the chosen series
+    delta_corrected_obj = _apply_deltas(delta_obj, delta_cols, time_freq, 
+                                       delta_type, preference, obj_type_observed, 
+                                       obj_type_reanalysis, date_key, 
+                                       delta_format, season_months, 
+                                       observed_series, reanalysis_series)
+    
+    return delta_corrected_obj
 
 
 #--------------------------#
