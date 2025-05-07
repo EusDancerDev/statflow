@@ -4,11 +4,24 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [v3.4.4] - 2025-05-05
+## [v3.4.5] - 2025-05-06
 
 ### Changed
 
 #### **Fields/Climatology**
+
+- Module `simple_bias_correction.py`:
+  - Reorganised functions into clear internal and public sections
+  - Improved code structure by grouping related functions
+  - Implement array uniqueness calculation with with Python's built-in set, instead of `np.unique`.
+
+---
+
+## [v3.4.4] - 2025-05-05
+
+### Changed (v3.4.4)
+
+#### **Fields/Climatology** (v3.4.4)
 
 - Module `representative_series.py`:
   - Resolved circular import issue by implementing lazy import of `meteorological_wind_direction` from `climalab.meteorological_variables`
@@ -54,7 +67,7 @@ All notable changes to this project will be documented in this file.
   - `signal_processing.py`
   - `time_series.py`
 
-#### **Fields/Climatology**
+#### **Fields/Climatology** (v3.4.1)
 
 - Convert constant names to uppercase and improve code consistency:
   - Module `periodic_climat_stats.py`:
