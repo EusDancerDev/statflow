@@ -22,9 +22,9 @@ A Python library for statistical analysis and data flow management.
   - Data transformation
   - Data quality checks
 
-- **Visualization**
+- **Visualisation**
   - Statistical plots
-  - Distribution visualizations
+  - Distribution visualisations
   - Time series plots
   - Correlation matrices
   - Custom charting
@@ -32,7 +32,7 @@ A Python library for statistical analysis and data flow management.
 - **Data Processing**
   - Data cleaning
   - Feature engineering
-  - Data normalization
+  - Data normalisation
   - Outlier detection
   - Missing value handling
 
