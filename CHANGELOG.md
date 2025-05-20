@@ -4,22 +4,53 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [v3.4.5] - 2025-05-06
+## [v3.4.6] - 2025-05-10
+
+### Fixed
+
+#### **Core**
+
+- Module `time_series.py`:
+  - Function `periodic_statistics()`:
+    - Fixed groupby construction for proper time frequency handling in both pandas DataFrame and xarray objects
+    - Added handling for DataFrames with non-datetime columns through proper type conversion
+    - Implemented NaT value filtering to prevent groupby errors
+    - Added empty result handling when no valid data remains after filtering
+    - Suppressed FutureWarning by explicitly setting `numeric_only=True` in statistical methods
 
 ### Changed
 
+#### **Core** (v3.4.6)
+
+- Module `time_series.py`:
+  - Function `periodic_statistics()`:
+    - Refactored frequency handling by combining separate mappings into a single `FREQ_MAPPING` dictionary
+    - Improved code organisation and standardised frequency references throughout the module
+    - Enhanced error handling with more descriptive messages
+
 #### **Fields/Climatology**
+
+- Module `periodic_climat_stats.py`:
+  - Optimised dimension check in internal function `_format_dataframe_output`: use numpy's native `ndim` attribute instead of taking the length of the shape tuple
+
+---
+
+## [v3.4.5] - 2025-05-06
+
+### Changed (v3.4.5)
+
+#### **Fields/Climatology** (v3.4.5)
 
 - Module `simple_bias_correction.py`:
   - Reorganised functions into clear internal and public sections
   - Improved code structure by grouping related functions
-  - Implement array uniqueness calculation with with Python's built-in set, instead of `np.unique`.
+  - Implemented array uniqueness calculation with Python's built-in set, instead of `np.unique`
 
 ---
 
 ## [v3.4.4] - 2025-05-05
 
-### Changed (v3.4.4)
+### Fixed (v3.4.4)
 
 #### **Fields/Climatology** (v3.4.4)
 
@@ -45,10 +76,10 @@ All notable changes to this project will be documented in this file.
 
 ### Changed (v3.4.2)
 
-#### **General** (changing)
+#### **General** (v3.4.2)
 
-- Modify the comment header `Import custom modules` to `Import project modules` in the remaining modules having it.
-- Sort project modules alphabetically where necessary.
+- Modify the comment header `Import custom modules` to `Import project modules` in the remaining modules having it
+- Sort project modules alphabetically where necessary
 
 ---
 
@@ -58,9 +89,9 @@ All notable changes to this project will be documented in this file.
 
 #### **General** (v3.4.1)
 
-- Modify the comment header `Import custom modules` to `Import project modules` in all modules having it.
+- Modify the comment header `Import custom modules` to `Import project modules` in all modules having it
 
-#### **Core**
+#### **Core** (v3.4.1)
 
 - Convert constant names to uppercase in the following modules:
   - `interpolation_methods.py`
@@ -84,6 +115,18 @@ All notable changes to this project will be documented in this file.
 
 ## [v3.4.0] - 2025-04-23
 
+### Fixed (v3.4.0)
+
+#### **Core** (v3.4.0)
+
+- Module `time_series.py`:
+  - Correct non-existent module `decompose_24h_cumulative_data` to the actual `decompose_cumulative_data`
+
+#### **Fields/Climatology** (v3.4.0)
+
+- Module `representative_series.py`:
+  - Correct non-existent module `periodic_statkit` (old name of the project) to the actual `periodic_statistics`
+
 ### Changed (v3.4.0)
 
 #### **General** (v3.4.0)
@@ -96,15 +139,9 @@ All notable changes to this project will be documented in this file.
   - Improved control over exported symbols when using 'from package import *'
   - Maintained consistent public API while following Python best practices
 
-#### **Core** (v3.4.0)
-
-- Module `time_series.py`:
-  - Correct non-existent module `decompose_24h_cumulative_data` to the actual `decompose_cumulative_data`
-
-#### **Fields/Climatology** (v3.4.0)
+#### **Fields/Climatology** (v3.4.0; changing)
 
 - Module `representative_series.py`:
-  - Correct non-existent module `periodic_statkit` (old name of the project) to the actual `periodic_statistics`
   - Refactor import aliasing:
     - Move import aliases to separate imports
     - Remove the aliases themselves
@@ -113,25 +150,19 @@ All notable changes to this project will be documented in this file.
 
 ## [v3.3.0] - 2025-04-17
 
-### Changed (v3.3.0)
+### Fixed (v3.3.0)
 
 #### **Core** (v3.3.0)
 
 - Module `time_series.py`:
-  - Correct the path for the function `find_time_key`.
-  - Adapt the module to use only the `find_time_key` function instead of the removed and non-existing `find_time_dimension` function, as the former `find_time_key` and already supports the following top-level objects:
-  - pandas.DataFrame
-  - xarray.Dataset
-  - xarray.DataArray
+  - Correct the path for the function `find_time_key`
+  - Adapt the module to use only the `find_time_key` function instead of the removed and non-existing `find_time_dimension` function
 
 #### **Fields/Climatology** (v3.3.0)
 
 - Modules `periodic_climat_stats.py` and `simple_bias_correction.py`:
-  - Adapt the modules to use only the `find_time_key` function instead of the removed and non-existing `find_time_dimension` function, as the former `find_time_key` and already supports the following top-level objects:
-    - pandas.DataFrame
-    - xarray.Dataset
-    - xarray.DataArray
-  
+  - Adapt the modules to use only the `find_time_key` function instead of the removed and non-existing `find_time_dimension` function
+
 ---
 
 ## [v3.2.0] - 2025-04-15
@@ -145,13 +176,13 @@ All notable changes to this project will be documented in this file.
     - Split the monolithic `climat_periodic_statistics` function into smaller, focused functions
     - Made helper functions internal by prefixing them with underscore
     - Extracted common operations into utility functions
-    - Created specialized functions for different data types and time frequencies
+    - Created specialised functions for different data types and time frequencies
     - Added docstrings to all functions for better documentation
   
   - Module `simple_bias_correction.py`:
     - Refactored the `calculate_and_apply_deltas` function into logical components
     - Made helper functions internal by prefixing them with underscore
-    - Improved code organization with specialized functions for different operations
+    - Improved code organisation with specialised functions for different operations
     - Enhanced error handling and validation
 
 ---
@@ -163,17 +194,17 @@ All notable changes to this project will be documented in this file.
 #### **General** (v3.1.0)
 
 - Improved variable naming conventions across multiple modules:
-  - Renamed `arg_tuple_*` variables to `format_args_*` in `core/time_series.py`, `core/signal_processing.py`, `fields/climatology/periodic_climat_stats.py`, and `fields/climatology/simple_bias_correction.py` to better reflect their purpose in error handling and information formatting.
-  - This change enhances code readability and maintainability by using more descriptive variable names.
+  - Renamed `arg_tuple_*` variables to `format_args_*` in `core/time_series.py`, `core/signal_processing.py`, `fields/climatology/periodic_climat_stats.py`, and `fields/climatology/simple_bias_correction.py` to better reflect their purpose in error handling and information formatting
+  - This change enhances code readability and maintainability by using more descriptive variable names
 
 #### **Fields/Climatology** (v3.1.0)
 
 - Module `simple_bias_correction.py`:
   - Enhanced `calculate_and_apply_deltas` function:
     - Added `delta_value` parameter to control formatting precision in output messages
-  - Implemented support for both integer precision and "auto" scientific notation
-  - Used actual delta values in output messages instead of hardcoded placeholders
-  - Improved validation for the `delta_value` parameter.
+    - Implemented support for both integer precision and "auto" scientific notation
+    - Used actual delta values in output messages instead of hardcoded placeholders
+    - Improved validation for the `delta_value` parameter
   
 ---
 
@@ -183,22 +214,22 @@ All notable changes to this project will be documented in this file.
 
 #### **General** (v3.0.6)
 
-- Peform several term replacements in many modules:
-  - `method` with `function`, if no object is instantiated throughout the module.
-  - `method` with `procedure` (or `algorithm`/`module`), to more accurately describe the approach or technique used in functions.
-  Additionally, this change effectively communicates that a function can employ different methods or techniques to achieve its goal.
+- Perform several term replacements in many modules:
+  - `method` with `function`, if no object is instantiated throughout the module
+  - `method` with `procedure` (or `algorithm`/`module`), to more accurately describe the approach or technique used in functions
+  - Additionally, this change effectively communicates that a function can employ different methods or techniques to achieve its goal
 
 ---
 
 ## [v3.0.0] - 2024-11-04
 
-### Added (v3.0.6)
+### Added
 
 - Added `__init__.py` files to all first-level and deeper sub-packages for enhanced import access
 
 ### Changed (v3.0.0)
 
-- Remove the redundant import of the deprecated and removed `parameters_and_constants` module in all affected modules.
+- Remove the redundant import of the deprecated and removed `parameters_and_constants` module in all affected modules
 
 ---
 
