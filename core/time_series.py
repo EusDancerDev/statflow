@@ -10,6 +10,7 @@ Module for time series operations in statistical analysis.
 #----------------#
 
 import numpy as np
+import pandas as pd
 from pandas import Grouper
 
 #------------------------#
@@ -102,41 +103,84 @@ def periodic_statistics(obj, statistic, freq,
                                 "{pandas.DataFrame, xarray.Dataset, xarray.DataArray}")
         raise ValueError(format_string(UNSUPPORTED_OPTION_ERROR_TEMPLATE, format_args_obj_type))
 
-    if freq not in FREQ_ABBREVIATIONS:
-        format_args_freq = ("frequency", freq, FREQ_ABBREVIATIONS)
+    if freq not in FREQ_MAPPING:
+        format_args_freq = ("frequency", freq, list(FREQ_MAPPING.keys()))
         raise ValueError(format_string(UNSUPPORTED_OPTION_ERROR_TEMPLATE, format_args_freq))
     
-    if seas_mon_arg_type != "list":
-        raise TypeError("Expected a list for parameter 'season_months' "
-                        f"(number {seas_months_arg_pos}) got '{seas_mon_arg_type}'.")
-    
-    if freq == "SEAS" and not season_months:
+    # Only validate season_months if it's provided (not None)
+    if season_months is not None:
+        if seas_mon_arg_type != "list":
+            raise TypeError("Expected a list for parameter 'season_months' "
+                            f"(number {seas_months_arg_pos}) got '{seas_mon_arg_type}'.")
+        
+        if len(season_months) != 3:
+            raise ValueError(SEASON_MONTH_FMT_ERROR_TEMPLATE)
+    elif freq == "SEAS":  # Only require season_months when freq is "SEAS"
         raise ValueError("Seasonal frequency requires parameter 'season_months'.")
-    
-    if season_months and len(season_months) != 3:
-        raise ValueError(SEASON_MONTH_FMT_ERROR_TEMPLATE)
 
     # Operations #
     #-#-#-#-#-#-#-
 
-    # GroupBy Logic
+    # Get the date/time column or dimension
     date_key = find_dt_key(obj)
 
+    # Different handling based on object type
     if obj_type in ["dataset", "dataarray"]:
-        groupby_key = f"{date_key}.dt.{freq}"
+        # Handle xarray objects
+        if groupby_dates:
+            if freq == "SEAS":
+                # Custom handling for seasons
+                # This would require more complex logic to define seasons
+                raise NotImplementedError("Season grouping for xarray not yet implemented")
+            else:
+                # Use proper xarray datetime accessor
+                groupby_key = f"{date_key}.{FREQ_MAPPING[freq]}"
+                result = getattr(obj.groupby(groupby_key), statistic)()
+        else:
+            # Without groupby_dates, return the full object
+            result = getattr(obj, statistic)()
     else:
-        groupby_key = date_key
-
-    # Handling grouping logic
-    if groupby_dates and obj_type in ["dataset", "dataarray"]:
-        obj_groupby = obj.groupby(groupby_key)
-    else:
-        obj_groupby = Grouper(key=date_key, freq=freq)
-
-    # Calculate Statistics
-    result = getattr(obj_groupby, statistic)()
-    if obj_type == "dataframe":
-        result.reset_index(drop=drop_date_idx_col)
+        # Handle pandas DataFrame
+        # Use pandas Grouper properly
+        if freq == "SEAS":
+            # Special handling for seasonal grouping
+            # This would require custom season definition
+            raise NotImplementedError("Season grouping for pandas not yet implemented")
+        else:
+            # Make a copy to avoid modifying the original DataFrame
+            df_copy = obj.copy()
+            
+            # Ensure the date column is in datetime format
+            # and handle NaT values by dropping them
+            if pd.api.types.is_datetime64_any_dtype(df_copy[date_key]):
+                # Already datetime, just drop NaT values
+                df_copy = df_copy.dropna(subset=[date_key])
+            else:
+                # Try to convert to datetime
+                try:
+                    df_copy[date_key] = pd.to_datetime(df_copy[date_key])
+                    df_copy = df_copy.dropna(subset=[date_key])
+                except Exception as e:
+                    raise ValueError(f"Could not convert column '{date_key}' to datetime: {str(e)}")
+            
+            # Proceed only if we have valid data after cleaning
+            if len(df_copy) == 0:
+                return pd.DataFrame()  # Return empty DataFrame if no valid data
+                
+            # Group by frequency and apply statistic
+            grouped = df_copy.groupby(pd.Grouper(key=date_key, freq=freq))
+            
+            # Call the statistic method with explicit numeric_only parameter
+            # This prevents FutureWarning about numeric_only default changing
+            if statistic in ["mean", "std", "sum", "min", "max"]:
+                result = getattr(grouped, statistic)(numeric_only=True)
+            else:
+                result = getattr(grouped, statistic)()
+            
+            if drop_date_idx_col:
+                result = result.reset_index(drop=True)
+            else:
+                result = result.reset_index()
     
     return result
 
@@ -384,8 +428,17 @@ def autocorrelate(x, twosided=False):
 # Statistics #
 STATISTICS = ["max", "min", "sum", "mean", "std"]
 
-# Time frequency abbreviations #
-FREQ_ABBREVIATIONS = ["Y", "SEAS", "M", "D", "H", "min", "S"]
+# Time frequency mapping #
+FREQ_MAPPING = {
+    "Y": "year",
+    "SEAS": "season",
+    "M": "month",
+    "W": "week",
+    "D": "day",
+    "H": "hour",
+    "min": "minute",
+    "S": "second"
+}
 
 # Template strings #
 #------------------#
