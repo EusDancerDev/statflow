@@ -11,7 +11,6 @@ Module for time series operations in statistical analysis.
 
 import numpy as np
 import pandas as pd
-from pandas import Grouper
 
 #------------------------#
 # Import project modules #
