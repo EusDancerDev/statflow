@@ -305,9 +305,9 @@ def _format_dataframe_output(climat_vals, climat_dates, climat_obj_cols):
     """Format the output DataFrame."""
     # Check climatological value array's shape to later fit into the df
     climat_vals = np.array(climat_vals)
-    climat_vals_shape = climat_vals.shape
+    climat_vals_ndims = climat_vals.ndim
      
-    if len(climat_vals_shape) == 1:
+    if climat_vals_ndims == 1:
         climat_vals = climat_vals[:, np.newaxis]    
     
     climat_dates = np.array(climat_dates, 'O')[:, np.newaxis]
