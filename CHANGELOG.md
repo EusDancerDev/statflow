@@ -1,14 +1,14 @@
-# statflow changelog
+# statflow Changelog
 
 All notable changes to this project will be documented in this file.
 
 ---
 
-## [v3.4.6] - 2025-05-10
+## [3.4.6] - 2025-05-10
 
-### Fixed
+### Fixed (3.4.6)
 
-#### **Core**
+#### **Core** (fixing; 3.4.6)
 
 - Module `time_series.py`:
   - Function `periodic_statistics()`:
@@ -18,9 +18,9 @@ All notable changes to this project will be documented in this file.
     - Added empty result handling when no valid data remains after filtering
     - Suppressed FutureWarning by explicitly setting `numeric_only=True` in statistical methods
 
-### Changed
+### Changed (3.4.6)
 
-#### **Core** (v3.4.6)
+#### **Core** (changing; 3.4.6)
 
 - Module `time_series.py`:
   - Function `periodic_statistics()`:
@@ -28,18 +28,18 @@ All notable changes to this project will be documented in this file.
     - Improved code organisation and standardised frequency references throughout the module
     - Enhanced error handling with more descriptive messages
 
-#### **Fields/Climatology**
+#### **Fields/Climatology** (changing; 3.4.6)
 
 - Module `periodic_climat_stats.py`:
   - Optimised dimension check in internal function `_format_dataframe_output`: use numpy's native `ndim` attribute instead of taking the length of the shape tuple
 
 ---
 
-## [v3.4.5] - 2025-05-06
+## [3.4.5] - 2025-05-06
 
-### Changed (v3.4.5)
+### Changed (3.4.5)
 
-#### **Fields/Climatology** (v3.4.5)
+#### **Fields/Climatology** (changing; 3.4.5)
 
 - Module `simple_bias_correction.py`:
   - Reorganised functions into clear internal and public sections
@@ -48,22 +48,22 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [v3.4.4] - 2025-05-05
+## [3.4.4] - 2025-05-05
 
-### Fixed (v3.4.4)
+### Fixed (3.4.4)
 
-#### **Fields/Climatology** (v3.4.4)
+#### **Fields/Climatology** (fixing; 3.4.4)
 
 - Module `representative_series.py`:
   - Resolved circular import issue by implementing lazy import of `meteorological_wind_direction` from `climalab.meteorological_variables`
 
 ---
 
-## [v3.4.3] - 2025-05-02
+## [3.4.3] - 2025-05-02
 
-### Changed (v3.4.3)
+### Changed (3.4.3)
 
-#### **General**
+#### **General** (changing; 3.4.3)
 
 - Replace the deprecated `find_time_key` function with the new `find_dt_key` function in the following modules:
   - `core/time_series.py`
@@ -72,33 +72,33 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [v3.4.2] - 2025-04-27
+## [3.4.2] - 2025-04-27
 
-### Changed (v3.4.2)
+### Changed (3.4.2)
 
-#### **General** (v3.4.2)
+#### **General** (changing; 3.4.2)
 
 - Modify the comment header `Import custom modules` to `Import project modules` in the remaining modules having it
 - Sort project modules alphabetically where necessary
 
 ---
 
-## [v3.4.1] - 2025-04-24
+## [3.4.1] - 2025-04-24
 
-### Changed (v3.4.1)
+### Changed (3.4.1)
 
-#### **General** (v3.4.1)
+#### **General** (changing; 3.4.1)
 
 - Modify the comment header `Import custom modules` to `Import project modules` in all modules having it
 
-#### **Core** (v3.4.1)
+#### **Core** (changing; 3.4.1)
 
 - Convert constant names to uppercase in the following modules:
   - `interpolation_methods.py`
   - `signal_processing.py`
   - `time_series.py`
 
-#### **Fields/Climatology** (v3.4.1)
+#### **Fields/Climatology** (changing; 3.4.1)
 
 - Convert constant names to uppercase and improve code consistency:
   - Module `periodic_climat_stats.py`:
@@ -113,23 +113,23 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [v3.4.0] - 2025-04-23
+## [3.4.0] - 2025-04-23
 
-### Fixed (v3.4.0)
+### Fixed (3.4.0)
 
-#### **Core** (v3.4.0)
+#### **Core** (fixing; 3.4.0)
 
 - Module `time_series.py`:
   - Correct non-existent module `decompose_24h_cumulative_data` to the actual `decompose_cumulative_data`
 
-#### **Fields/Climatology** (v3.4.0)
+#### **Fields/Climatology** (fixing; 3.4.0)
 
 - Module `representative_series.py`:
   - Correct non-existent module `periodic_statkit` (old name of the project) to the actual `periodic_statistics`
 
-### Changed (v3.4.0)
+### Changed (3.4.0)
 
-#### **General** (v3.4.0)
+#### **General** (changing; 3.4.0)
 
 - Refactored package import structure:
   - Replace direct imports with `__all__` definitions in package initiator files:
@@ -139,7 +139,7 @@ All notable changes to this project will be documented in this file.
   - Improved control over exported symbols when using 'from package import *'
   - Maintained consistent public API while following Python best practices
 
-#### **Fields/Climatology** (v3.4.0; changing)
+#### **Fields/Climatology** (changing; 3.4.0)
 
 - Module `representative_series.py`:
   - Refactor import aliasing:
@@ -148,28 +148,28 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [v3.3.0] - 2025-04-17
+## [3.3.0] - 2025-04-17
 
-### Fixed (v3.3.0)
+### Fixed (3.3.0)
 
-#### **Core** (v3.3.0)
+#### **Core** (fixing; 3.3.0)
 
 - Module `time_series.py`:
   - Correct the path for the function `find_time_key`
   - Adapt the module to use only the `find_time_key` function instead of the removed and non-existing `find_time_dimension` function
 
-#### **Fields/Climatology** (v3.3.0)
+#### **Fields/Climatology** (fixing; 3.3.0)
 
 - Modules `periodic_climat_stats.py` and `simple_bias_correction.py`:
   - Adapt the modules to use only the `find_time_key` function instead of the removed and non-existing `find_time_dimension` function
 
 ---
 
-## [v3.2.0] - 2025-04-15
+## [3.2.0] - 2025-04-15
 
-### Changed (v3.2.0)
+### Changed (3.2.0)
 
-#### **Fields/Climatology** (v3.2.0)
+#### **Fields/Climatology** (changing; 3.2.0)
 
 - Refactored the climatology modules for improved structure and maintainability:
   - Module `periodic_climat_stats.py`:
@@ -187,17 +187,17 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [v3.1.0] - 2025-04-05
+## [3.1.0] - 2025-04-05
 
-### Changed (v3.1.0)
+### Changed (3.1.0)
 
-#### **General** (v3.1.0)
+#### **General** (changing; 3.1.0)
 
 - Improved variable naming conventions across multiple modules:
   - Renamed `arg_tuple_*` variables to `format_args_*` in `core/time_series.py`, `core/signal_processing.py`, `fields/climatology/periodic_climat_stats.py`, and `fields/climatology/simple_bias_correction.py` to better reflect their purpose in error handling and information formatting
   - This change enhances code readability and maintainability by using more descriptive variable names
 
-#### **Fields/Climatology** (v3.1.0)
+#### **Fields/Climatology** (changing; 3.1.0)
 
 - Module `simple_bias_correction.py`:
   - Enhanced `calculate_and_apply_deltas` function:
@@ -205,14 +205,14 @@ All notable changes to this project will be documented in this file.
     - Implemented support for both integer precision and "auto" scientific notation
     - Used actual delta values in output messages instead of hardcoded placeholders
     - Improved validation for the `delta_value` parameter
-  
+
 ---
 
-## [v3.0.6] - 2025-02-03
+## [3.0.6] - 2025-02-03
 
-### Changed (v3.0.6)
+### Changed (3.0.6)
 
-#### **General** (v3.0.6)
+#### **General** (changing; 3.0.6)
 
 - Perform several term replacements in many modules:
   - `method` with `function`, if no object is instantiated throughout the module
@@ -221,34 +221,44 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [v3.0.0] - 2024-11-04
+## [3.0.0] - 2024-11-04
 
-### Added
+### Added (3.0.0)
+
+#### **General** (adding; 3.0.0)
 
 - Added `__init__.py` files to all first-level and deeper sub-packages for enhanced import access
 
-### Changed (v3.0.0)
+### Changed (3.0.0)
+
+#### **General** (changing; 3.0.0)
 
 - Remove the redundant import of the deprecated and removed `parameters_and_constants` module in all affected modules
 
 ---
 
-## [v2.1.0] - Initial Release - 2024-10-28
+## [2.1.0] - Initial Release - 2024-10-28
 
-### Added (v2.1.0)
+### Added (2.1.0)
 
-- The following **sub-packages** and `modules` were added:
+#### **Core** (adding; 2.1.0)
 
-- **core**
-  - `regressions`: methods for performing various regression analyses
-  - `interpolation_methods`: interpolation tools for numerical data
-  - `approximation_techniques`: approximation and curve-fitting methods
-  - `moving_operations`: moving average and related operations
-  - `statistical_tests`: hypothesis tests and statistical analysis tools
-  - `time_series`: comprehensive tools for time series analysis, including trend detection and seasonal decomposition
-  - `signal_processing`: filters and tools for signal analysis, including low-pass, high-pass, and band-pass filters
-- **distributions**
-  - Sub-package prepared for future additions of statistical distribution functions
-- **fields**
-  - `climatology`: climate data analysis tools, including periodic statistics, climate indicators, and representative series
-- **utils**: helper functions to support statistical computations and operations
+- Module `regressions`: methods for performing various regression analyses
+- Module `interpolation_methods`: interpolation tools for numerical data
+- Module `approximation_techniques`: approximation and curve-fitting methods
+- Module `moving_operations`: moving average and related operations
+- Module `statistical_tests`: hypothesis tests and statistical analysis tools
+- Module `time_series`: comprehensive tools for time series analysis, including trend detection and seasonal decomposition
+- Module `signal_processing`: filters and tools for signal analysis, including low-pass, high-pass, and band-pass filters
+
+#### **Distributions** (adding; 2.1.0)
+
+- Sub-package prepared for future additions of statistical distribution functions
+
+#### **Fields/Climatology** (adding; 2.1.0)
+
+- Sub-package `climatology`: climate data analysis tools, including periodic statistics, climate indicators, and representative series
+
+#### **Utils** (adding; 2.1.0)
+
+- Helper functions to support statistical computations and operations
