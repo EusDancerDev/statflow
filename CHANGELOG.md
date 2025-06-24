@@ -4,11 +4,23 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [3.4.7] - 2025-06-24
+## [3.5.0] - 2025-06-24
 
-### Changed (3.4.7)
+### Added (3.5.0)
 
-#### **General** (changing; 3.4.7)
+#### **Utils** (adding; 3.5.0)
+
+- Module `helpers.py`: add initial docstring as a future implementation guideline of the module
+
+### Changed (3.5.0)
+
+#### **General** (changing; 3.5.0)
+
+- *PEP-604 Modernisation*: comprehensive type annotation modernisation across all core and climatology modules
+- Update all union type annotations from `Union[A, B]` to modern `A | B` syntax
+- Modernise docstring type descriptions from `"A or B"` to `"A | B"` format throughout codebase
+- Enhanced type safety with specific generic types: `list[str]`, `dict[str, float]`, `tuple[pd.DataFrame, list[int]]`
+- Improved IDE support and code reliability through comprehensive type hints
 
 - Update variable names:
   - Changes have been made in the original file `global_parameters.py` in the `paramlib` package.
@@ -18,6 +30,34 @@ All notable changes to this project will be documented in this file.
 |:------:|:-----------------:|:-----------------:|
 | `fields/climatology/representative_series.py` | `COMMON_DELIM_LIST` | `COMMON_DELIMITER_LIST` |
 | `fields/climatology/periodic_climat_stats.py` | `TIME_FREQUENCIES_SHORT_1` | `TIME_FREQUENCIES_ABBREVIATED` |
+
+#### **Core Modules** (changing; 3.5.0)
+
+- All Core Modules (`interpolation_methods.py`, `moving_operations.py`, `signal_processing.py`, `statistical_tests.py`, `time_series.py`):
+  - Add comprehensive PEP-604 type annotations to all functions
+  - Update parameter types with modern union syntax: `list | np.ndarray`, `str | int`, `float | None`
+  - Modernise docstring syntax: `"list or numpy.ndarray"` → `"list | numpy.ndarray"`
+  - Enhanced return type annotations with specific tuple types where applicable
+
+- Notable Specifics:
+  - `time_series.py`: Most extensive modernisation with 6+ functions updated
+  - `statistical_tests.py`: Complex tuple return types: `tuple[float, float, str]`, `tuple[float, float, int, np.ndarray, str]`
+  - `interpolation_methods.py`: Enhanced parameter types: `callable | None`, `np.ndarray | float | tuple | str`
+
+#### **Fields/Climatology Modules** (changing; 3.5.0)
+
+- Climate Indicator Modules (`indicators.py`, `variables.py`):
+  - Add comprehensive type annotations for all climate calculation functions
+  - Remove unnecessary pandas imports used only for type hints to reduce module weight
+  - Modernise docstring syntax throughout with detailed parameter descriptions
+  - `variables.py`: Add 6 new meteorological calculation functions with proper documentation
+
+- Complex Analysis Modules (`periodic_climat_stats.py`, `representative_series.py`, `simple_bias_correction.py`):
+  - *Complex modernisation* with extensive helper function typing
+  - Update main functions with comprehensive type annotations and specific return types
+  - `periodic_climat_stats.py`: Add type hints to 15+ helper functions
+  - `simple_bias_correction.py`: Complete rewrite with new bias correction functions and validation
+  - `representative_series.py`: Specific tuple return types for HDY calculation functions
 
 ---
 
