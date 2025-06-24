@@ -29,10 +29,12 @@ from pygenutils.time_handling.date_and_time_utils import find_dt_key
 # Statistical Processing #
 #------------------------#
 
-def periodic_statistics(obj, statistic, freq,
-                        groupby_dates=False,
-                        drop_date_idx_col=False,
-                        season_months=None):
+def periodic_statistics(obj,
+                        statistic: str,
+                        freq: str,
+                        groupby_dates: bool = False,
+                        drop_date_idx_col: bool = False,
+                        season_months: list[int] | None = None):
     """
     Calculates basic statistics (not climatologies) for the given data 
     object over a specified time frequency.
@@ -43,7 +45,7 @@ def periodic_statistics(obj, statistic, freq,
 
     Parameters
     ----------
-    obj : pandas.DataFrame or xarray.Dataset or xarray.DataArray
+    obj : pandas.DataFrame | xarray.Dataset | xarray.DataArray
         The data object for which statistics are to be calculated.
     
     statistic : {"max", "min", "mean", "std", "sum"}
@@ -64,13 +66,13 @@ def periodic_statistics(obj, statistic, freq,
         Whether to drop the date index column from the results. 
         Default is False, retaining the dates in the output.
     
-    season_months : list of int, optional
+    season_months : list[int] | None, optional
         A list of three integers representing the months of a season,
         used if 'freq' is "SEAS". Must contain exactly three months.
 
     Returns
     -------
-    pandas.DataFrame or xarray object
+    pandas.DataFrame | xarray object
         The computed statistics as a DataFrame or xarray object,
         depending on the type of input data.
 
@@ -184,7 +186,9 @@ def periodic_statistics(obj, statistic, freq,
     return result
 
 
-def decompose_cumulative_data(cumulative_array, fill_value=None, zeros_dtype='d'):    
+def decompose_cumulative_data(cumulative_array: np.ndarray, 
+                             fill_value: float | None = None, 
+                             zeros_dtype: str = 'd') -> np.ndarray:    
     """
     Convert cumulative values into individual values by subtracting consecutive elements,
     with an option to handle negative differences.
@@ -197,9 +201,9 @@ def decompose_cumulative_data(cumulative_array, fill_value=None, zeros_dtype='d'
     ----------
     cumulative_array : numpy.ndarray
         A multi-dimensional array representing cumulative values over time or other axes.
-    fill_value : scalar or None, optional
+    fill_value : float | None, optional
         Value to replace negative differences. If None (default), negative differences are preserved.
-    zeros_dtype : str or numpy dtype
+    zeros_dtype : str
         Data type for the array of zeros if `fill_value` is used. Default is 'd' (float).
     
     Returns
@@ -245,7 +249,7 @@ def decompose_cumulative_data(cumulative_array, fill_value=None, zeros_dtype='d'
     return individual_values_array
 
 
-def hourly_ts_cumul(array, zero_threshold, zeros_dtype='d'):    
+def hourly_ts_cumul(array: np.ndarray, zero_threshold: float, zeros_dtype: str = 'd') -> np.ndarray:    
     """
     Obtain the 1-hour time step cumulative data by subtracting the 
     previous cumulative value from the next.
@@ -256,7 +260,7 @@ def hourly_ts_cumul(array, zero_threshold, zeros_dtype='d'):
         Time-series array (first index corresponds to time).
     zero_threshold : float
         Values below this threshold are considered unrealistic and set to zero.
-    zeros_dtype : str or numpy type, optional
+    zeros_dtype : str | numpy type, optional
         Data type of the resulting zero array, by default 'd' (double-precision float).
 
     Returns
@@ -274,10 +278,10 @@ def hourly_ts_cumul(array, zero_threshold, zeros_dtype='d'):
     return hour_ts_cumul
 
 
-def consec_occurrences_maxdata(array,
-                               max_threshold,
-                               min_consec=None,
-                               calc_max_consec=False):
+def consec_occurrences_maxdata(array: np.ndarray | pd.Series,
+                               max_threshold: float,
+                               min_consec: int | None = None,
+                               calc_max_consec: bool = False) -> int:
     
     """
     Count the occurrences where values exceed a threshold,
@@ -285,11 +289,11 @@ def consec_occurrences_maxdata(array,
 
     Parameters
     ----------
-    array : numpy.ndarray or pandas.Series
+    array : numpy.ndarray | pandas.Series
         Input array with maximum value data.
     max_threshold : float
         Threshold for counting occurrences.
-    min_consec : int, optional
+    min_consec : int | None, optional
         Minimum number of consecutive occurrences.
     calc_max_consec : bool, optional
         If True, returns the maximum length of consecutive occurrences.
@@ -319,23 +323,24 @@ def consec_occurrences_maxdata(array,
     return 0
     
     
-def consec_occurrences_mindata(array, min_thres, 
-                               threshold_mode="below", 
-                               min_consec=None, 
-                               calc_min_consec=False):
+def consec_occurrences_mindata(array: np.ndarray | pd.Series, 
+                               min_thres: float, 
+                               threshold_mode: str = "below", 
+                               min_consec: int | None = None, 
+                               calc_min_consec: bool = False) -> int:
     """
     Count the occurrences where values are below or above a threshold,
     with an option to calculate the longest consecutive occurrences.
 
     Parameters
     ----------
-    array : numpy.ndarray or pandas.Series
+    array : numpy.ndarray | pandas.Series
         Input array with minimum value data.
     min_thres : float
         Threshold for counting occurrences.
     threshold_mode : {"below", "above"}, optional
         Whether to count values below or above the threshold. Defaults to "below".
-    min_consec : int, optional
+    min_consec : int | None, optional
         Minimum number of consecutive occurrences.
     calc_min_consec : bool, optional
         If True, returns the maximum length of consecutive occurrences.
@@ -369,7 +374,7 @@ def consec_occurrences_mindata(array, min_thres,
 # Correlations #
 #--------------#
 
-def autocorrelate(x, twosided=False):
+def autocorrelate(x: list | np.ndarray, twosided: bool = False) -> np.ndarray:
     """
     Computes the autocorrelation of a time series.
 
@@ -380,7 +385,7 @@ def autocorrelate(x, twosided=False):
 
     Parameters
     ----------
-    x : list or numpy.ndarray
+    x : list | numpy.ndarray
         The time series data to autocorrelate.
     twosided : bool, optional, default: False
         If True, returns autocorrelation for both positive and negative 
