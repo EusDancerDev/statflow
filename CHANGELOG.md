@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [3.4.7] - 2025-06-24
+
+### Changed (3.4.7)
+
+#### **General** (changing; 3.4.7)
+
+- Update variable names:
+  - Changes have been made in the original file `global_parameters.py` in the `paramlib` package.
+  - These include abbreviation addressing.
+
+| Module | Old variable name | New variable name |
+|:------:|:-----------------:|:-----------------:|
+| `fields/climatology/representative_series.py` | `COMMON_DELIM_LIST` | `COMMON_DELIMITER_LIST` |
+| `fields/climatology/periodic_climat_stats.py` | `TIME_FREQUENCIES_SHORT_1` | `TIME_FREQUENCIES_ABBREVIATED` |
+
+---
+
 ## [3.4.6] - 2025-05-10
 
 ### Fixed (3.4.6)
