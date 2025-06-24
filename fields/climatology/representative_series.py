@@ -12,7 +12,7 @@ import pandas as pd
 # Import project modules #
 #------------------------#
 
-from paramlib.global_parameters import COMMON_DELIM_LIST
+from paramlib.global_parameters import COMMON_DELIMITER_LIST
 from statflow.core.interpolation_methods import polynomial_fitting
 from statflow.core.time_series import periodic_statistics
 
@@ -231,4 +231,4 @@ def hdy_interpolation(hdy_df,
 # Parameters and constants #
 #--------------------------#
 
-SPLIT_DELIM = COMMON_DELIM_LIST[3]
+SPLIT_DELIM = COMMON_DELIMITER_LIST[3]
