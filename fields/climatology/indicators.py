@@ -27,7 +27,7 @@ def calculate_WSDI(season_daily_tmax, tmax_threshold, min_consec_days):
     
     Input data
     ----------
-    season_daily_tmax : numpy.ndarray or pandas.Series
+    season_daily_tmax : numpy.ndarray | pandas.Series
           Daily maximum temperature data of the corresponding season in units ºC.
     tmax_threshold : float
           Upper limit of the maximum temperature.
@@ -49,7 +49,7 @@ def calculate_SU(season_daily_tmax, tmax_threshold=25):
     
     Parameters
     ----------
-    season_daily_tmax : numpy.ndarray or pandas.Series
+    season_daily_tmax : numpy.ndarray | pandas.Series
         Daily maximum temperature data of the corresponding season in units ºC.
     
     tmax_threshold : float
@@ -70,7 +70,7 @@ def calculate_CSU(season_daily_tmax, tmax_threshold=25):
     
     Parameters
     ----------
-    season_daily_tmax : numpy.ndarray or pandas.Series
+    season_daily_tmax : numpy.ndarray | pandas.Series
         Daily maximum temperature data of the season in units ºC.
     
     tmax_threshold : float
@@ -94,7 +94,7 @@ def calculate_FD(season_daily_tmin, tmin_threshold=0):
     
     Parameters
     ----------
-    season_daily_tmin : numpy.ndarray or pandas.Series
+    season_daily_tmin : numpy.ndarray | pandas.Series
         Daily minimum temperature data of the corresponding season in units ºC.
     
     tmin_threshold : float
@@ -115,7 +115,7 @@ def calculate_TN(season_daily_tmin, tmin_threshold=20):
     
     Parameters
     ----------
-    season_daily_tmin : numpy.ndarray or pandas.Series
+    season_daily_tmin : numpy.ndarray | pandas.Series
         Daily minimum temperature data of the corresponding season in units ºC.
     
     tmin_threshold : float
@@ -140,7 +140,7 @@ def calculate_RR(season_daily_precip, precip_threshold):
     
     Parameters
     ----------
-    season_daily_precip : numpy.ndarray or pandas.Series
+    season_daily_precip : numpy.ndarray | pandas.Series
         Daily precipitation data of the corresponding season in units mm.
     
     precip_threshold : float
@@ -163,7 +163,7 @@ def calculate_CWD(season_daily_precip, precip_threshold):
     
     Parameters
     ----------
-    season_daily_precip : numpy.ndarray or pandas.Series
+    season_daily_precip : numpy.ndarray | pandas.Series
         Daily precipitation data of the season in units mm.
     
     precip_threshold : float
@@ -191,9 +191,9 @@ def calculate_hwd(tmax, tmin, max_thresh, min_thresh, dates, min_days):
     
     Parameters
     ----------
-    tmax : numpy.ndarray or pandas.Series
+    tmax : numpy.ndarray | pandas.Series
         Array of daily maximum temperatures.
-    tmin : numpy.ndarray or pandas.Series
+    tmin : numpy.ndarray | pandas.Series
         Array of daily minimum temperatures.
     max_thresh : float
         Threshold for maximum temperature (95th percentile).

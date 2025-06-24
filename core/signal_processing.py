@@ -26,7 +26,7 @@ from pygenutils.strings.text_formatters import format_string
 # Noise handling #
 #-#-#-#-#-#-#-#-#-
     
-def signal_whitening(data, method="classic"):
+def signal_whitening(data: np.ndarray, method: str = "classic") -> np.ndarray:
     """
     Function to perform signal whitening (decorrelation) on the input data.
 
@@ -88,7 +88,7 @@ def signal_whitening(data, method="classic"):
 # Filtering #
 #~~~~~~~~~~~#
 
-def low_pass_filter(data, window_size=3):
+def low_pass_filter(data: np.ndarray, window_size: int = 3) -> np.ndarray:
     """
     Applies a simple moving average (SMA) low-pass filter to the input data.
     
@@ -123,7 +123,7 @@ def low_pass_filter(data, window_size=3):
     return filtered_data
 
 
-def high_pass_filter(data):
+def high_pass_filter(data: np.ndarray) -> np.ndarray:
     """
     Applies a simple high-pass filter by taking the difference between consecutive points in the time series.
     
@@ -149,7 +149,7 @@ def high_pass_filter(data):
     return filtered_data
 
 
-def band_pass1(original, timestep, low_freq, high_freq):
+def band_pass1(original: np.ndarray, timestep: float, low_freq: float, high_freq: float) -> np.ndarray:
     """
     Band-pass filter, method 1.
 
@@ -199,7 +199,7 @@ def band_pass1(original, timestep, low_freq, high_freq):
     return band_filtered
 
 
-def band_pass2(original, low_filtered_all_highfreq, low_filtered_all_lowfreq):
+def band_pass2(original: np.ndarray, low_filtered_all_highfreq: np.ndarray, low_filtered_all_lowfreq: np.ndarray) -> np.ndarray:
     """
     Band-pass filter, method 2.
 
@@ -241,7 +241,7 @@ def band_pass2(original, low_filtered_all_highfreq, low_filtered_all_lowfreq):
     return band_filtered
 
 
-def band_pass3(original, low_filtered_all, high_filtered_all):
+def band_pass3(original: np.ndarray, low_filtered_all: np.ndarray, high_filtered_all: np.ndarray) -> np.ndarray:
     """
     Band-pass filter, method 3.
 

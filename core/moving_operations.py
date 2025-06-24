@@ -20,7 +20,7 @@ from scipy.signal import convolve
 # Define functions #
 #------------------#
 
-def window_sum(x, N):
+def window_sum(x: np.ndarray, N: int) -> np.ndarray:
     """
     Computes the sum of elements in an array using a sliding window (moving sum).
     Applicable to any multidimensional array.
@@ -66,7 +66,7 @@ def window_sum(x, N):
     return sum_window
 
     
-def moving_average(x, N):
+def moving_average(x: np.ndarray, N: int) -> np.ndarray:
     """
     Returns the moving average of an array, irrespective of dimension.
     Uses the moving sum function and divides by the window size N.

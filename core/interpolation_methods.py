@@ -22,7 +22,11 @@ from filewise.general.introspection_utils import get_caller_args, get_type_str
 # General purpose #
 #-----------------#
 
-def polynomial_fitting(y, poly_ord, fix_edges=False, poly_func=None, poly_params=None):
+def polynomial_fitting(y: list | np.ndarray, 
+                      poly_ord: int, 
+                      fix_edges: bool = False, 
+                      poly_func: callable | None = None, 
+                      poly_params: list | dict | None = None) -> np.ndarray:
     """
     Fits a polynomial to 1D data using least squares or a custom function.
 
@@ -32,17 +36,17 @@ def polynomial_fitting(y, poly_ord, fix_edges=False, poly_func=None, poly_params
 
     Parameters
     ----------
-    y : list or numpy.ndarray
+    y : list | numpy.ndarray
         The y-coordinates (dependent variable) of the sample points.
     poly_ord : int
         The order of the polynomial to fit.
     fix_edges : bool, optional, default: False
         If True, fixes the first and last values of the fitted data 
         to match the original edges.
-    poly_func : callable, optional
+    poly_func : callable | None, optional
         A custom polynomial function to use for fitting. If provided, 
         `scipy.optimize.curve_fit` will be used instead of `numpy.polyfit`.
-    poly_params : list or dict, optional
+    poly_params : list | dict | None, optional
         Parameters for the custom polynomial function.
 
     Returns
@@ -83,7 +87,11 @@ def polynomial_fitting(y, poly_ord, fix_edges=False, poly_func=None, poly_params
 # NumPy objects #
 #-#-#-#-#-#-#-#-#
 
-def interp_np(data, method='linear', order=None, kind="nearest", fill_value="extrapolate"):
+def interp_np(data: np.ndarray, 
+              method: str = 'linear', 
+              order: int | None = None, 
+              kind: str | int = "nearest", 
+              fill_value: np.ndarray | float | tuple | str = "extrapolate") -> np.ndarray:
     """
     Perform interpolation on NumPy arrays.
 
@@ -93,9 +101,9 @@ def interp_np(data, method='linear', order=None, kind="nearest", fill_value="ext
         1D or 2D array with missing data to interpolate.
     method : {'linear', 'nearest', 'polynomial', 'spline'}, default 'linear'
         Interpolation method.
-    order : int, optional
+    order : int | None, optional
         Order of interpolation if using polynomial or spline methods.
-    kind : str or int, optional
+    kind : str | int, optional
         Specifies the kind of interpolation as a string or as an integer 
         specifying the order of the spline interpolator to use. 
         The string has to be one of:
@@ -104,7 +112,7 @@ def interp_np(data, method='linear', order=None, kind="nearest", fill_value="ext
             - 'zero', 'slinear', 'quadratic' and 'cubic' refer to a spline
               interpolation of zeroth, first, second or third order.
             - 'previous' and 'next' simply return the previous or next value of the point.
-    fill_value : array-like or (array-like, array_like) or "extrapolate", optional
+    fill_value : array-like | (array-like, array_like) | "extrapolate", optional
         - If a ndarray (or float), this value will be used to fill in for requested 
           points outside of the data range. If not provided, then the default is NaN.
         - If a two-element tuple, then the first element is used as a fill value 
@@ -178,25 +186,25 @@ def interp_np(data, method='linear', order=None, kind="nearest", fill_value="ext
 # Pandas objects #
 #-#-#-#-#-#-#-#-#-
 
-def interp_pd(data, method='linear', order=None, axis=0):
+def interp_pd(data, method: str = 'linear', order: int | None = None, axis: int = 0):
     """
     Perform interpolation on Pandas DataFrames or Series.
 
     Parameters
     ----------
-    data : pandas.DataFrame or pandas.Series
+    data : pandas.DataFrame | pandas.Series
         Data with missing values to interpolate.
     method : str
         Interpolation method, e.g., 'linear', 'polynomial', 'pad', 'bfill', 'spline'.
         Defaults to 'linear'.
-    order : int, optional
+    order : int | None, optional
         Order of interpolation for polynomial or spline methods.
     axis : int, optional
         Axis along which to interpolate (default is 0 for rows).
 
     Returns
     -------
-    data_interpolated : pandas.DataFrame or pandas.Series
+    data_interpolated : pandas.DataFrame | pandas.Series
         Data with interpolated values.
     """
     # Input validations #
@@ -227,24 +235,24 @@ def interp_pd(data, method='linear', order=None, axis=0):
 # Xarray objects #
 #-#-#-#-#-#-#-#-#-
 
-def interp_xr(data, method='linear', order=None, dim=None):
+def interp_xr(data, method: str = 'linear', order: int | None = None, dim: str | None = None):
     """
     Perform interpolation on Xarray DataArrays or Datasets.
 
     Parameters
     ----------
-    data : xarray.DataArray or xarray.Dataset
+    data : xarray.DataArray | xarray.Dataset
         Data with missing values to interpolate.
     method : {'linear', 'nearest', 'spline', 'polyfit'}, default 'linear'
         Interpolation method.
-    order : int, optional
+    order : int | None, optional
         Order for 'spline' or 'polyfit' interpolation.
-    dim : str, optional
+    dim : str | None, optional
         Dimension along which to interpolate (required for Xarray).
 
     Returns
     -------
-    data_interpolated : xarray.DataArray or xarray.Dataset
+    data_interpolated : xarray.DataArray | xarray.Dataset
         Interpolated data.
     """
     # Input validations #

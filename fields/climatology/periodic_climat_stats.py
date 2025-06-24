@@ -45,7 +45,7 @@ from paramlib.global_parameters import (
     BASIC_TIME_FORMAT_STRS,
     MONTH_NUMBER_DICT,
     TIME_FREQUENCIES_COMPLETE,
-    TIME_FREQUENCIES_SHORT_1
+    TIME_FREQUENCIES_ABBREVIATED
 )
 from pygenutils.strings.string_handler import find_substring_index
 from pygenutils.strings.text_formatters import format_string
@@ -58,17 +58,18 @@ from statflow.core.time_series import periodic_statistics
 #------------------#
 
 def climat_periodic_statistics(obj,
-                               statistic,
-                               time_freq,
-                               keep_std_dates=False, 
-                               drop_date_idx_col=False,
-                               season_months=None):
+                               statistic: str,
+                               time_freq: str,
+                               keep_std_dates: bool = False, 
+                               drop_date_idx_col: bool = False,
+                               season_months: list[int] | None = None):
     """
     Function that calculates climatologic statistics for a time-frequency.
     
     Parameters
     ----------
-    obj : pandas.DataFrame, xarray.Dataset or xarray.DataArray.
+    obj : pandas.DataFrame | xarray.Dataset | xarray.DataArray
+        The data object for climatological statistics calculation.
     statistic : {"max", "min", "mean", "std", "sum"}
         The statistic to calculate.
     time_freq : str
@@ -84,14 +85,14 @@ def climat_periodic_statistics(obj,
         If True, the dates will be kept, but the corresponding array
         will be an index, instead of a column.
         Defaults to False
-    season_months : list of integers
+    season_months : list[int] | None
         List containing the month numbers to later refer to the time array,
         whatever the object is among the mentioned three types.
         Defaults to None.
     
     Returns
     -------
-    obj_climat : pandas.DataFrame, xarray.Dataset or xarray.DataArray.
+    obj_climat : pandas.DataFrame | xarray.Dataset | xarray.DataArray
         Calculated climatological average.
     
     Notes
@@ -105,7 +106,7 @@ def climat_periodic_statistics(obj,
     
     # Determine object type and get time frequency abbreviation
     obj_type = get_type_str(obj, lowercase=True)
-    freq_abbr = FREQ_ABBRS[TIME_FREQUENCIES_SHORT_1.index(time_freq)]
+    freq_abbr = FREQ_ABBRS[TIME_FREQUENCIES_ABBREVIATED.index(time_freq)]
     
     # Identify the time dimension
     date_key = _get_time_dimension(obj, obj_type)
@@ -132,10 +133,10 @@ def climat_periodic_statistics(obj,
         raise TypeError(f"Unsupported object type: {obj_type}")
 
 
-def _validate_inputs(time_freq, season_months, statistic=None):
+def _validate_inputs(time_freq: str, season_months: list[int] | None, statistic: str | None = None) -> None:
     """Validate input parameters."""
-    if time_freq not in TIME_FREQUENCIES_SHORT_1:
-        format_args_climat_stats = ("time-frequency", time_freq, TIME_FREQUENCIES_SHORT_1)
+    if time_freq not in TIME_FREQUENCIES_ABBREVIATED:
+        format_args_climat_stats = ("time-frequency", time_freq, TIME_FREQUENCIES_ABBREVIATED)
         raise ValueError(format_string(UNSUPPORTED_OPTION_ERROR_TEMPLATE, format_args_climat_stats))
     
     if statistic is not None and statistic not in STATISTICS:
@@ -156,7 +157,7 @@ def _validate_inputs(time_freq, season_months, statistic=None):
             raise ValueError(SEASON_MONTH_FMT_ERROR_TEMPLATE)
 
 
-def _get_time_dimension(obj, obj_type):
+def _get_time_dimension(obj, obj_type: str) -> str:
     """Get the time dimension key from the object."""
     if obj_type in ["dataframe", "dataset", "dataarray"]:
         return find_dt_key(obj)
@@ -164,7 +165,7 @@ def _get_time_dimension(obj, obj_type):
         raise TypeError(f"Unsupported object type: {obj_type}")
 
 
-def _get_latest_year(years):
+def _get_latest_year(years: np.ndarray) -> int:
     """Get the latest year, preferably a leap year."""
     leapyear_bool_arr = [calendar.isleap(year) for year in years]
     llba = len(leapyear_bool_arr)
@@ -175,9 +176,18 @@ def _get_latest_year(years):
         return years[-1]
 
 
-def _process_dataframe(obj, date_key, statistic, time_freq, keep_std_dates, 
-                     drop_date_idx_col, season_months, freq_abbr, 
-                     latest_year, months, days, hours):
+def _process_dataframe(obj: pd.DataFrame, 
+                      date_key: str, 
+                      statistic: str, 
+                      time_freq: str, 
+                      keep_std_dates: bool, 
+                      drop_date_idx_col: bool, 
+                      season_months: list[int] | None, 
+                      freq_abbr: str, 
+                      latest_year: int, 
+                      months: np.ndarray, 
+                      days: np.ndarray, 
+                      hours: np.ndarray):
     """Process pandas DataFrame objects."""
     # Define the climatologic statistical data frame columns
     climat_obj_cols = [date_key] + [obj.columns[i]+"_climat" for i in range(1, len(obj.columns))]
@@ -211,8 +221,16 @@ def _process_dataframe(obj, date_key, statistic, time_freq, keep_std_dates,
     return _format_dataframe_output(climat_vals, climat_dates, climat_obj_cols)
 
 
-def _process_hourly_dataframe(obj, date_key, statistic, keep_std_dates, freq_abbr, 
-                            latest_year, months, days, hours, climat_obj_cols):
+def _process_hourly_dataframe(obj: pd.DataFrame, 
+                            date_key: str, 
+                            statistic: str, 
+                            keep_std_dates: bool, 
+                            freq_abbr: str, 
+                            latest_year: int, 
+                            months: np.ndarray, 
+                            days: np.ndarray, 
+                            hours: np.ndarray, 
+                            climat_obj_cols: list[str]) -> tuple[list, np.ndarray, list[str]]:
     """Process hourly data for DataFrame."""
     climat_vals = []
     for m in months:
@@ -235,8 +253,15 @@ def _process_hourly_dataframe(obj, date_key, statistic, keep_std_dates, freq_abb
     return climat_vals, climat_dates, climat_obj_cols
 
 
-def _process_daily_dataframe(obj, date_key, statistic, keep_std_dates, freq_abbr, 
-                           latest_year, months, days, climat_obj_cols):
+def _process_daily_dataframe(obj: pd.DataFrame, 
+                           date_key: str, 
+                           statistic: str, 
+                           keep_std_dates: bool, 
+                           freq_abbr: str, 
+                           latest_year: int, 
+                           months: np.ndarray, 
+                           days: np.ndarray, 
+                           climat_obj_cols: list[str]) -> tuple[list, np.ndarray, list[str]]:
     """Process daily data for DataFrame."""
     climat_vals = []
     for m in months:
@@ -257,8 +282,14 @@ def _process_daily_dataframe(obj, date_key, statistic, keep_std_dates, freq_abbr
     return climat_vals, climat_dates, climat_obj_cols
 
 
-def _process_monthly_dataframe(obj, date_key, statistic, keep_std_dates, freq_abbr, 
-                             latest_year, months, climat_obj_cols):
+def _process_monthly_dataframe(obj: pd.DataFrame, 
+                             date_key: str, 
+                             statistic: str, 
+                             keep_std_dates: bool, 
+                             freq_abbr: str, 
+                             latest_year: int, 
+                             months: np.ndarray, 
+                             climat_obj_cols: list[str]) -> tuple[list, np.ndarray, list[str]]:
     """Process monthly data for DataFrame."""
     climat_vals = []
     for m in months:
@@ -277,8 +308,12 @@ def _process_monthly_dataframe(obj, date_key, statistic, keep_std_dates, freq_ab
     return climat_vals, climat_dates, climat_obj_cols
 
 
-def _process_seasonal_dataframe(obj, date_key, statistic, keep_std_dates, 
-                              season_months, climat_obj_cols):
+def _process_seasonal_dataframe(obj: pd.DataFrame, 
+                              date_key: str, 
+                              statistic: str, 
+                              keep_std_dates: bool, 
+                              season_months: list[int] | None, 
+                              climat_obj_cols: list[str]) -> tuple[list, list, list[str]]:
     """Process seasonal data for DataFrame."""
     climat_vals = [obj[obj[date_key].dt.month.isin(season_months)].iloc[:, 1:][statistic]()]
     
@@ -292,7 +327,10 @@ def _process_seasonal_dataframe(obj, date_key, statistic, keep_std_dates,
     return climat_vals, climat_dates, climat_obj_cols
 
 
-def _process_yearly_dataframe(obj, statistic, freq_abbr, drop_date_idx_col):
+def _process_yearly_dataframe(obj: pd.DataFrame, 
+                            statistic: str, 
+                            freq_abbr: str, 
+                            drop_date_idx_col: bool) -> tuple[list, list]:
     """Process yearly data for DataFrame."""
     climat_df = periodic_statistics(obj, statistic, freq_abbr, drop_date_idx_col)
     climat_vals = [climat_df.iloc[:, 1:][statistic]()]
@@ -301,7 +339,7 @@ def _process_yearly_dataframe(obj, statistic, freq_abbr, drop_date_idx_col):
     return climat_vals, climat_dates
 
 
-def _format_dataframe_output(climat_vals, climat_dates, climat_obj_cols):
+def _format_dataframe_output(climat_vals: list, climat_dates: list | np.ndarray, climat_obj_cols: list[str]) -> pd.DataFrame:
     """Format the output DataFrame."""
     # Check climatological value array's shape to later fit into the df
     climat_vals = np.array(climat_vals)
@@ -320,8 +358,14 @@ def _format_dataframe_output(climat_vals, climat_dates, climat_obj_cols):
     return obj_climat
 
 
-def _process_xarray(obj, date_key, statistic, time_freq, keep_std_dates, 
-                  season_months, freq_abbr, latest_year):
+def _process_xarray(obj, 
+                  date_key: str, 
+                  statistic: str, 
+                  time_freq: str, 
+                  keep_std_dates: bool, 
+                  season_months: list[int] | None, 
+                  freq_abbr: str, 
+                  latest_year: int):
     """Process xarray objects (Dataset or DataArray)."""
     # Process based on time frequency
     if time_freq == "hourly":
@@ -337,28 +381,33 @@ def _process_xarray(obj, date_key, statistic, time_freq, keep_std_dates,
                                        season_months, freq_abbr, latest_year, date_key)
 
 
-def _process_hourly_xarray(obj, date_key, statistic):
+def _process_hourly_xarray(obj, date_key: str, statistic: str):
     """Process hourly data for xarray."""
     # Define the hourly climatology pattern
     obj_climat_nonstd_times = obj['time.hour'] / 24 + obj['time.dayofyear']
     return obj.groupby(obj_climat_nonstd_times).statistic(dim=date_key)
 
 
-def _process_seasonal_xarray(obj, date_key, statistic, season_months):
+def _process_seasonal_xarray(obj, date_key: str, statistic: str, season_months: list[int] | None):
     """Process seasonal data for xarray."""
     obj_seas_sel = obj.sel({date_key: obj[date_key].dt.month.isin(season_months)})
     return obj_seas_sel[statistic](dim=date_key)
 
 
-def _process_other_xarray(obj, date_key, statistic, time_freq):
+def _process_other_xarray(obj, date_key: str, statistic: str, time_freq: str):
     """Process other time frequencies for xarray."""
     # This is a placeholder for other time frequencies
     # In a complete refactoring, you would implement specific functions for each
     return obj.groupby(time_freq)[statistic](dim=date_key)
 
 
-def _format_xarray_time_dimension(obj_climat, time_freq, keep_std_dates, 
-                                season_months, freq_abbr, latest_year, date_key):
+def _format_xarray_time_dimension(obj_climat, 
+                                time_freq: str, 
+                                keep_std_dates: bool, 
+                                season_months: list[int] | None, 
+                                freq_abbr: str, 
+                                latest_year: int, 
+                                date_key: str):
     """Format the time dimension for xarray objects."""
     if time_freq in TIME_FREQUENCIES_COMPLETE[2:]:
         # Get the analogous dimension of 'time', usually label 'group'
@@ -398,7 +447,7 @@ def _format_xarray_time_dimension(obj_climat, time_freq, keep_std_dates,
     return obj_climat
 
 
-def _rename_xarray_dimension(obj_climat, occ_time_name_temp, occ_time_name):
+def _rename_xarray_dimension(obj_climat, occ_time_name_temp: str, occ_time_name: str):
     """Rename the dimension in xarray objects."""
     try:
         # Rename the analogous dimension of 'time' on dimension list

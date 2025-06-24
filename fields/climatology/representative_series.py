@@ -27,9 +27,9 @@ from statflow.core.time_series import periodic_statistics
 #-#-#-#-#-#-#-#-#
 
 def calculate_HDY(hourly_df: pd.DataFrame, 
-                  varlist: list, 
-                  varlist_primary: list, 
-                  drop_new_idx_col: bool = False) -> tuple:
+                  varlist: list[str], 
+                  varlist_primary: list[str], 
+                  drop_new_idx_col: bool = False) -> tuple[pd.DataFrame, list[int]]:
     """
     Calculate the Hourly Design Year (HDY) using ISO 15927-4:2005 (E) standard.
     
@@ -37,16 +37,17 @@ def calculate_HDY(hourly_df: pd.DataFrame,
     ----------
     hourly_df : pd.DataFrame
         DataFrame containing hourly climatological data.
-    varlist : list
+    varlist : list[str]
         List of all variables (column names) to be considered in HDY DataFrame.
-    varlist_primary :list
+    varlist_primary : list[str]
         Primary variables to be used for ranking calculations.
     drop_new_idx_col : bool
         Whether to drop the reset index column.
         
     Returns
     -------
-    tuple: HDY DataFrame and the list of selected years for each month.
+    tuple[pd.DataFrame, list[int]]
+        HDY DataFrame and the list of selected years for each month.
     """
     # Initialise the HDY DataFrame to store results
     hdy_df = pd.DataFrame(columns=varlist)
@@ -123,13 +124,13 @@ def calculate_HDY(hourly_df: pd.DataFrame,
 # Helpers #
 #-#-#-#-#-#
 
-def hdy_interpolation(hdy_df,
-                      hdy_years,
-                      previous_month_last_time_range,
-                      next_month_first_time_range,
-                      varlist_to_interpolate,
-                      polynomial_order,
-                      drop_date_idx_col=False):
+def hdy_interpolation(hdy_df: pd.DataFrame,
+                      hdy_years: list[int],
+                      previous_month_last_time_range: str,
+                      next_month_first_time_range: str,
+                      varlist_to_interpolate: list[str],
+                      polynomial_order: int,
+                      drop_date_idx_col: bool = False) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
     Interpolates along a selected time array between two months
     of an HDY constructed following the ISO 15927-4 2005 (E) standard.
@@ -142,13 +143,13 @@ def hdy_interpolation(hdy_df,
     ----------
     hdy_df : pd.DataFrame
         DataFrame containing the HDY hourly data.
-    hdy_years : list
+    hdy_years : list[int]
         List of selected years corresponding to each month in HDY.
     previous_month_last_time_range : str
         Time range (e.g., '23:00-23:59') for the last day of the previous month.
     next_month_first_time_range : str
         Time range (e.g., '00:00-01:00') for the first day of the next month.
-    varlist_to_interpolate : list
+    varlist_to_interpolate : list[str]
         Variables to be interpolated between months.
     polynomial_order : int
         Order of the polynomial to use for fitting.
@@ -157,7 +158,7 @@ def hdy_interpolation(hdy_df,
 
     Returns
     -------
-    tuple
+    tuple[pd.DataFrame, pd.DataFrame]
         - hdy_interp: pd.DataFrame
                 Interpolated variables and smoothed transitions, except wind direction
         - wind_dir_meteo_interp: pd.DataFrame

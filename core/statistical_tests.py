@@ -15,7 +15,7 @@ import scipy.stats as ss
 # Hypothesis tests #
 #------------------#
 
-def z_test_two_means(data1, data2, alpha=0.05):
+def z_test_two_means(data1: np.ndarray, data2: np.ndarray, alpha: float = 0.05) -> tuple[float, float, str]:
     """
     Performs a Z-test for comparing the means of two independent samples.
     
@@ -72,7 +72,7 @@ def z_test_two_means(data1, data2, alpha=0.05):
 
 
 
-def chi_squared_test(contingency_table, alpha=0.05):
+def chi_squared_test(contingency_table: np.ndarray, alpha: float = 0.05) -> tuple[float, float, int, np.ndarray, str]:
     """
     Performs a Chi-squared test for independence on a contingency table.
     
