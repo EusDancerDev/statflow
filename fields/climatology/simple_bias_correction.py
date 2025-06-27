@@ -53,6 +53,13 @@ def _unique_sorted(items):
     -------
     list
         Sorted list of unique items.
+        
+    Examples
+    --------
+    >>> _unique_sorted([3, 1, 4, 1, 5, 9, 2, 6, 5])
+    [1, 2, 3, 4, 5, 6, 9]
+    >>> _unique_sorted(['c', 'a', 'b', 'a'])
+    ['a', 'b', 'c']
     """
     return sorted(set(items))
 
@@ -76,7 +83,27 @@ def _validate_inputs(delta_type, preference, delta_value, statistic=None):
 
 
 def _get_delta_format(delta_value):
-    """Get the format string for delta values."""
+    """
+    Get the format string for delta values.
+    
+    Parameters
+    ----------
+    delta_value : int | str
+        If an integer, specifies the number of decimal places to display.
+        If "auto", uses scientific notation with 2 significant digits.
+        
+    Returns
+    -------
+    str
+        Format string for displaying delta values.
+        
+    Examples
+    --------
+    >>> _get_delta_format(3)
+    '{:.3f}'
+    >>> _get_delta_format("auto")
+    '{:.2g}'
+    """
     if delta_value == "auto":
         return "{:.2g}"
     else:
@@ -108,7 +135,38 @@ def _align_time_dimensions(observed_series, reanalysis_series, obj_type_observed
 
 
 def _rename_xarray_dimension(obj, old_dim, new_dim):
-    """Rename a dimension in an xarray object."""
+    """
+    Rename a dimension in an xarray object.
+    
+    This function attempts to rename a dimension in an xarray object using
+    multiple approaches to handle different xarray structures and versions.
+    
+    Parameters
+    ----------
+    obj : xarray.Dataset | xarray.DataArray
+        The xarray object whose dimension needs to be renamed.
+    old_dim : str
+        Current name of the dimension to be renamed.
+    new_dim : str
+        New name for the dimension.
+        
+    Notes
+    -----
+    The function modifies the object in place and uses multiple fallback 
+    approaches:
+    1. First tries rename_dims() and rename()
+    2. If that fails, tries swap_dims() twice
+    3. Silently continues if all approaches fail
+    
+    This robust approach handles different xarray versions and object states.
+    
+    Examples
+    --------
+    >>> import xarray as xr
+    >>> data = xr.DataArray([1, 2, 3], dims=['old_time'])
+    >>> _rename_xarray_dimension(data, 'old_time', 'time')
+    # The dimension 'old_time' is now renamed to 'time'
+    """
     try:
         # Rename the analogous dimension of 'time' on dimension list
         obj = obj.rename_dims({old_dim: new_dim})
@@ -258,7 +316,32 @@ def _apply_deltas(delta_obj, delta_cols, time_freq, delta_type, preference,
 
 
 def _get_frequency_abbreviation(time_freq, delta_obj, date_key, obj_type_observed, obj_type_reanalysis):
-    """Get the frequency abbreviation for the time frequency."""
+    """
+    Get the frequency abbreviation for the time frequency.
+    
+    Parameters
+    ----------
+    time_freq : str
+        Time frequency string ('seasonal', 'monthly', 'daily', 'hourly').
+    delta_obj : pandas.DataFrame | xarray.Dataset | xarray.DataArray
+        Delta object containing time information.
+    date_key : str
+        Name of the date/time column or dimension.
+    obj_type_observed : str
+        Type of the observed series object ('dataframe', 'dataset', 'dataarray').
+    obj_type_reanalysis : str
+        Type of the reanalysis series object ('dataframe', 'dataset', 'dataarray').
+        
+    Returns
+    -------
+    str
+        Frequency abbreviation string for pandas/xarray operations.
+        
+    Notes
+    -----
+    For seasonal frequency, returns the time_freq string itself.
+    For other frequencies, infers the frequency from the time series data.
+    """
     if time_freq == "seasonal":
         return time_freq
     else:
