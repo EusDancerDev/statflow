@@ -5,6 +5,8 @@
 # Import modules #
 #----------------#
 
+from typing import Callable
+
 import numpy as np
 import scipy.interpolate as scintp
 import scipy.optimize as scopt
@@ -23,10 +25,10 @@ from filewise.general.introspection_utils import get_caller_args, get_type_str
 #-----------------#
 
 def polynomial_fitting(y: list | np.ndarray, 
-                      poly_ord: int, 
-                      fix_edges: bool = False, 
-                      poly_func: callable | None = None, 
-                      poly_params: list | dict | None = None) -> np.ndarray:
+                       poly_ord: int, 
+                       fix_edges: bool = False, 
+                       poly_func: Callable | None = None, 
+                       poly_params: list | dict | None = None) -> np.ndarray:
     """
     Fits a polynomial to 1D data using least squares or a custom function.
 
