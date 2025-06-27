@@ -33,21 +33,100 @@ def calculate_HDY(hourly_df: pd.DataFrame,
     """
     Calculate the Hourly Design Year (HDY) using ISO 15927-4:2005 (E) standard.
     
+    The HDY is a representative year constructed by selecting the most typical
+    month from each calendar month across the historical record, based on
+    statistical ranking of primary meteorological variables.
+    
     Parameters
     ----------
     hourly_df : pd.DataFrame
-        DataFrame containing hourly climatological data.
+        DataFrame containing hourly climatological data with a 'date' column
+        and meteorological variables.
     varlist : list[str]
-        List of all variables (column names) to be considered in HDY DataFrame.
+        List of all variables (column names) to be included in the HDY DataFrame.
+        Must include 'date' as the first element.
     varlist_primary : list[str]
-        Primary variables to be used for ranking calculations.
-    drop_new_idx_col : bool
-        Whether to drop the reset index column.
+        Primary variables to be used for ranking calculations. These variables
+        determine which year's data is selected for each month.
+        Must include 'date' as the first element.
+    drop_new_idx_col : bool, default False
+        Whether to drop the reset index column during processing.
         
     Returns
     -------
     tuple[pd.DataFrame, list[int]]
-        HDY DataFrame and the list of selected years for each month.
+        hdy_dataframe : pd.DataFrame
+            Complete HDY DataFrame with hourly data for the representative year.
+        selected_years : list[int]
+            List of selected years for each month (12 elements).
+    
+    Examples
+    --------
+    >>> import pandas as pd
+    >>> import numpy as np
+    >>> 
+    >>> # Create sample hourly data
+    >>> dates = pd.date_range('2020-01-01', '2023-12-31 23:00', freq='H')
+    >>> hourly_data = {
+    ...     'date': dates,
+    ...     'temperature': np.random.normal(15, 10, len(dates)),
+    ...     'humidity': np.random.normal(70, 20, len(dates)),
+    ...     'wind_speed': np.random.exponential(3, len(dates))
+    ... }
+    >>> hourly_df = pd.DataFrame(hourly_data)
+    >>> 
+    >>> # Define variable lists
+    >>> varlist = ['date', 'temperature', 'humidity', 'wind_speed']
+    >>> varlist_primary = ['date', 'temperature', 'humidity']
+    >>> 
+    >>> # Calculate HDY
+    >>> hdy_df, selected_years = calculate_HDY(hourly_df, varlist, varlist_primary)
+    >>> print(f"Selected years: {selected_years}")
+    >>> print(f"HDY shape: {hdy_df.shape}")
+    
+    Raises
+    ------
+    ValueError
+        If the primary variables are not found in the DataFrame columns.
+    KeyError
+        If the 'date' column is missing from the DataFrame.
+    IndexError
+        If insufficient data is available for any month.
+        
+    Notes
+    -----
+    The HDY calculation follows these steps for each calendar month:
+    
+    1. **Daily Aggregation**: Calculate daily means for each primary variable
+    2. **Ranking**: Rank each day within the month for each variable
+    3. **Probability Calculation**: Convert ranks to cumulative probabilities (φ)
+    4. **Annual Evaluation**: For each year, calculate the sum of absolute 
+       deviations from the overall monthly φ values
+    5. **Year Selection**: Choose the year with the minimum total deviation
+    
+    The mathematical foundation uses cumulative probability:
+    φ = (rank - 0.5) / number_of_days
+    
+    For each year y and variable v:
+    F_s(y,v) = Σ|φ_actual(d,v) - φ_monthly(d,v)|
+    
+    The selected year minimizes: F_s_total(y) = Σ F_s(y,v)
+    
+    **Data Requirements:**
+    - Continuous hourly data for multiple years
+    - At least one complete year of data
+    - Primary variables should be meteorologically relevant
+    
+    **Limitations:**
+    - The method assumes stationarity in climate statistics
+    - Extreme years may be under-represented
+    - Requires sufficient data for robust statistics
+    
+    References
+    ----------
+    ISO 15927-4:2005(E) - Hygrothermal performance of buildings - Calculation 
+    and presentation of climatic data - Part 4: Hourly data for assessing the 
+    annual energy use for heating and cooling.
     """
     # Initialise the HDY DataFrame to store results
     hdy_df = pd.DataFrame(columns=varlist)
@@ -132,37 +211,111 @@ def hdy_interpolation(hdy_df: pd.DataFrame,
                       polynomial_order: int,
                       drop_date_idx_col: bool = False) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
-    Interpolates along a selected time array between two months
-    of an HDY constructed following the ISO 15927-4 2005 (E) standard.
+    Interpolates variables between months in an HDY to smooth transitions.
 
-    Since the HDY is composed of 'fragments' of completely different months,
-    there are unavoidable vertical jumps for every variable. Polynomial interpolation
-    helps to smooth these transitions between months.
+    Since the HDY is composed of 'fragments' from different years, there are
+    unavoidable discontinuities at month boundaries. This function applies
+    polynomial interpolation to smooth these transitions between consecutive months.
 
     Parameters
     ----------
     hdy_df : pd.DataFrame
-        DataFrame containing the HDY hourly data.
+        DataFrame containing the HDY hourly data with a 'date' column.
     hdy_years : list[int]
-        List of selected years corresponding to each month in HDY.
+        List of selected years corresponding to each month in HDY (12 elements).
     previous_month_last_time_range : str
-        Time range (e.g., '23:00-23:59') for the last day of the previous month.
+        Time range for the last hours of the previous month (format: "HH:MM").
+        Example: "20:23" for hours 20, 21, 22, 23.
     next_month_first_time_range : str
-        Time range (e.g., '00:00-01:00') for the first day of the next month.
+        Time range for the first hours of the next month (format: "HH:MM").
+        Example: "0:3" for hours 0, 1, 2, 3.
     varlist_to_interpolate : list[str]
-        Variables to be interpolated between months.
+        Variables to be interpolated between months. Should not include 'date'.
+        Wind speed ('ws10') is automatically excluded as it's derived from u10, v10.
     polynomial_order : int
-        Order of the polynomial to use for fitting.
-    drop_date_idx_col : bool, optional
-        Whether to drop the index column.
+        Order of the polynomial to use for fitting (1=linear, 2=quadratic, 3=cubic, etc.).
+    drop_date_idx_col : bool, default False
+        Whether to drop the index column during processing.
 
     Returns
     -------
     tuple[pd.DataFrame, pd.DataFrame]
-        - hdy_interp: pd.DataFrame
-                Interpolated variables and smoothed transitions, except wind direction
-        - wind_dir_meteo_interp: pd.DataFrame
-                Interpolated wind direction and smoothed transitions
+        hdy_interp : pd.DataFrame
+            HDY DataFrame with interpolated variables and smoothed transitions.
+        wind_dir_meteo_interp : pd.DataFrame
+            Interpolated meteorological wind direction data.
+
+    Examples
+    --------
+    >>> # Assuming you have an HDY DataFrame and selected years
+    >>> varlist_interp = ['temperature', 'humidity', 'u10', 'v10']
+    >>> 
+    >>> hdy_smooth, wind_dir = hdy_interpolation(
+    ...     hdy_df=hdy_dataframe,
+    ...     hdy_years=selected_years,
+    ...     previous_month_last_time_range="20:23",
+    ...     next_month_first_time_range="0:3",
+    ...     varlist_to_interpolate=varlist_interp,
+    ...     polynomial_order=3
+    ... )
+    >>> 
+    >>> print("Interpolation completed successfully")
+    >>> print(f"Original shape: {hdy_dataframe.shape}")
+    >>> print(f"Smoothed shape: {hdy_smooth.shape}")
+
+    Raises
+    ------
+    ValueError
+        If the time range format is incorrect or polynomial_order < 1.
+    KeyError
+        If required variables are not found in the DataFrame.
+    IndexError
+        If insufficient data is available for interpolation.
+
+    Notes
+    -----
+    **Interpolation Process:**
+    
+    1. **Time Range Extraction**: For each consecutive month pair, extract
+       data from the specified time ranges at month boundaries
+    2. **Polynomial Fitting**: Apply polynomial fitting to smooth the transition
+       using the `polynomial_fitting` function with edge preservation
+    3. **Wind Speed Calculation**: Recalculate wind speed modulus from
+       interpolated u10 and v10 components
+    4. **Wind Direction**: Calculate meteorological wind direction using
+       the meteorological convention (0° = North, clockwise positive)
+
+    **Wind Direction Convention:**
+    - u component: positive when wind is westerly (blows from west to east)
+    - v component: positive when wind is northerly (blows from south to north)
+    - Direction: antiparallel to wind vector (direction wind comes FROM)
+    - 0° corresponds to wind from North, increasing clockwise
+
+    **Time Range Format:**
+    The time range strings should be in "HH:MM" format where:
+    - Single hours: "0:3" means hours 0, 1, 2, 3
+    - Multiple hours: "20:23" means hours 20, 21, 22, 23
+
+    **Polynomial Orders:**
+    - Order 1: Linear interpolation
+    - Order 2: Quadratic interpolation  
+    - Order 3: Cubic interpolation (recommended for smooth transitions)
+    - Higher orders: May cause overfitting with oscillations
+
+    **Performance Considerations:**
+    - Processing time increases with polynomial order
+    - Memory usage scales with the number of variables interpolated
+    - For large datasets, consider interpolating only essential variables
+
+    **Limitations:**
+    - Assumes monotonic time progression within each month
+    - May not preserve physical relationships between variables
+    - Edge effects at the beginning and end of the time series
+
+    See Also
+    --------
+    calculate_HDY : Generate the initial HDY data
+    polynomial_fitting : Core polynomial interpolation function
     """
     hdy_interp = hdy_df.copy()
 
@@ -200,7 +353,7 @@ def hdy_interpolation(hdy_df: pd.DataFrame,
             # Update the main HDY DataFrame
             hdy_interp.loc[df_slice_to_fit.index, var] = fitted_values
 
-    # Calculate wind speed modulus based on interpolated u10 and 
+    # Calculate wind speed modulus based on interpolated u10 and v10
     """
     On the wind direction calculus
     ------------------------------
@@ -215,7 +368,7 @@ def hdy_interpolation(hdy_df: pd.DataFrame,
      the direction of the wind speed vector is taken as
      the antiparallel image vector.
      The zero-degree angle is set 90º further than the
-     default unit cyrcle, so that 0º means wind blowing from the North. 
+     default unit circle, so that 0º means wind blowing from the North. 
     """   
     hdy_interp["ws10"] = np.sqrt(hdy_interp.u10 ** 2 + hdy_interp.v10 ** 2)
 
