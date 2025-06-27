@@ -187,8 +187,8 @@ def periodic_statistics(obj,
 
 
 def decompose_cumulative_data(cumulative_array: np.ndarray, 
-                             fill_value: float | None = None, 
-                             zeros_dtype: str = 'd') -> np.ndarray:    
+                              fill_value: float | None = None, 
+                              zeros_dtype: str = 'd') -> np.ndarray:    
     """
     Convert cumulative values into individual values by subtracting consecutive elements,
     with an option to handle negative differences.
