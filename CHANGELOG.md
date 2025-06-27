@@ -4,6 +4,56 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [3.5.1] - 2025-06-27
+
+### Fixed (3.5.1)
+
+#### **Fields/Climatology** (fixing; 3.5.1)
+
+- Module `indicators.py`:
+  - Fixed functions `calculate_CSU` and `calculate_CWD` that were calling `consec_occurrences_maxdata` with wrong parameter `max_consecutive_days=True` → changed to `calc_max_consec=True`
+  - This way, runtime errors that prevented these functions from working correctly are eliminated.
+
+### Changed (3.5.1)
+
+#### **Fields/Climatology** (changing; 3.5.1)
+
+- Modules `indicators.py`, `periodic_climat_stats.py`, `representative_series.py`, `simple_bias_correction.py`:
+  - **Type Hint Standardisation**
+    - Standardised type hints and docstrings by capitalising typing objects (e.g. `Any`, `Callable`, `Optional`)
+    - Updated all `optional` parameters in docstrings to follow lowercase convention
+    - Adopted Python 3.10+ union syntax (`|`) consistently across all modules
+
+- Module `indicators.py`:
+  - **Function Enhancements**: added complete type hints to all 8 climate indicator functions:
+    - `calculate_WSDI`
+    - `calculate_SU`
+    - `calculate_CSU`
+    - `calculate_FD`
+    - `calculate_TN`
+    - `calculate_RR`
+    - `calculate_CWD`
+    - `calculate_hwd`
+  - **Documentation**: enhanced with NumPy-style docstrings, parameter descriptions, and practical examples
+
+- Module `periodic_climat_stats.py`:
+  - **Internal Helper Functions**: enhanced documentation for `_process_yearly_dataframe`, `_process_other_xarray`, and `_rename_xarray_dimension`
+  - **Comprehensive Docstrings**: added parameter types, return documentation, and implementation notes
+
+- Module `representative_series.py`:
+  - **Complex Function Documentation**: enhanced `calculate_HDY` with ISO 15927-4:2005 standard compliance explanation, step-by-step algorithm documentation, and practical examples
+  - **Interpolation Documentation**: enhanced `hdy_interpolation` with wind direction conventions, time range format specifications, polynomial guidance, and performance considerations
+
+- Module `simple_bias_correction.py`:
+  - **Internal Helper Functions**: enhanced documentation for `_unique_sorted`, `_get_delta_format`, `_get_frequency_abbreviation`, and `_rename_xarray_dimension`
+  - **Complete Documentation**: added missing docstrings, practical examples, and implementation details
+
+#### **Core** (changing; 3.5.1)
+
+- Module `interpolation_methods.py`: add missing 'Callable' object type import
+
+---
+
 ## [3.5.0] - 2025-06-24
 
 ### Added (3.5.0)
@@ -16,7 +66,7 @@ All notable changes to this project will be documented in this file.
 
 #### **General** (changing; 3.5.0)
 
-- *PEP-604 Modernisation*: comprehensive type annotation modernisation across all core and climatology modules
+- **PEP-604 Modernisation**: comprehensive type annotation modernisation across all core and climatology modules
 - Update all union type annotations from `Union[A, B]` to modern `A | B` syntax
 - Modernise docstring type descriptions from `"A or B"` to `"A | B"` format throughout codebase
 - Enhanced type safety with specific generic types: `list[str]`, `dict[str, float]`, `tuple[pd.DataFrame, list[int]]`
