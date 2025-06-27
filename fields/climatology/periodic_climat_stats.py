@@ -331,7 +331,28 @@ def _process_yearly_dataframe(obj: pd.DataFrame,
                             statistic: str, 
                             freq_abbr: str, 
                             drop_date_idx_col: bool) -> tuple[list, list]:
-    """Process yearly data for DataFrame."""
+    """
+    Process yearly data for DataFrame.
+    
+    Parameters
+    ----------
+    obj : pd.DataFrame
+        Input DataFrame containing time series data.
+    statistic : str
+        Statistical operation to perform ('mean', 'max', 'min', 'std', 'sum').
+    freq_abbr : str
+        Frequency abbreviation for time resampling.
+    drop_date_idx_col : bool
+        Whether to drop the date index column from the results.
+        
+    Returns
+    -------
+    tuple[list, list]
+        climat_vals : list
+            List containing the calculated statistical values.
+        climat_dates : list
+            List containing the corresponding dates.
+    """
     climat_df = periodic_statistics(obj, statistic, freq_abbr, drop_date_idx_col)
     climat_vals = [climat_df.iloc[:, 1:][statistic]()]
     climat_dates = [climat_df.iloc[-1,0]]
@@ -395,7 +416,34 @@ def _process_seasonal_xarray(obj, date_key: str, statistic: str, season_months: 
 
 
 def _process_other_xarray(obj, date_key: str, statistic: str, time_freq: str):
-    """Process other time frequencies for xarray."""
+    """
+    Process other time frequencies for xarray objects.
+    
+    This function handles time frequencies that are not specifically 
+    implemented in dedicated functions (hourly, seasonal).
+    
+    Parameters
+    ----------
+    obj : xarray.Dataset | xarray.DataArray
+        Input xarray object containing time series data.
+    date_key : str
+        Name of the time dimension in the xarray object.
+    statistic : str
+        Statistical operation to perform ('mean', 'max', 'min', 'std', 'sum').
+    time_freq : str
+        Time frequency for grouping ('daily', 'monthly', 'yearly').
+        
+    Returns
+    -------
+    xarray.Dataset | xarray.DataArray
+        Processed xarray object with applied statistical operation.
+        
+    Notes
+    -----
+    This is a placeholder function for time frequencies that require
+    specific implementations. In a complete implementation, you would
+    add specific logic for each supported time frequency.
+    """
     # This is a placeholder for other time frequencies
     # In a complete refactoring, you would implement specific functions for each
     return obj.groupby(time_freq)[statistic](dim=date_key)
@@ -448,7 +496,35 @@ def _format_xarray_time_dimension(obj_climat,
 
 
 def _rename_xarray_dimension(obj_climat, occ_time_name_temp: str, occ_time_name: str):
-    """Rename the dimension in xarray objects."""
+    """
+    Rename dimension in xarray objects.
+    
+    This function attempts to rename a dimension in an xarray object using
+    multiple approaches to handle different xarray structures and versions.
+    
+    Parameters
+    ----------
+    obj_climat : xarray.Dataset | xarray.DataArray
+        The xarray object whose dimension needs to be renamed.
+    occ_time_name_temp : str
+        Current (temporary) name of the time dimension.
+    occ_time_name : str
+        Desired new name for the time dimension.
+        
+    Returns
+    -------
+    xarray.Dataset | xarray.DataArray
+        The xarray object with renamed dimension.
+        
+    Notes
+    -----
+    The function uses multiple fallback approaches:
+    1. First tries rename_dims() and rename()
+    2. If that fails, tries swap_dims() twice
+    3. Silently continues if all approaches fail
+    
+    This robust approach handles different xarray versions and object states.
+    """
     try:
         # Rename the analogous dimension of 'time' on dimension list
         obj_climat = obj_climat.rename_dims({occ_time_name_temp: occ_time_name})
