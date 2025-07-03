@@ -1,6 +1,6 @@
 # statflow
 
-[![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/downloads/)
+[![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PyPI Version](https://img.shields.io/pypi/v/statflow.svg)](https://pypi.org/project/statflow/)
 
@@ -41,31 +41,105 @@
 
 ### Prerequisites
 
-- Python 3.8 or higher
-- NumPy, pandas, scipy, xarray for core functionality
-- Additional dependencies: filewise, pygenutils, paramlib (project packages)
+- **Python 3.10+**: Required for modern type annotations and features
+- **Core Dependencies**: NumPy, pandas, scipy, xarray for scientific computing
+- **Additional Dependencies**: filewise, pygenutils (project packages)
 
-### Using pip
+### For Regular Users
+
+**For regular users** who want to use the package in their projects:
 
 ```bash
 pip install statflow
 ```
 
-### Using conda
+This automatically installs `statflow` and all its dependencies from PyPI and GitHub repositories.
+
+### Package Updates
+
+To stay up-to-date with the latest version of this package, simply run:
 
 ```bash
-conda install -c conda-forge statflow
+pip install --upgrade statflow
 ```
 
-### Development Installation
+## Development Setup
 
-For development purposes, you can install the package in editable mode:
+### For Contributors and Developers
+
+If you're planning to contribute to the project or work with the source code, follow these setup instructions:
+
+#### Quick Setup (Recommended)
 
 ```bash
-git clone https://github.com/yourusername/statflow.git
+# Clone the repository
+git clone https://github.com/EusDancerDev/statflow.git
 cd statflow
+
+# Install in editable mode with all dependencies
 pip install -e .
 ```
+
+**Note**: The `-e` flag installs the package in "editable" mode, meaning changes to the source code are immediately reflected without reinstalling.
+
+This will automatically install all dependencies, including the required `filewise` and `pygenutils` packages directly from their GitHub repositories.
+
+#### Manual Setup (Advanced)
+
+If you prefer to install dependencies manually:
+
+```bash
+# Clone the repository
+git clone https://github.com/EusDancerDev/statflow.git
+cd statflow
+
+# Install interdependent packages first
+pip install git+https://github.com/EusDancerDev/filewise.git
+pip install git+https://github.com/EusDancerDev/pygenutils.git
+
+# Install statflow in editable mode
+pip install -e .
+```
+
+If you encounter import errors after cloning:
+
+1. **Ensure dependencies are installed**: Run `pip install -e .` in the project directory
+2. **Check for missing packages**: The main interdependent packages are `filewise` and `pygenutils`
+3. **Verify Python environment**: Make sure you're using a compatible Python version (3.10+)
+4. **Check scientific computing libraries**: Ensure scipy, xarray, and other scientific packages are available
+
+### Verify Installation
+
+To verify that your installation is working correctly, you can run this quick test:
+
+```python
+# Test script to verify installation
+try:
+    import statflow
+    from filewise.general.introspection_utils import get_type_str
+    from pygenutils.arrays_and_lists.data_manipulation import flatten_list
+    from statflow.core.time_series import periodic_statistics
+    
+    print("✅ All imports successful!")
+    print(f"✅ statflow version: {statflow.__version__}")
+    print("✅ Installation is working correctly.")
+    
+except ImportError as e:
+    print(f"❌ Import error: {e}")
+    print("💡 For regular users: pip install statflow")
+    print("💡 For developers: pip install -e .")
+```
+
+### Implementation Notes
+
+This project implements **Git-based dependencies** to solve the interdependent packages problem:
+
+- **Dependencies**: `filewise` and `pygenutils` packages are installed directly from GitHub repositories
+- **Automatic Resolution**: Works for both scenarios:
+  - **Regular users**: `pip install statflow` automatically installs all required interdependent packages
+  - **Developers**: `pip install -e .` automatically installs all required interdependent packages
+- **No Import Errors**: Contributors can clone the repository and immediately start working without manual dependency installation
+- **Seamless Setup**: The solution ensures that all imports work correctly after a simple installation command
 
 ## Usage
 
@@ -268,32 +342,38 @@ statflow/
 ## Key Capabilities
 
 ### 1. Time Series Analysis
+
 - **Periodic Statistics**: Calculate statistics across multiple time frequencies with robust datetime handling
 - **Cumulative Data Processing**: Decompose cumulative time series into individual values
 - **Consecutive Analysis**: Detect and count consecutive occurrences of extreme events
 - **Autocorrelation**: Optimised autocorrelation analysis for pattern detection
 
 ### 2. Statistical Testing
+
 - **Hypothesis Tests**: Z-tests for mean comparison, Chi-squared tests for independence
 - **Robust Validation**: Comprehensive input validation and error handling
 - **Multiple Data Types**: Support for NumPy arrays, pandas Series, and more
 
 ### 3. Signal Processing
+
 - **Filtering Suite**: Low-pass, high-pass, and band-pass filters with multiple implementation methods
 - **Signal Enhancement**: Whitening techniques for decorrelation and noise reduction
 - **Frequency Domain**: Fourier transform-based processing for advanced filtering
 
 ### 4. Climatological Indicators
+
 - **Standard Indices**: WSDI, SU, CSU, FD, TN, RR, CWD following international standards
 - **Heat Wave Analysis**: Comprehensive heat wave detection with intensity metrics
 - **Bioclimatic Variables**: Complete set of 19 bioclimatic indicators for ecological studies
 
 ### 5. Meteorological Calculations
+
 - **Atmospheric Variables**: Heat index, wind chill, dew point, specific humidity
 - **Magnus Formula**: Accurate saturation vapor pressure calculations
 - **Multi-Unit Support**: Celsius/Fahrenheit and metric/imperial unit systems
 
 ### 6. Data Processing Excellence
+
 - **Multi-Format Support**: Seamless handling of pandas, xarray, and NumPy data structures
 - **Type Safety**: Modern PEP-604 type annotations throughout the codebase
 - **Error Handling**: Comprehensive validation with descriptive error messages
@@ -301,6 +381,7 @@ statflow/
 ## Advanced Features
 
 ### Professional Climatology Workflows
+
 ```python
 # Complete climatological analysis workflow
 from statflow.fields.climatology import *
@@ -335,6 +416,7 @@ comfort_metrics = calculate_wind_chill(temperature, wind_speed)
 ```
 
 ### High-Performance Time Series Processing
+
 ```python
 # Optimised for large datasets
 from statflow.core.time_series import periodic_statistics, consec_occurrences_maxdata
@@ -359,39 +441,30 @@ extreme_events = consec_occurrences_maxdata(
 )
 ```
 
-## Version Information
-
-Current version: **3.5.0**
-
-### Recent Updates (v3.5.0)
-- **PEP-604 Modernisation**: Comprehensive type annotation updates using modern `A | B` union syntax
-- **Enhanced Type Safety**: Specific generic types and improved IDE support
-- **Core Module Updates**: Extensive improvements to interpolation, time series, and statistical modules
-- **Climatology Enhancements**: New meteorological functions and improved bias correction
-- **Performance Optimisations**: Improved efficiency for large dataset processing
-
-For detailed version history, see [CHANGELOG.md](CHANGELOG.md).
-
 ## Dependencies
 
 ### Core Dependencies
+
 - **numpy**: Numerical computing and array operations
 - **pandas**: Data manipulation and time series handling
 - **scipy**: Statistical functions and signal processing
 - **xarray**: Multi-dimensional data handling for climate data
 
 ### Project Dependencies
+
 - **filewise**: File operations and introspection utilities
 - **pygenutils**: General-purpose utilities for arrays, strings, and time handling
 - **paramlib**: Parameter management and global constants
 
 ### Optional Dependencies
+
 - **scikit-learn**: For advanced whitening techniques in signal processing
 - **matplotlib**: For plotting and visualisation (user's choice)
 
 ## Integration Examples
 
 ### Climate Data Analysis Pipeline
+
 ```python
 import statflow as sf
 import xarray as xr
@@ -431,6 +504,7 @@ temp_stats = sf.core.statistical_tests.z_test_two_means(
 ```
 
 ### Multi-Scale Statistical Analysis
+
 ```python
 # Analyse data across multiple temporal scales
 scales = ['hourly', 'daily', 'monthly', 'seasonal']
@@ -457,24 +531,28 @@ for i, scale1 in enumerate(scales):
 ## Best Practices
 
 ### Data Preparation
+
 - Ensure consistent datetime indexing for time series analysis
 - Validate data quality and handle missing values appropriately
 - Use appropriate data structures (pandas for tabular, xarray for multi-dimensional)
 - Consider memory usage for large climate datasets
 
 ### Statistical Analysis
+
 - Choose appropriate statistical tests based on data distribution and assumptions
 - Use robust error handling and validate input parameters
 - Consider multiple time scales for comprehensive climate analysis
 - Apply proper bias correction techniques for model-observation comparisons
 
 ### Performance Optimisation
+
 - Leverage vectorised operations for large datasets
 - Use appropriate interpolation methods based on data characteristics
 - Consider parallel processing for independent calculations
 - Monitor memory usage with large climate model outputs
 
 ### Climatological Standards
+
 - Follow international standards for climate indicator calculations
 - Use appropriate thresholds for regional climate conditions
 - Document methodology and parameter choices
@@ -497,10 +575,8 @@ Contributions are welcome! Please feel free to submit a Pull Request for:
 4. **Performance Considerations**: Optimise for large scientific datasets
 5. **Compatibility**: Ensure compatibility with multiple data formats
 
-### Development Setup
-
 ```bash
-git clone https://github.com/yourusername/statflow.git
+git clone https://github.com/EusDancerDev/statflow.git
 cd statflow
 pip install -e ".[dev]"
 pytest  # Run test suite
@@ -551,23 +627,27 @@ For questions, suggestions, or collaboration opportunities:
 ### Common Issues
 
 1. **Memory Errors with Large Datasets**:
+
    ```python
    # Use chunking for large xarray datasets
    large_data = xr.open_dataset("huge_file.nc", chunks={'time': 1000})
    ```
 
 2. **Type Compatibility**:
+
    ```python
    # Ensure consistent data types
    data = data.astype(np.float64)  # Convert to consistent numeric type
    ```
 
 3. **Missing Dependencies**:
+
    ```bash
    pip install scipy xarray  # Install missing scientific computing libraries
    ```
 
 4. **Performance Issues**:
+
    ```python
    # Use appropriate methods for data size
    if len(data) > 50000:
