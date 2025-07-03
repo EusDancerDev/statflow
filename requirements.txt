@@ -1,0 +1,24 @@
+# Core dependencies
+pandas>=1.3.0
+numpy>=1.21.0
+scipy>=1.7.0
+xarray>=2024.2.0
+
+# Git dependencies (installed from GitHub repositories)
+git+https://github.com/EusDancerDev/filewise.git
+git+https://github.com/EusDancerDev/pygenutils.git
+
+# Optional dependencies (uncomment as needed)
+scikit-learn>=1.0.0  # For advanced whitening techniques
+matplotlib>=3.0.0    # For plotting and visualisation
+
+# Development dependencies (uncomment for development)
+# pytest>=7.0.0
+# pytest-cov>=4.0.0
+# black>=23.0.0
+# isort>=5.0.0
+# mypy>=1.0.0
+# flake8>=6.0.0
+# sphinx>=5.0.0
+# sphinx-rtd-theme>=1.0.0
+# nbsphinx>=0.8.0 
