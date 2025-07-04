@@ -42,8 +42,6 @@ dev = [
     "isort>=5.0.0",
     "mypy>=1.0.0",
     "flake8>=6.0.0",
-    "filewise @ git+https://github.com/EusDancerDev/filewise.git",
-    "pygenutils @ git+https://github.com/EusDancerDev/pygenutils.git",
 ]
 docs = [
     "sphinx>=5.0.0",
