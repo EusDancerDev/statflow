@@ -31,7 +31,7 @@ dependencies = [
     "scipy>=1.7.0",
     "xarray>=2024.2.0",
     "filewise>=3.11.0",
-    "pygenutils>=16.0.0",
+    "pygenutils>=16.1.0",
 ]
 
 [project.optional-dependencies]
