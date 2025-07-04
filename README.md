@@ -82,29 +82,30 @@ pip install -e .
 
 **Note**: The `-e` flag installs the package in "editable" mode, meaning changes to the source code are immediately reflected without reinstalling.
 
-This will automatically install all dependencies, including the required `filewise` and `pygenutils` packages directly from their GitHub repositories.
+This will automatically install all dependencies with version constraints.
 
-#### Manual Setup (Advanced)
+#### Alternative Setup (Explicit Git Dependencies)
 
-If you prefer to install dependencies manually:
+If you prefer to use the explicit development requirements file:
 
 ```bash
 # Clone the repository
 git clone https://github.com/EusDancerDev/statflow.git
 cd statflow
 
-# Install interdependent packages first
-pip install git+https://github.com/EusDancerDev/filewise.git
-pip install git+https://github.com/EusDancerDev/pygenutils.git
+# Install development dependencies from requirements-dev.txt
+pip install -r requirements-dev.txt
 
-# Install statflow in editable mode
+# Install in editable mode
 pip install -e .
 ```
 
+This approach gives you the latest development versions of all interdependent packages for testing and development.
+
 If you encounter import errors after cloning:
 
-1. **Ensure dependencies are installed**: Run `pip install -e .` in the project directory
-2. **Check for missing packages**: The main interdependent packages are `filewise` and `pygenutils`
+1. **For regular users**: Run `pip install statflow` (all dependencies included)
+2. **For developers**: Run `pip install -e .[dev]` to include development dependencies
 3. **Verify Python environment**: Make sure you're using a compatible Python version (3.10+)
 4. **Check scientific computing libraries**: Ensure scipy, xarray, and other scientific packages are available
 
@@ -127,19 +128,20 @@ try:
 except ImportError as e:
     print(f"❌ Import error: {e}")
     print("💡 For regular users: pip install statflow")
-    print("💡 For developers: pip install -e .")
+    print("💡 For developers: pip install -e .[dev]")
 ```
 
 ### Implementation Notes
 
-This project implements **Git-based dependencies** to solve the interdependent packages problem:
+This project implements a **dual-approach dependency management** system:
 
-- **Dependencies**: `filewise` and `pygenutils` packages are installed directly from GitHub repositories
-- **Automatic Resolution**: Works for both scenarios:
-  - **Regular users**: `pip install statflow` automatically installs all required interdependent packages
-  - **Developers**: `pip install -e .` automatically installs all required interdependent packages
-- **No Import Errors**: Contributors can clone the repository and immediately start working without manual dependency installation
-- **Seamless Setup**: The solution ensures that all imports work correctly after a simple installation command
+- **Production Dependencies**: Version-constrained dependencies for PyPI compatibility
+- **Development Dependencies**: Git-based dependencies for latest development versions
+- **Installation Methods**:
+  - **Regular users**: Simple `pip install statflow` with all dependencies included
+  - **Developers**: `pip install -e .[dev]` for latest Git versions and development tools
+- **PyPI Compatibility**: All packages can be published without Git dependency issues
+- **Development Flexibility**: Contributors get access to latest versions for testing and development
 
 ## Usage
 
