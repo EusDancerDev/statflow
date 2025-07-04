@@ -30,8 +30,8 @@ dependencies = [
     "numpy>=1.21.0",
     "scipy>=1.7.0",
     "xarray>=2024.2.0",
-    "filewise @ git+https://github.com/EusDancerDev/filewise.git",
-    "pygenutils @ git+https://github.com/EusDancerDev/pygenutils.git",
+    "filewise>=3.11.0",
+    "pygenutils>=16.0.0",
 ]
 
 [project.optional-dependencies]
@@ -42,6 +42,8 @@ dev = [
     "isort>=5.0.0",
     "mypy>=1.0.0",
     "flake8>=6.0.0",
+    "filewise @ git+https://github.com/EusDancerDev/filewise.git",
+    "pygenutils @ git+https://github.com/EusDancerDev/pygenutils.git",
 ]
 docs = [
     "sphinx>=5.0.0",
