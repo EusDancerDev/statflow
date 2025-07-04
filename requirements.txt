@@ -6,8 +6,8 @@ matplotlib>=3.5.0
 xarray>=2022.1.0
 
 # Interdependent packages (version constraints for PyPI publishing)
-filewise>=0.1.0
-pygenutils>=0.1.0
+filewise>=3.11.0
+pygenutils>=16.1.0
 
 # Optional dependencies (uncomment as needed)
 scikit-learn>=1.0.0  # For advanced whitening techniques
