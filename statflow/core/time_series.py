@@ -230,7 +230,7 @@ def decompose_cumulative_data(cumulative_array: np.ndarray,
     
     records = len(cumulative_array)
     
-    # Define the behavior for negative differences
+    # Define the behaviour for negative differences
     def handle_negative_difference(diff):
         if fill_value is None:
             return diff
