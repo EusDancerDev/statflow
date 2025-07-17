@@ -4,19 +4,19 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [3.5.6] - 2025-06-27
+## [3.5.7] - 2025-06-27
 
-### Fixed (3.5.6)
+### Fixed (3.5.7)
 
-#### **Fields/Climatology** (fixing; 3.5.6)
+#### **Fields/Climatology** (fixing; 3.5.7)
 
 - Module `indicators.py`:
   - Fixed functions `calculate_CSU` and `calculate_CWD` that were calling `consec_occurrences_maxdata` with wrong parameter `max_consecutive_days=True` → changed to `calc_max_consec=True`
   - This way, runtime errors that prevented these functions from working correctly are eliminated.
 
-### Changed (3.5.6)
+### Changed (3.5.7)
 
-#### **Fields/Climatology** (changing; 3.5.6)
+#### **Fields/Climatology** (changing; 3.5.7)
 
 - Modules `indicators.py`, `periodic_climat_stats.py`, `representative_series.py`, `simple_bias_correction.py`:
   - **Type Hint Standardisation**
@@ -48,7 +48,7 @@ All notable changes to this project will be documented in this file.
   - **Internal Helper Functions**: enhanced documentation for `_unique_sorted`, `_get_delta_format`, `_get_frequency_abbreviation`, and `_rename_xarray_dimension`
   - **Complete Documentation**: added missing docstrings, practical examples, and implementation details
 
-#### **Core** (changing; 3.5.6)
+#### **Core** (changing; 3.5.7)
 
 - Module `interpolation_methods.py`: add missing 'Callable' object type import
 
