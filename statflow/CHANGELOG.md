@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [3.5.8] - 2025-07-18
+
+### Added (3.5.8)
+
+#### **Core** (adding; 3.5.8)
+
+- Module `time_series.py`:
+  - Enhance datetime parsing in `time_series.py`:
+    - Use function `parse_dt_string` from module `time_formatters.py` in package `pygenutils`, adding `dayfirst` and `yearfirst` parameters, and updating the docstring.
+
+---
+
 ## [3.5.7] - 2025-06-27
 
 ### Fixed (3.5.7)
