@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "statflow"
-version = "3.5.7"
+version = "3.5.8"
 license = {file = "LICENSE"}
 description = "A versatile statistical toolkit for Python, featuring core statistical methods, time series analysis, signal processing, and climatology tools"
 keywords = ["statistics", "time series", "signal processing", "climatology", "data analysis"]
