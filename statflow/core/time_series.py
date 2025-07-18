@@ -21,6 +21,7 @@ from pygenutils.arrays_and_lists.patterns import count_consecutive
 from pygenutils.strings.string_handler import find_substring_index
 from pygenutils.strings.text_formatters import format_string
 from pygenutils.time_handling.date_and_time_utils import find_dt_key
+from pygenutils.time_handling.time_formatters import parse_dt_string
 
 #------------------#
 # Define functions #
@@ -34,7 +35,9 @@ def periodic_statistics(obj,
                         freq: str,
                         groupby_dates: bool = False,
                         drop_date_idx_col: bool = False,
-                        season_months: list[int] | None = None):
+                        season_months: list[int] | None = None,
+                        dayfirst: bool = False,
+                        yearfirst: bool = False):
     """
     Calculates basic statistics (not climatologies) for the given data 
     object over a specified time frequency.
@@ -69,6 +72,17 @@ def periodic_statistics(obj,
     season_months : list[int] | None, optional
         A list of three integers representing the months of a season,
         used if 'freq' is "SEAS". Must contain exactly three months.
+    
+    dayfirst : bool, default False
+        Specify a date parse order if datetime strings are ambiguous.
+        If True, parses dates with the day first, e.g. "10/11/12" is parsed as 2012-11-10.
+        When converting date columns to datetime format.
+    
+    yearfirst : bool, default False
+        Specify a date parse order if datetime strings are ambiguous.
+        If True parses dates with the year first, e.g. "10/11/12" is parsed as 2010-11-12.
+        If both dayfirst and yearfirst are True, yearfirst is preceded (same as dateutil).
+        When converting date columns to datetime format.
 
     Returns
     -------
@@ -159,7 +173,10 @@ def periodic_statistics(obj,
             else:
                 # Try to convert to datetime
                 try:
-                    df_copy[date_key] = pd.to_datetime(df_copy[date_key])
+                    df_copy[date_key] = parse_dt_string(df_copy[date_key],
+                                                        module="pandas",
+                                                        dayfirst=dayfirst,
+                                                        yearfirst=yearfirst)
                     df_copy = df_copy.dropna(subset=[date_key])
                 except Exception as e:
                     raise ValueError(f"Could not convert column '{date_key}' to datetime: {str(e)}")
