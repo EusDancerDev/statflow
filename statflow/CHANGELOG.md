@@ -4,11 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [3.5.8] - 2025-07-18
+## [3.5.9] - 2025-07-18
 
-### Added (3.5.8)
+### Added (3.5.9)
 
-#### **Core** (adding; 3.5.8)
+#### **Core** (adding; 3.5.9)
 
 - Module `time_series.py`:
   - Enhance datetime parsing in `time_series.py`:
