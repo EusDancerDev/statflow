@@ -6,7 +6,7 @@ matplotlib>=3.5.0
 xarray>=2022.1.0
 
 # Interdependent packages (version constraints for PyPI publishing)
-filewise>=3.11.0
+filewise>=3.11.6
 pygenutils>=16.2.0
 
 # Optional dependencies (uncomment as needed)

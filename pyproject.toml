@@ -30,7 +30,7 @@ dependencies = [
     "numpy>=1.21.0",
     "scipy>=1.7.0",
     "xarray>=2024.2.0",
-    "filewise>=3.11.0",
+    "filewise>=3.11.6",
     "pygenutils>=16.2.0",
 ]
 
