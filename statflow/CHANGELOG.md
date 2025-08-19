@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [3.5.10] - 2025-08-19
+
+### Changed (3.5.10)
+
+#### **Core** (changing; 3.5.10)
+
+- Modules `interpolation_methods.py` and `time_series.py`:
+  - Change the header section comment `Operations` to `Program progression` to better reflect what it contains.
+
+---
+
 ## [3.5.9] - 2025-07-18
 
 ### Added (3.5.9)
