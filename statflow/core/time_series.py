@@ -133,8 +133,8 @@ def periodic_statistics(obj,
     elif freq == "SEAS":  # Only require season_months when freq is "SEAS"
         raise ValueError("Seasonal frequency requires parameter 'season_months'.")
 
-    # Operations #
-    #-#-#-#-#-#-#-
+    # Program progression #
+    #-#-#-#-#-#-#-#-#-#-#-#
 
     # Get the date/time column or dimension
     date_key = find_dt_key(obj)

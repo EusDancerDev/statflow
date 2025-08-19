@@ -158,8 +158,8 @@ def interp_np(data: np.ndarray,
         raise TypeError(f"Fill value (position {fillval_arg_pos}) "
                         f"must be one of {FILLVAL_TYPES} or 'extrapolate'.")
           
-    # Operations #
-    ##############
+    # Program progression #
+    #######################
     
     x = np.arange(data.shape[0])
     
@@ -229,8 +229,8 @@ def interp_pd(data, method: str = 'linear', order: int | None = None, axis: int 
         if order is None:
             raise ValueError(f"Order must be specified for '{method}' interpolation.")
     
-    # Operations #
-    ##############
+    # Program progression #
+    #######################
     
     return data.interpolate(method=method, order=order, axis=axis)
 
@@ -276,8 +276,8 @@ def interp_xr(data, method: str = 'linear', order: int | None = None, dim: str |
         raise ValueError("For Xarray objects, the dimension ('dim') must be "
                          "specified for interpolation.")
         
-    # Operations #
-    ##############
+    # Program progression #
+    #######################
     
     if method in ['linear', 'nearest', 'spline']:
         return data.interpolate_na(dim=dim, method=method)
