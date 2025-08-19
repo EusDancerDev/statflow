@@ -7,7 +7,7 @@ xarray>=2022.1.0
 
 # Interdependent packages (version constraints for PyPI publishing)
 filewise>=3.11.6
-pygenutils>=16.2.3
+pygenutils>=16.3.0
 
 # Optional dependencies (uncomment as needed)
 scikit-learn>=1.0.0  # For advanced whitening techniques
