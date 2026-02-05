@@ -1,5 +1,5 @@
 {% set name = "statflow" %}
-{% set version = "3.4.6" %}
+{% set version = "3.5.11" %}
 
 package:
   name: {{ name|lower }}
@@ -28,6 +28,8 @@ requirements:
 test:
   imports:
     - statflow
+  commands:
+    - python -c "import statflow; print(statflow.__version__)"
 
 about:
   home: https://github.com/EusDancerDev/statflow
