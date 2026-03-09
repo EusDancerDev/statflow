@@ -81,8 +81,5 @@ site/
 *.swp
 *~
 
-# Ignore the Spyder project manager directory #
-.spyproject
-
 # Ignore configuration and generated files #
 .chglog 
