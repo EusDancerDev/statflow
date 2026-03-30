@@ -40,6 +40,7 @@ import pandas as pd
 # Import project modules #
 #------------------------#
 
+from climarraykit.patterns import rename_xarray_dimension
 from filewise.general.introspection_utils import get_caller_args, get_type_str
 from paramlib.global_parameters import (
     BASIC_TIME_FORMAT_STRS,
@@ -478,7 +479,7 @@ def _format_xarray_time_dimension(obj_climat,
                 climat_dates = np.arange(lcd) 
             
         # 'time' dimension renaming and its assignment
-        obj_climat = _rename_xarray_dimension(obj_climat, occ_time_name_temp, occ_time_name)
+        obj_climat = rename_xarray_dimension(obj_climat, occ_time_name_temp, occ_time_name)
                 
     elif time_freq == TIME_FREQUENCIES_COMPLETE[1]:  # seasonal
         if keep_std_dates:
@@ -491,56 +492,6 @@ def _format_xarray_time_dimension(obj_climat,
     
     # Update the time array
     obj_climat = obj_climat.assign_coords({occ_time_name: climat_dates})
-    
-    return obj_climat
-
-
-def _rename_xarray_dimension(obj_climat, occ_time_name_temp: str, occ_time_name: str):
-    """
-    Rename dimension in xarray objects.
-    
-    This function attempts to rename a dimension in an xarray object using
-    multiple approaches to handle different xarray structures and versions.
-    
-    Parameters
-    ----------
-    obj_climat : xarray.Dataset | xarray.DataArray
-        The xarray object whose dimension needs to be renamed.
-    occ_time_name_temp : str
-        Current (temporary) name of the time dimension.
-    occ_time_name : str
-        Desired new name for the time dimension.
-        
-    Returns
-    -------
-    xarray.Dataset | xarray.DataArray
-        The xarray object with renamed dimension.
-        
-    Notes
-    -----
-    The function uses multiple fallback approaches:
-    1. First tries rename_dims() and rename()
-    2. If that fails, tries swap_dims() twice
-    3. Silently continues if all approaches fail
-    
-    This robust approach handles different xarray versions and object states.
-    """
-    try:
-        # Rename the analogous dimension of 'time' on dimension list
-        obj_climat = obj_climat.rename_dims({occ_time_name_temp: occ_time_name})
-    except:
-        # Rename the analogous dimension name of 'time' to standard
-        obj_climat = obj_climat.rename({occ_time_name_temp: occ_time_name})
-        
-    try:
-        # Rename the analogous dimension of 'time' on dimension list
-        obj_climat = obj_climat.swap_dims({occ_time_name_temp: occ_time_name})
-    except:
-        try:
-            # Rename the analogous dimension name of 'time' to standard
-            obj_climat = obj_climat.swap_dims({occ_time_name_temp: occ_time_name})
-        except:
-            pass
     
     return obj_climat
 
