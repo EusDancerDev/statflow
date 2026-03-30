@@ -3,6 +3,7 @@
 
 # Core dependencies with Git references for development
 filewise @ git+https://github.com/EusDancerDev/filewise.git
+climarraykit @ git+https://github.com/EusDancerDev/climarraykit.git
 pygenutils @ git+https://github.com/EusDancerDev/pygenutils.git
 
 # Standard dependencies
