@@ -107,7 +107,9 @@ The helper functions should integrate seamlessly with:
 - **Core modules**: Support functions in `statflow.core.*`
 - **Field-specific modules**: Assist domain-specific analyses in `statflow.fields.*`
 - **External dependencies**: Work with numpy, pandas, scipy, xarray
-- **Custom packages**: Leverage utilities from filewise, pygenutils, paramlib
+- **Custom packages**: Leverage utilities from filewise, pygenutils, paramlib, and
+  **climarraykit** for shared NetCDF / xarray helpers (for example dimension renaming in
+  climatology code) where that keeps behaviour consistent across packages
 
 Implementation Guidelines
 -------------------------
@@ -136,6 +138,8 @@ This module will likely depend on:
     - scipy: For statistical distributions and advanced mathematics
     - xarray: For multi-dimensional data handling
     - filewise: For introspection and general utilities
+    - climarraykit: For shared xarray helpers (for example dimension renaming) used by
+      climatology modules
     - pygenutils: For string, array, and time handling utilities
     - paramlib: For parameter and constant definitions
 
@@ -168,7 +172,7 @@ optimised.
 # import numpy as np
 # import pandas as pd
 # import scipy as sp
-# import xarray as xr
+# import xarray as xr  # used in field modules (e.g. climatology); not required in this stub
 
 #------------------------#
 # Import project modules #
@@ -176,6 +180,7 @@ optimised.
 
 # Project-specific imports will go here
 # from filewise.general.introspection_utils import get_caller_args, get_type_str
+# from climarraykit.patterns import rename_xarray_dimension  # when adding xarray helpers here
 # from pygenutils.arrays_and_lists.data_manipulation import flatten_list
 # from pygenutils.strings.text_formatters import format_string
 # from paramlib.global_parameters import BASIC_TIME_FORMAT_STRS
