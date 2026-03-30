@@ -40,8 +40,9 @@ import pandas as pd
 # Import project modules #
 #------------------------#
 
-from climarraykit.patterns import rename_xarray_dimension
 from filewise.general.introspection_utils import get_caller_args, get_type_str
+
+from ._climate_deps import rename_xarray_dimension
 from paramlib.global_parameters import (
     BASIC_TIME_FORMAT_STRS,
     MONTH_NUMBER_DICT,
