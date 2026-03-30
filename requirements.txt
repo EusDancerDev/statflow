@@ -1,12 +1,25 @@
-# Core dependencies (aligned with pyproject.toml [project.dependencies])
+# Core dependencies
 numpy>=1.21.0
 pandas>=1.3.0
 scipy>=1.7.0
+matplotlib>=3.5.0
+xarray>=2024.2.0
 
-# Interdependent packages
+# Interdependent packages (version constraints for PyPI publishing)
 filewise>=3.11.6
+climarraykit>=0.1.0
 pygenutils>=16.3.0
 
-# Optional climate stack (install with: pip install 'statflow[climate]')
-# xarray>=2024.2.0
-# climarraykit>=0.1.0
+# Optional dependencies (uncomment as needed)
+scikit-learn>=1.0.0  # For advanced whitening techniques
+
+# Development dependencies (uncomment for development)
+# pytest>=7.0.0
+# pytest-cov>=4.0.0
+# black>=23.0.0
+# isort>=5.0.0
+# mypy>=1.0.0
+# flake8>=6.0.0
+# sphinx>=5.0.0
+# sphinx-rtd-theme>=1.0.0
+# nbsphinx>=0.8.0 
