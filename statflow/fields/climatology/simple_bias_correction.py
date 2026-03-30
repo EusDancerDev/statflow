@@ -28,6 +28,7 @@ import xarray as xr
 # Import project modules #
 #------------------------#
 
+from climarraykit.patterns import rename_xarray_dimension
 from filewise.general.introspection_utils import get_type_str
 from pygenutils.strings.text_formatters import format_string, print_format_string
 from pygenutils.time_handling.date_and_time_utils import find_dt_key
@@ -111,75 +112,37 @@ def _get_delta_format(delta_value):
 
 
 def _align_time_dimensions(observed_series, reanalysis_series, obj_type_observed, obj_type_reanalysis):
-    """Align time dimensions between observed and reanalysis series."""
-    if (obj_type_observed, obj_type_reanalysis) == ("dataframe", "dataframe"):      
+    """
+    Align time dimensions between observed and reanalysis series.
+
+    Returns
+    -------
+    tuple
+        ``(date_key, reanalysis_series)`` so xarray renames propagate to callers.
+    """
+    if (obj_type_observed, obj_type_reanalysis) == ("dataframe", "dataframe"):
         date_key = find_dt_key(observed_series)
         date_key_rean = find_dt_key(reanalysis_series)
 
         if date_key != date_key_rean:
             reanalysis_series.columns = [date_key] + reanalysis_series.columns[1:]
-        return date_key
+        return date_key, reanalysis_series
 
-    elif ((obj_type_observed, obj_type_reanalysis) == ("dataset", "dataset"))\
-        or ((obj_type_observed, obj_type_reanalysis) == ("dataarray", "dataarray")):
-        
+    if (obj_type_observed, obj_type_reanalysis) in (
+        ("dataset", "dataset"),
+        ("dataarray", "dataarray"),
+    ):
         date_key = find_dt_key(observed_series)
         date_key_rean = find_dt_key(reanalysis_series)
-        
+
         if date_key != date_key_rean:
-            _rename_xarray_dimension(reanalysis_series, date_key_rean, date_key)
-        
-        return date_key
-    else:
-        return None
+            reanalysis_series = rename_xarray_dimension(
+                reanalysis_series, date_key_rean, date_key
+            )
 
+        return date_key, reanalysis_series
 
-def _rename_xarray_dimension(obj, old_dim, new_dim):
-    """
-    Rename a dimension in an xarray object.
-    
-    This function attempts to rename a dimension in an xarray object using
-    multiple approaches to handle different xarray structures and versions.
-    
-    Parameters
-    ----------
-    obj : xarray.Dataset | xarray.DataArray
-        The xarray object whose dimension needs to be renamed.
-    old_dim : str
-        Current name of the dimension to be renamed.
-    new_dim : str
-        New name for the dimension.
-        
-    Notes
-    -----
-    The function modifies the object in place and uses multiple fallback 
-    approaches:
-    1. First tries rename_dims() and rename()
-    2. If that fails, tries swap_dims() twice
-    3. Silently continues if all approaches fail
-    
-    This robust approach handles different xarray versions and object states.
-    
-    Examples
-    --------
-    >>> import xarray as xr
-    >>> data = xr.DataArray([1, 2, 3], dims=['old_time'])
-    >>> _rename_xarray_dimension(data, 'old_time', 'time')
-    # The dimension 'old_time' is now renamed to 'time'
-    """
-    try:
-        # Rename the analogous dimension of 'time' on dimension list
-        obj = obj.rename_dims({old_dim: new_dim})
-        # Rename the analogous dimension name of 'time' to standard
-        obj = obj.rename({old_dim: new_dim})
-    except:
-        try:
-            # Rename the analogous dimension of 'time' on dimension list
-            obj = obj.swap_dims({old_dim: new_dim})
-            # Rename the analogous dimension name of 'time' to standard
-            obj = obj.swap_dims({old_dim: new_dim})
-        except:
-            pass
+    return None, reanalysis_series
 
 
 def _calculate_deltas(observed_series, reanalysis_series, time_freq, statistic, 
@@ -613,8 +576,9 @@ def calculate_and_apply_deltas(observed_series,
     obj_type_reanalysis = get_type_str(reanalysis_series, lowercase=True)
     
     # Identify the time dimension and align if needed
-    date_key = _align_time_dimensions(observed_series, reanalysis_series, 
-                                     obj_type_observed, obj_type_reanalysis)
+    date_key, reanalysis_series = _align_time_dimensions(
+        observed_series, reanalysis_series, obj_type_observed, obj_type_reanalysis
+    )
     
     # Calculate climatologies and deltas
     delta_obj, delta_cols = _calculate_deltas(observed_series, reanalysis_series, 
