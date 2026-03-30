@@ -1,5 +1,5 @@
 {% set name = "statflow" %}
-{% set version = "3.5.11" %}
+{% set version = "3.6.0" %}
 
 package:
   name: {{ name|lower }}
