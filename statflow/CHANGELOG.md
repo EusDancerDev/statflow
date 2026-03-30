@@ -4,6 +4,31 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [3.6.0] - 2026-03-30
+
+### Changed (3.6.0)
+
+#### **Fields / Climatology** (changing; 3.6.0)
+
+- Modules `simple_bias_correction.py` and `periodic_climat_stats.py`:
+  - Use `rename_xarray_dimension` from `climarraykit.patterns` instead of duplicated local helpers.
+  - In `simple_bias_correction.py`, `_align_time_dimensions` returns `(date_key, reanalysis_series)` so renamed xarray objects are passed through to downstream calculations.
+- Add `_climate_deps.py` to centralise optional imports of `xarray` and `climarraykit.patterns.rename_xarray_dimension`, with a clear error message pointing to `pip install 'statflow[climate]'`.
+
+#### **Dependencies** (changing; 3.6.0)
+
+- **Breaking (install surface):** `xarray` and `climarraykit` are no longer core dependencies. They are provided by the optional extra **`[climate]`** (`pip install 'statflow[climate]'`). The **`[dev]`** extra includes them so contributors and CI keep a full stack.
+- Core `pyproject.toml` dependencies: `pandas`, `numpy`, `scipy`, `filewise`, `pygenutils` only.
+- `requirements.txt` lists the core set; climate packages are commented with install instructions.
+- `requirements-dev.txt`: Git pins for `filewise`, `climarraykit`, `pygenutils`; workflow and sections aligned with `[dev]` / `[docs]` extras; use `pip install -e .[dev]` after installing dev requirements.
+
+#### **Documentation** (changing; 3.6.0)
+
+- Module `utils/helpers.py`: note `climarraykit` in integration and dependency guidance.
+- `README.md`: prerequisites and installation describe optional **`[climate]`**, editable **`[dev]`** setup, and troubleshooting for core vs climate installs.
+
+---
+
 ## [3.5.11] - 2025-08-19
 
 ### Changed (3.5.11)
@@ -100,7 +125,7 @@ All notable changes to this project will be documented in this file.
   - These include abbreviation addressing.
 
 | Module | Old variable name | New variable name |
-|:------:|:-----------------:|:-----------------:|
+| :--- | :---: | :---: |
 | `fields/climatology/representative_series.py` | `COMMON_DELIM_LIST` | `COMMON_DELIMITER_LIST` |
 | `fields/climatology/periodic_climat_stats.py` | `TIME_FREQUENCIES_SHORT_1` | `TIME_FREQUENCIES_ABBREVIATED` |
 
