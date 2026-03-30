@@ -42,18 +42,24 @@
 ### Prerequisites
 
 - **Python 3.10+**: Required for modern type annotations and features
-- **Core Dependencies**: NumPy, pandas, scipy, xarray for scientific computing
-- **Additional Dependencies**: filewise, pygenutils (project packages)
+- **Core dependencies** (installed with `pip install statflow`): NumPy, pandas, SciPy, **filewise**, **pygenutils**
+- **Optional climate stack**: **xarray** and **climarraykit** are *not* required for core statistics, time series, and many climatology helpers that only use NumPy/pandas. Modules that operate on xarray objects (for example `simple_bias_correction`, `periodic_climat_stats` via `_climate_deps`) need the extra below.
 
 ### For Regular Users
 
-**For regular users** who want to use the package in their projects:
+**Minimal install** (core package only):
 
 ```bash
 pip install statflow
 ```
 
-This automatically installs `statflow` and all its dependencies from PyPI and GitHub repositories.
+**Full climatology / xarray workflows** (xarray + climarraykit):
+
+```bash
+pip install 'statflow[climate]'
+```
+
+This keeps the default install lighter for users who do not need xarray.
 
 ### Package Updates
 
@@ -76,13 +82,13 @@ If you're planning to contribute to the project or work with the source code, fo
 git clone https://github.com/EusDancerDev/statflow.git
 cd statflow
 
-# Install in editable mode with all dependencies
-pip install -e .
+# Install in editable mode with dev + climate dependencies (pytest, xarray, climarraykit, …)
+pip install -e .[dev]
 ```
 
 **Note**: The `-e` flag installs the package in "editable" mode, meaning changes to the source code are immediately reflected without reinstalling.
 
-This will automatically install all dependencies with version constraints.
+Use `pip install -e .` for the **core** dependency set only; use `pip install -e .[climate]` if you need xarray/climarraykit without the full dev toolchain.
 
 #### Alternative Setup (Explicit Git Dependencies)
 
@@ -96,18 +102,18 @@ cd statflow
 # Install development dependencies from requirements-dev.txt
 pip install -r requirements-dev.txt
 
-# Install in editable mode
-pip install -e .
+# Install in editable mode (after satisfying requirements-dev.txt)
+pip install -e .[climate]
 ```
 
-This approach gives you the latest development versions of all interdependent packages for testing and development.
+This approach gives you the latest development versions of interdependent packages from Git; add **`[climate]`** (or **`[dev]`**, which includes climate) so xarray-dependent climatology modules import cleanly.
 
 If you encounter import errors after cloning:
 
-1. **For regular users**: Run `pip install statflow` (all dependencies included)
-2. **For developers**: Run `pip install -e .[dev]` to include development dependencies
+1. **For regular users**: Run `pip install statflow` (core dependencies) or `pip install 'statflow[climate]'` for xarray workflows
+2. **For developers**: Run `pip install -e .[dev]` to include development tools and the climate stack
 3. **Verify Python environment**: Make sure you're using a compatible Python version (3.10+)
-4. **Check scientific computing libraries**: Ensure scipy, xarray, and other scientific packages are available
+4. **Check scientific computing libraries**: Ensure SciPy is available; for xarray workflows, install **`statflow[climate]`** (or **`[dev]`** when developing)
 
 ### Verify Installation
 
@@ -127,21 +133,16 @@ try:
     
 except ImportError as e:
     print(f"❌ Import error: {e}")
-    print("💡 For regular users: pip install statflow")
+    print("💡 For regular users: pip install statflow  # add [climate] if you need xarray")
     print("💡 For developers: pip install -e .[dev]")
 ```
 
 ### Implementation Notes
 
-This project implements a **dual-approach dependency management** system:
-
-- **Production Dependencies**: Version-constrained dependencies for PyPI compatibility
-- **Development Dependencies**: Git-based dependencies for latest development versions
-- **Installation Methods**:
-  - **Regular users**: Simple `pip install statflow` with all dependencies included
-  - **Developers**: `pip install -e .[dev]` for latest Git versions and development tools
-- **PyPI Compatibility**: All packages can be published without Git dependency issues
-- **Development Flexibility**: Contributors get access to latest versions for testing and development
+- **Core dependencies** (always installed with `statflow`): NumPy, pandas, SciPy, filewise, pygenutils.
+- **Optional `[climate]` extra**: xarray and climarraykit for climatology modules that use `_climate_deps`.
+- **Development**: `pip install -e .[dev]` includes development tools and the climate stack for local testing.
+- **requirements-dev.txt** (Git pins): optional for installing bleeding-edge interdependent packages from source before `pip install -e .[dev]` or `.[climate]`.
 
 ## Usage
 
