@@ -22,14 +22,14 @@ xarray Datasets.
 #----------------#
 
 import pandas as pd
-import xarray as xr
 
 #------------------------#
 # Import project modules #
 #------------------------#
 
-from climarraykit.patterns import rename_xarray_dimension
 from filewise.general.introspection_utils import get_type_str
+
+from ._climate_deps import rename_xarray_dimension, xr
 from pygenutils.strings.text_formatters import format_string, print_format_string
 from pygenutils.time_handling.date_and_time_utils import find_dt_key
 from statflow.fields.climatology.periodic_climat_stats import climat_periodic_statistics
