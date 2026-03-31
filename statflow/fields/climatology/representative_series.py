@@ -66,7 +66,7 @@ def calculate_HDY(hourly_df: pd.DataFrame,
     >>> import numpy as np
     >>> 
     >>> # Create sample hourly data
-    >>> dates = pd.date_range('2020-01-01', '2023-12-31 23:00', freq='H')
+    >>> dates = pd.date_range('2020-01-01', '2023-12-31 23:00', freq='h')
     >>> hourly_data = {
     ...     'date': dates,
     ...     'temperature': np.random.normal(15, 10, len(dates)),
