@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [3.7.1] - 2026-03-31
+
+### Changed (3.7.1)
+
+#### **Documentation** (changing; 3.7.1)
+
+- Module `fields/climatology/representative_series.py`: docstring examples use **`pd.date_range(..., freq='h')`** for hourly frequency, aligned with pandas 2.2+ normalisation of the hourly alias (replacing **`'H'`** in copy-pastable snippets).
+
+---
+
 ## [3.7.0] - 2026-03-31
 
 ### Changed (3.7.0)
