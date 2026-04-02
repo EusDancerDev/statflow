@@ -8,12 +8,15 @@
 # pulls filewise and pygenutils from PyPI if not already satisfied — prefer a clean
 # venv or use only PyPI (skip the Git lines) to avoid duplicate installs.
 # Mirrors pyproject.toml: [project.dependencies], optional [climate] / [dev] / [docs].
+# PyPI-only installs must satisfy: filewise>=3.14.0, pygenutils>=17.1.0, paramlib>=3.5.0
+# (and numpy/pandas/scipy as below). Skip the Git lines if you rely on those pins alone.
 # ---------------------------------------------------------------------------
 
 # Interdependent packages — Git (optional; latest main from source)
 filewise @ git+https://github.com/EusDancerDev/filewise.git
 climarraykit @ git+https://github.com/EusDancerDev/climarraykit.git
 pygenutils @ git+https://github.com/EusDancerDev/pygenutils.git
+# paramlib: direct import in statflow; install via pygenutils / pip or add a Git line if needed
 
 # Core scientific stack (aligns with [project.dependencies])
 numpy>=2.2.3
