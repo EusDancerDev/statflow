@@ -146,7 +146,7 @@ def _align_time_dimensions(observed_series, reanalysis_series, obj_type_observed
 
 
 def _calculate_deltas(observed_series, reanalysis_series, time_freq, statistic, 
-                     keep_std_dates, drop_date_idx_col, season_months, delta_type, 
+                     keep_std_dates, reset_index_drop, season_months, delta_type, 
                      preference, obj_type_observed, obj_type_reanalysis, date_key):
     """Calculate deltas between observed and reanalysis series."""
     # Calculate statistical climatologies
@@ -163,7 +163,7 @@ def _calculate_deltas(observed_series, reanalysis_series, time_freq, statistic,
                                             statistic, 
                                             time_freq,
                                             keep_std_dates,
-                                            drop_date_idx_col,
+                                            reset_index_drop,
                                             season_months)
     
     format_args_delta4 = (
@@ -179,7 +179,7 @@ def _calculate_deltas(observed_series, reanalysis_series, time_freq, statistic,
                                              statistic, 
                                              time_freq,
                                              keep_std_dates,
-                                             drop_date_idx_col,
+                                             reset_index_drop,
                                              season_months)
     
     # Calculate deltas
@@ -494,7 +494,7 @@ def calculate_and_apply_deltas(observed_series,
                                statistic="mean",
                                preference="observed",
                                keep_std_dates=True, 
-                               drop_date_idx_col=False,
+                               reset_index_drop=False,
                                season_months=None,
                                delta_value=2):
     """
@@ -530,19 +530,17 @@ def calculate_and_apply_deltas(observed_series,
         Otherwise, though it is not common, the reanalysis will be treated
         as the truth and observations will be delta-corrected.
         Defaults to give preference over the observed series.
-    keep_std_dates : bool
+    keep_std_dates : bool, default True
         If True, standard YMD (HMS) date format is kept for all climatologics
         except for yearly climatologics.
         Otherwise dates are shown as hour, day, or month indices,
         and season achronyms if "seasonal" is selected as the time frequency.
-        Default value is False.
-    drop_date_idx_col : bool
-        Affects only if the passed object is a Pandas DataFrame.
-        Boolean used to whether drop the date columns in the new data frame.
-        If it is False, then the columns of the dates will be kept.
-        Otherwise, the dates themselves will be kept, but they will be
-        treated as indexers, and not as a column.
-        Defaults to True in order to return date-time incorporated series.
+    reset_index_drop : bool, default False
+        Passed through to :func:`~statflow.fields.climatology.periodic_climat_stats.climat_periodic_statistics`.
+        For pandas DataFrames it only affects the **yearly** frequency path; it
+        must stay ``False`` there (see that function). For xarray inputs it has
+        no effect. Matches :func:`~statflow.core.time_series.periodic_statistics`
+        semantics where it applies.
     season_months : list of integers
         List containing the month numbers to later refer to the time array,
         whatever the object is among the mentioned three types.
@@ -583,7 +581,7 @@ def calculate_and_apply_deltas(observed_series,
     # Calculate climatologies and deltas
     delta_obj, delta_cols = _calculate_deltas(observed_series, reanalysis_series, 
                                              time_freq, statistic, keep_std_dates, 
-                                             drop_date_idx_col, season_months, 
+                                             reset_index_drop, season_months, 
                                              delta_type, preference, obj_type_observed, 
                                              obj_type_reanalysis, date_key)
     
