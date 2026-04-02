@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [3.8.0] - 2026-04-02
+
+### Changed (3.8.0)
+
+#### **Breaking** (API; 3.8.0)
+
+- Renamed parameter **`drop_date_idx_col`** to **`reset_index_drop`** everywhere it applied (clearer alignment with **`DataFrame.reset_index(..., drop=...)`** in pandas):
+  - `statflow.core.time_series.periodic_statistics`
+  - `statflow.fields.climatology.periodic_climat_stats.climat_periodic_statistics`
+  - `statflow.fields.climatology.simple_bias_correction.calculate_and_apply_deltas`
+  - `statflow.fields.climatology.representative_series.hdy_interpolation`
+- Renamed **`drop_new_idx_col`** to **`reset_index_drop`** in **`calculate_HDY`** for the same reason (same ``reset_index(drop=...)`` usage).
+
+#### **Package Dependencies** (changing; 3.8.0)
+
+- Align interdependent pins with the rest of the **EusDancerDev** stack: **`filewise>=3.14.0`**, **`pygenutils>=17.1.0`**, **`climarraykit>=0.2.1`** (optional **`[climate]`** / **`[dev]`**).
+- Declare **`paramlib>=3.5.0`** explicitly (direct imports in climatology modules).
+- **Conda recipe:** `run` requirements now include **SciPy**; **`recipe/post-link.sh`** installs **filewise**, **pygenutils**, and **paramlib** from PyPI (replacing an incomplete **`more_itertools`**-only post-link).
+- **README:** citation block uses the canonical repository URL and current version.
+
+---
+
 ## [3.7.1] - 2026-03-31
 
 ### Changed (3.7.1)
