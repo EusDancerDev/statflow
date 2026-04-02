@@ -42,7 +42,7 @@
 ### Prerequisites
 
 - **Python 3.10+**: Required for modern type annotations and features
-- **Core dependencies** (installed with `pip install statflow`): NumPy, pandas, SciPy, **filewise**, **pygenutils**
+- **Core dependencies** (installed with `pip install statflow`): NumPy, pandas, SciPy, **filewise**, **pygenutils**, **paramlib**
 - **Optional climate stack**: **xarray** and **climarraykit** are *not* required for core statistics, time series, and many climatology helpers that only use NumPy/pandas. Modules that operate on xarray objects (for example `simple_bias_correction`, `periodic_climat_stats` via `_climate_deps`) need the extra below.
 
 ### For Regular Users
@@ -162,7 +162,7 @@ monthly_means = periodic_statistics(
     df, 
     statistic="mean", 
     freq="M",  # Monthly frequency
-    drop_date_idx_col=False
+    reset_index_drop=False
 )
 
 # Perform hypothesis testing
@@ -299,7 +299,7 @@ hdy_dataframe, selected_years = calculate_HDY(
     hourly_climate_df,
     varlist=['date', 'temperature', 'humidity', 'wind_speed'],
     varlist_primary=['date', 'temperature', 'humidity'],
-    drop_new_idx_col=True
+    reset_index_drop=True
 )
 
 # Interpolate between months to smooth transitions
@@ -603,10 +603,10 @@ If you use statflow in your research, please cite:
 ```bibtex
 @software{statflow2024,
   title={statflow: Statistical Analysis and Climatology Toolkit},
-  author={Your Name},
-  year={2024},
-  url={https://github.com/yourusername/statflow},
-  version={3.5.0}
+  author={Gabantxo, Jon Ander},
+  year={2026},
+  url={https://github.com/EusDancerDev/statflow},
+  version={3.8.0}
 }
 ```
 
