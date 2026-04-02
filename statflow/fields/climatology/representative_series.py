@@ -29,7 +29,7 @@ from statflow.core.time_series import periodic_statistics
 def calculate_HDY(hourly_df: pd.DataFrame, 
                   varlist: list[str], 
                   varlist_primary: list[str], 
-                  drop_new_idx_col: bool = False) -> tuple[pd.DataFrame, list[int]]:
+                  reset_index_drop: bool = False) -> tuple[pd.DataFrame, list[int]]:
     """
     Calculate the Hourly Design Year (HDY) using ISO 15927-4:2005 (E) standard.
     
@@ -49,8 +49,10 @@ def calculate_HDY(hourly_df: pd.DataFrame,
         Primary variables to be used for ranking calculations. These variables
         determine which year's data is selected for each month.
         Must include 'date' as the first element.
-    drop_new_idx_col : bool, default False
-        Whether to drop the reset index column during processing.
+    reset_index_drop : bool, default False
+        Passed as ``drop`` to :meth:`pandas.DataFrame.reset_index` after
+        filtering or slicing. ``True`` discards the current row index;
+        ``False`` turns it into ordinary column(s).
         
     Returns
     -------
@@ -141,7 +143,7 @@ def calculate_HDY(hourly_df: pd.DataFrame,
     for m in months:
         try:
             # Filter data for the current month and calculate monthly statkit
-            hdata_MONTH = hourly_df[hourly_df.date.dt.month == m].filter(items=varlist_primary).reset_index(drop=drop_new_idx_col)
+            hdata_MONTH = hourly_df[hourly_df.date.dt.month == m].filter(items=varlist_primary).reset_index(drop=reset_index_drop)
             hdata_MONTH_rank_phi = hdata_MONTH.copy()
             
             # Step a: Calculate daily means for the primary variables
@@ -194,7 +196,7 @@ def calculate_HDY(hourly_df: pd.DataFrame,
         hourly_data_sel = \
         hourly_df[(hourly_df.date.dt.year == selected_year) 
                   & (hourly_df.date.dt.month == m)].filter(items=varlist)\
-                 .reset_index(drop=drop_new_idx_col)
+                 .reset_index(drop=reset_index_drop)
         hdy_df = pd.concat([hdy_df, hourly_data_sel], axis=0)
 
     return hdy_df, hdy_years
@@ -209,7 +211,7 @@ def hdy_interpolation(hdy_df: pd.DataFrame,
                       next_month_first_time_range: str,
                       varlist_to_interpolate: list[str],
                       polynomial_order: int,
-                      drop_date_idx_col: bool = False) -> tuple[pd.DataFrame, pd.DataFrame]:
+                      reset_index_drop: bool = False) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
     Interpolates variables between months in an HDY to smooth transitions.
 
@@ -234,8 +236,10 @@ def hdy_interpolation(hdy_df: pd.DataFrame,
         Wind speed ('ws10') is automatically excluded as it's derived from u10, v10.
     polynomial_order : int
         Order of the polynomial to use for fitting (1=linear, 2=quadratic, 3=cubic, etc.).
-    drop_date_idx_col : bool, default False
-        Whether to drop the index column during processing.
+    reset_index_drop : bool, default False
+        Passed as ``drop`` to :meth:`pandas.DataFrame.reset_index` after
+        concatenating boundary slices. This controls whether the **concatenated
+        frame's row index** is discarded; the ``date`` column remains in the data.
 
     Returns
     -------
@@ -340,7 +344,7 @@ def hdy_interpolation(hdy_df: pd.DataFrame,
         df_slice2 = days_slice_next[(days_slice_next.date.dt.hour >= nmf1) & (days_slice_next.date.dt.hour <= nmf2)]
 
         # Concatenate and reset indices for interpolation
-        df_slice_to_fit = pd.concat([df_slice1, df_slice2]).reset_index(drop=drop_date_idx_col)
+        df_slice_to_fit = pd.concat([df_slice1, df_slice2]).reset_index(drop=reset_index_drop)
 
         # Polynomial fitting for each variable in varlist_to_interpolate
         for var in varlist_to_interpolate:
