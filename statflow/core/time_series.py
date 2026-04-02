@@ -34,7 +34,7 @@ def periodic_statistics(obj,
                         statistic: str,
                         freq: str,
                         groupby_dates: bool = False,
-                        drop_date_idx_col: bool = False,
+                        reset_index_drop: bool = False,
                         season_months: list[int] | None = None,
                         dayfirst: bool = False,
                         yearfirst: bool = False):
@@ -65,9 +65,12 @@ def periodic_statistics(obj,
         If True, the function will group the dates according to 
         the specified frequency.
     
-    drop_date_idx_col : bool, optional
-        Whether to drop the date index column from the results. 
-        Default is False, retaining the dates in the output.
+    reset_index_drop : bool, optional, default False
+        **Pandas DataFrame only**; ignored for xarray inputs. After resampling,
+        the grouped result has the time periods on the index. Passed as the
+        ``drop`` argument to :meth:`pandas.DataFrame.reset_index`: if False,
+        period labels become the first column of the returned frame; if True,
+        they are discarded and only a default integer index remains.
     
     season_months : list[int] | None, optional
         A list of three integers representing the months of a season,
@@ -195,7 +198,7 @@ def periodic_statistics(obj,
             else:
                 result = getattr(grouped, statistic)()
             
-            if drop_date_idx_col:
+            if reset_index_drop:
                 result = result.reset_index(drop=True)
             else:
                 result = result.reset_index()
