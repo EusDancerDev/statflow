@@ -1,5 +1,5 @@
 {% set name = "statflow" %}
-{% set version = "3.7.1" %}
+{% set version = "3.8.0" %}
 
 package:
   name: {{ name|lower }}
@@ -23,7 +23,8 @@ requirements:
     - pip
     - numpy >=2.2.3
     - pandas >=2.2.3
-    # Add other dependencies as needed
+    - scipy >=1.7.0
+    # filewise, pygenutils, paramlib: PyPI pins via recipe/post-link.sh
 
 test:
   imports:
