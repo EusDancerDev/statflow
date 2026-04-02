@@ -3,13 +3,14 @@ numpy>=2.2.3
 pandas>=2.2.3
 scipy>=1.7.0
 
-# Interdependent packages
-filewise>=3.13.0
-pygenutils>=16.4.0
+# Interdependent packages (aligned with pyproject.toml)
+filewise>=3.14.0
+pygenutils>=17.1.0
+paramlib>=3.5.0
 
 # Optional climate stack (same as: pip install 'statflow[climate]')
 # xarray>=2024.2.0
-# climarraykit>=0.1.0
+# climarraykit>=0.2.1
 
 # Other optional
 matplotlib>=3.5.0
