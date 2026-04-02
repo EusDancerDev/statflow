@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "statflow"
-version = "3.7.1"
+version = "3.8.0"
 license = {file = "LICENSE"}
 description = "A versatile statistical toolkit for Python, featuring core statistical methods, time series analysis, signal processing, and climatology tools"
 keywords = ["statistics", "time series", "signal processing", "climatology", "data analysis"]
@@ -29,14 +29,15 @@ dependencies = [
     "pandas>=2.2.3",
     "numpy>=2.2.3",
     "scipy>=1.7.0",
-    "filewise>=3.13.0",
-    "pygenutils>=16.4.0",
+    "filewise>=3.14.0",
+    "pygenutils>=17.1.0",
+    "paramlib>=3.5.0",
 ]
 
 [project.optional-dependencies]
 climate = [
     "xarray>=2024.2.0",
-    "climarraykit>=0.1.0",
+    "climarraykit>=0.2.1",
 ]
 dev = [
     "pytest>=7.0.0",
@@ -46,7 +47,7 @@ dev = [
     "mypy>=1.0.0",
     "flake8>=6.0.0",
     "xarray>=2024.2.0",
-    "climarraykit>=0.1.0",
+    "climarraykit>=0.2.1",
 ]
 docs = [
     "sphinx>=5.0.0",
