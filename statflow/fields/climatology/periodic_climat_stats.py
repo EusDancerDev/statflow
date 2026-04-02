@@ -63,7 +63,7 @@ def climat_periodic_statistics(obj,
                                statistic: str,
                                time_freq: str,
                                keep_std_dates: bool = False, 
-                               drop_date_idx_col: bool = False,
+                               reset_index_drop: bool = False,
                                season_months: list[int] | None = None):
     """
     Function that calculates climatologic statistics for a time-frequency.
@@ -82,11 +82,13 @@ def climat_periodic_statistics(obj,
         Otherwise dates are shown as hour, day, or month indices,
         and season achronyms if "seasonal" is selected as the time frequency.
         Default value is False.
-    drop_date_idx_col : bool
-        Whether to drop the date index column. Default is False.
-        If True, the dates will be kept, but the corresponding array
-        will be an index, instead of a column.
-        Defaults to False
+    reset_index_drop : bool, default False
+        Forwarded to :func:`~statflow.core.time_series.periodic_statistics` for
+        **yearly** pandas DataFrame climatologies only. For other DataFrame
+        time frequencies this argument is ignored (the climatology is built
+        from subsets and the time axis is assembled in
+        ``_format_dataframe_output``). For xarray objects it is ignored.
+        See ``periodic_statistics`` for the precise meaning of this flag.
     season_months : list[int] | None
         List containing the month numbers to later refer to the time array,
         whatever the object is among the mentioned three types.
@@ -101,6 +103,10 @@ def climat_periodic_statistics(obj,
     -----
     For Pandas DataFrames, since it is a 2D object,
     it is interpreted as data holds for a specific geographical point.
+
+    ``reset_index_drop`` must remain ``False`` for yearly DataFrame
+    climatologies: the yearly assembly path requires the resampled period
+    labels as a column. Passing ``True`` raises ``ValueError``.
     """
     
     # Input validation
@@ -126,7 +132,7 @@ def climat_periodic_statistics(obj,
     # Process based on object type
     if obj_type == "dataframe":
         return _process_dataframe(obj, date_key, statistic, time_freq, keep_std_dates, 
-                                drop_date_idx_col, season_months, freq_abbr, 
+                                reset_index_drop, season_months, freq_abbr, 
                                 latest_year, months, days, hours)
     elif obj_type in ["dataset", "dataarray"]:
         return _process_xarray(obj, date_key, statistic, time_freq, keep_std_dates, 
@@ -183,7 +189,7 @@ def _process_dataframe(obj: pd.DataFrame,
                       statistic: str, 
                       time_freq: str, 
                       keep_std_dates: bool, 
-                      drop_date_idx_col: bool, 
+                      reset_index_drop: bool, 
                       season_months: list[int] | None, 
                       freq_abbr: str, 
                       latest_year: int, 
@@ -216,7 +222,7 @@ def _process_dataframe(obj: pd.DataFrame,
         )
     elif time_freq == "yearly":
         climat_vals, climat_dates = _process_yearly_dataframe(
-            obj, statistic, freq_abbr, drop_date_idx_col
+            obj, statistic, freq_abbr, reset_index_drop
         )
     
     # Format the output DataFrame
@@ -332,7 +338,7 @@ def _process_seasonal_dataframe(obj: pd.DataFrame,
 def _process_yearly_dataframe(obj: pd.DataFrame, 
                             statistic: str, 
                             freq_abbr: str, 
-                            drop_date_idx_col: bool) -> tuple[list, list]:
+                            reset_index_drop: bool) -> tuple[list, list]:
     """
     Process yearly data for DataFrame.
     
@@ -344,9 +350,10 @@ def _process_yearly_dataframe(obj: pd.DataFrame,
         Statistical operation to perform ('mean', 'max', 'min', 'std', 'sum').
     freq_abbr : str
         Frequency abbreviation for time resampling.
-    drop_date_idx_col : bool
-        Whether to drop the date index column from the results.
-        
+    reset_index_drop : bool
+        Passed as ``reset_index_drop`` to :func:`~statflow.core.time_series.periodic_statistics`
+        (must be ``False`` so period labels stay as a column for downstream assembly).
+
     Returns
     -------
     tuple[list, list]
@@ -355,7 +362,15 @@ def _process_yearly_dataframe(obj: pd.DataFrame,
         climat_dates : list
             List containing the corresponding dates.
     """
-    climat_df = periodic_statistics(obj, statistic, freq_abbr, drop_date_idx_col)
+    if reset_index_drop:
+        raise ValueError(
+            "reset_index_drop=True is not supported for yearly DataFrame climatologies "
+            "in climat_periodic_statistics: the resampled period labels must remain a "
+            "column. Use the default False."
+        )
+    climat_df = periodic_statistics(
+        obj, statistic, freq_abbr, reset_index_drop=reset_index_drop
+    )
     climat_vals = [climat_df.iloc[:, 1:][statistic]()]
     climat_dates = [climat_df.iloc[-1,0]]
     
