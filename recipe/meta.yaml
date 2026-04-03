@@ -36,7 +36,12 @@ about:
   home: https://github.com/EusDancerDev/statflow
   license: MIT
   license_file: LICENSE
-  summary: Python package statflow
+  summary: Statistical toolkit for time series, signal processing, and climatology in Python
+  description: |
+    statflow provides hypothesis tests, interpolation, filtering, moving-window operations, and
+    decomposition utilities on NumPy and pandas. Climatology modules cover indicators, periodic
+    climatologies, bias correction, and representative-year style series; optional extras enable
+    deeper xarray integration where configured.
   doc_url: https://github.com/EusDancerDev/statflow#readme
   dev_url: https://github.com/EusDancerDev/statflow.git
 
