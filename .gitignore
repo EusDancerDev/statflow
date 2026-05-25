@@ -55,11 +55,11 @@ logs/
 .env.test.local
 .env.production.local
 
-# Data files
-*.csv
-*.xlsx
-*.xls
-*.json
+# Local data and generated datasets
+local_data/
+data_downloads/
+outputs/
+artifacts/
 *.h5
 *.hdf5
 *.pkl
@@ -67,9 +67,16 @@ logs/
 *.parquet
 *.feather
 
+# Keep shareable examples and fixtures trackable.
+!examples/**
+!tests/**
+!docs/**
+!notebooks/**
+!sample_data/**
+!fixtures/**
+
 # Jupyter Notebook
 .ipynb_checkpoints
-*.ipynb
 
 # Documentation
 docs/_build/
@@ -81,5 +88,3 @@ site/
 *.swp
 *~
 
-# Ignore configuration and generated files #
-.chglog 
